@@ -1,8 +1,10 @@
 package com.ssafy.config;
 
 import com.ssafy.api.service.UserService;
+import com.ssafy.common.auth.CustomOAuth2UserService;
 import com.ssafy.common.auth.JwtAuthenticationFilter;
 import com.ssafy.common.auth.SsafyUserDetailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
@@ -28,6 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
     private UserService userService;
+
+    private final CustomOAuth2UserService customOAuth2UserService;
     
     // Password 인코딩 방식에 BCrypt 암호화 방식 사용
     @Bean
@@ -62,6 +67,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/users/me").authenticated()       //인증이 필요한 URL과 필요하지 않은 URL에 대하여 설정
     	        	    .anyRequest().permitAll()
-                .and().cors();
+                .and().cors()
+                .and()
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService);
     }
 }

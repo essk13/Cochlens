@@ -15,6 +15,7 @@
         </div>
         <div class="button-wrapper">
           <el-button>회원가입</el-button>
+          <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a>
           <el-button type="primary" @click="clickLogin">로그인</el-button>
         </div>
       </div>
