@@ -2,6 +2,8 @@
   <v-app>
     <v-navigation-drawer
       width="200"
+      class="navbar"
+      v-model="state.isLogin"
     >
       <v-list
         nav
@@ -15,7 +17,7 @@
             <v-list-item-icon>
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
-            <router-link to="/" class="menu" @click="drawer = false">Cochlens</router-link>
+            <router-link to="/" class="menu" @click="state.drawer = false">Cochlens</router-link>
           </v-list-item>
 
           <v-list-item>
@@ -43,14 +45,14 @@
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
-            <router-link to="/setting" class="menu" @click="drawer = false">설정</router-link>
+            <router-link to="/setting" class="menu" @click="state.drawer = false">설정</router-link>
           </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
 
     <v-navigation-drawer
-      v-model="drawer"
+      v-model="state.drawer"
       width="250"
     >
       <v-list
@@ -68,14 +70,26 @@
             <router-link to="/" class="menu">Cochlens</router-link>
           </v-list-item>
 
-          <v-list-item v-for="item in drawerItems" :key="item">
-            <h3>{{ item }}</h3>
-          </v-list-item>
+        <v-btn-toggle
+          v-model="toggle_exclusive"
+          mandatory
+        >
+          <v-btn
+            v-for="item in state.drawerItems"
+            :key="item"
+            width="250"
+            variant="none"
+            class="ma-0 pa-0"
+            :rounded="0"
+          >
+            {{ item }}
+          </v-btn>
+        </v-btn-toggle>
 
 
           <v-list-item>
             <v-list-item-icon>
-              <v-icon @click="drawer = false">mdi-arrow-collapse-left</v-icon>
+              <v-icon @click="state.drawer = false">mdi-arrow-collapse-left</v-icon>
             </v-list-item-icon>
           </v-list-item>
         </v-list-item-group>
@@ -89,61 +103,69 @@
 </template>
 
 <script>
-// import { reactive } from '@vue/reactivity'
+import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { computed } from '@vue/runtime-core'
+import { useRouter } from 'vue-router'
+
 
 export default {
-  props: {
-  },
+  setup() {
+    const store = useStore()
+    const router = useRouter()
 
-  data: () => ({
+    const state = reactive({
       drawer: false,
-      group: null,
       drawerItems: [],
-    }),
+      group: null,
+      isLogin: true
+    })
 
-  methods: {
-    clickProfile () {
-      this.drawer = true
-      this.drawerItems = [
+    // Created
+    const user = computed(() => store.state.user)
+    console.log(user.value)
+
+    if (user.value == null) {
+      state.isLogin = false
+      router.push({ name: 'login' })
+    } else {
+      state.isLogin = true
+    }
+
+    // Function
+    function clickProfile() {
+      state.drawer = true
+      state.drawerItems = [
         '프로필', '수강 중인 강좌', '내가 찜한 강좌'
       ]
-    },
-    clickClass () {
-      this.drawer = true
-      this.drawerItems = [
+    }
+
+    function clickClass() {
+      state.drawer = true
+      state.drawerItems = [
         '강의 목록', '라이브 강좌', '인기 강좌'
       ]
-    },
-    clickInstructor () {
-      this.drawer = true
-      this.drawerItems = [
+    }
+
+    function clickInstructor() {
+      state.drawer = true
+      state.drawerItems = [
         '강사 목록', '강사 프로필', '전체 강좌', '강사 리뷰'
       ]
-    },
-  }
+    }
 
-  // setup() {
-  //   const state = reactive({
-  //     drawer: false,
-  //     group: null,
-  //     isLogin: false,
-  //     isProfile: false,
-  //     isClass: false,
-  //     isInstructor: false
-  //   })
-
-  //   const clickProfile = () => {
-  //     state.drawer = !state.drawer
-  //   }
-
-  //   return {
-  //     state, clickProfile
-  //   }
-  // },
+    return {
+      state, clickProfile, clickClass, clickInstructor
+    }
+  },
   }
 </script>
 
 <style>
+.navbar {
+  background-color: rgb(211, 239, 255);
+}
+
 .menu {
   font-size: 18px;
 }
