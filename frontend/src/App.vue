@@ -3,14 +3,14 @@
     <v-navigation-drawer
       width="200"
       class="navbar"
-      v-model="state.isLogin"
+      v-model="state.mainNav"
     >
       <v-list
         nav
         dense
       >
         <v-list-item-group
-          v-model="group"
+          v-model="state.group"
           active-class="deep-purple--text text--accent-4"
         >
           <v-list-item>
@@ -53,31 +53,17 @@
 
     <v-navigation-drawer
       v-model="state.drawer"
+      class="sub-nav"
       width="250"
     >
-      <v-list
-        nav
-        dense
-      >
-        <v-list-item-group
-          v-model="group"
-          active-class="deep-purple--text text--accent-4"
-        >
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
-            <router-link to="/" class="menu">Cochlens</router-link>
-          </v-list-item>
-
         <v-btn-toggle
-          v-model="toggle_exclusive"
+          v-model="state.toggle_item"
           mandatory
         >
           <v-btn
             v-for="item in state.drawerItems"
             :key="item"
-            width="250"
+            block
             variant="none"
             class="ma-0 pa-0"
             :rounded="0"
@@ -86,14 +72,12 @@
           </v-btn>
         </v-btn-toggle>
 
+        <v-btn
+          variant="none"
+        >
+          <v-icon @click="state.drawer = false">mdi-arrow-collapse-left</v-icon>
+        </v-btn>
 
-          <v-list-item>
-            <v-list-item-icon>
-              <v-icon @click="state.drawer = false">mdi-arrow-collapse-left</v-icon>
-            </v-list-item-icon>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
     </v-navigation-drawer>
 
     <v-main>
@@ -107,6 +91,7 @@ import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import { computed } from '@vue/runtime-core'
 import { useRouter } from 'vue-router'
+import { watch } from 'vue'
 
 
 export default {
@@ -118,7 +103,8 @@ export default {
       drawer: false,
       drawerItems: [],
       group: null,
-      isLogin: true
+      mainNav: true,
+      toggle_item: false
     })
 
     // Created
@@ -126,11 +112,21 @@ export default {
     console.log(user.value)
 
     if (user.value == null) {
-      state.isLogin = false
+      state.mainNav = false
       router.push({ name: 'login' })
     } else {
-      state.isLogin = true
+      state.mainNav = true
     }
+
+    // Watch
+    watch(
+      computed(() => store.state.user),
+      (newUser, oldUser) => {
+        console.log('new', newUser, 'old', oldUser)
+        if (newUser != null) {
+          state.mainNav = true
+      }
+    })
 
     // Function
     function clickProfile() {
@@ -164,6 +160,10 @@ export default {
 <style>
 .navbar {
   background-color: rgb(211, 239, 255);
+}
+
+.sub-nav {
+  background-color: rgb(166, 222, 255);
 }
 
 .menu {
