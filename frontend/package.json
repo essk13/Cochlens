@@ -9,9 +9,11 @@
   },
   "dependencies": {
     "@mdi/font": "5.9.55",
+    "@quasar/extras": "^1.0.0",
     "axios": "^0.25.0",
     "core-js": "^3.8.3",
     "lodash": "^4.17.21",
+    "quasar": "^2.0.0",
     "roboto-fontface": "*",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
@@ -31,7 +33,8 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "sass": "^1.38.0",
-    "sass-loader": "^10.0.0",
+    "sass-loader": "^10.1.0",
+    "vue-cli-plugin-quasar": "~4.0.4",
     "vue-cli-plugin-vuetify": "~2.4.5",
     "vuetify-loader": "^2.0.0-alpha.0"
   },
