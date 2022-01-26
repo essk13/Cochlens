@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,java,node,vuejs,visualstudiocode,eclipse,intellij+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,java,node,vuejs,visualstudiocode,eclipse,intellij+all
 
+### aws ###
+I6D102T.pem
+
 ### Eclipse ###
 .metadata
 bin/
