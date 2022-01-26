@@ -14,11 +14,17 @@ export default createStore({
   mutations: {
     SET_USER( state ) {
       state.user = 'loginUser'
+    },
+    DEL_USER( state ) {
+      state.user = null
     }
   },
   actions: {
     userLogin({ commit }) {
       commit('SET_USER')
+    },
+    userLogout({ commit }) {
+      commit('DEL_USER')
     }
   },
   modules: {
