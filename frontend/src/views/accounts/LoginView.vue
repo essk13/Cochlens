@@ -1,19 +1,21 @@
 <template>
   <div class="login-view">
     <div class="full-width full-height row justify-center items-center content-center">
-      <div class="col-6 full-height row justify-center items-center content-center">
+      <div class="col-1"></div>
+      <div class="col-5 full-height row justify-center items-center content-center">
         <img @click="clickLogin" :src="state.logo" height="250"/>
       </div>
 
       <!-- Input -->
-      <div class="col-6 row justify-start items-center content-center">
+      <div class="col-4 row justify-start items-center content-center">
         <div class="login-input-area">
           <p class="unlogin-title">Sing In</p>
           <!-- E-mail -->
           <q-input
             outlined
+            dense
             bg-color="white"
-            v-model="email"
+            v-model="state.email"
             label="이메일"
             lazy-rules
             :rules="[ val => val && val.length > 4 || '이메일이 올바르지 않습니다.']"
@@ -22,19 +24,21 @@
 
           <!-- Password -->
           <q-input
-            v-model="password"
+            v-model="state.password"
             outlined
+            dense
             bg-color="white"
-            :type="isPwd ? 'password' : 'text'"
+            :type="state.isPwd ? 'password' : 'text'"
             label="비밀번호"
             lazy-rules
             :rules="[ val => val && val.length > 7 || '비밀번호는 8자리 이상입니다.']"
+            @keyup.enter="clickLogin"
           >
             <template v-slot:append>
               <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
+                :name="state.isPwd ? 'visibility_off' : 'visibility'"
                 class="cursor-pointer"
-                @click="isPwd = !isPwd"
+                @click="state.isPwd = !state.isPwd"
               />
             </template>
           </q-input>
@@ -44,17 +48,26 @@
             <a @click="move" class="text-primary text-bold">비밀번호 찾기</a>
           </div>
 
+          <!-- Button -->
+          <q-btn
+            @click="clickLogin"
+            class="full-width q-mb-md bg-logo-color text-bold"
+          >
+            로 그 인
+          </q-btn>
+
           <div class="q-px-xl">
             <q-btn
               color="primary"
-              class="full-width q-mb-md"
               @click="moveSingup"
+              class="full-width q-mb-md"
             >회원가입</q-btn>
             <q-btn color="white" text-color="dark" class="full-width q-mb-md">구글 로그인</q-btn>
             <q-btn color="positive" class="full-width">네이버 로그인</q-btn>
           </div>
         </div>
       </div>
+      <div class="col-1"></div>
     </div>
   </div>
 </template>
@@ -62,7 +75,7 @@
 import logo from '@/assets/logo.svg'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { reactive } from 'vue'
 
 export default {
   name: 'LoginView',
@@ -72,17 +85,24 @@ export default {
   setup() {
     const store = useStore()
     const router = useRouter()
-    const state = {
+    const state = reactive({
       logo,
+      email: '',
+      password: '',
+      isPwd: true
+    })
+
+    // Created
+    if (localStorage.getItem('JWT')) {
+      router.push({ name: 'home' })
     }
 
-    const email = ref('')
-    const password = ref('')
-    const isPwd = ref(true)
-
     function clickLogin() {
-      store.dispatch('userLogin')
-      router.push({ name: 'home' })
+      store.dispatch('userLogin', { id: state.email, password: state.password })
+      .then(res => {
+        console.log(res)
+        router.push({ name: 'home' })
+      })
     }
 
     function moveSingup() {
@@ -91,7 +111,6 @@ export default {
 
     return {
       state, clickLogin, moveSingup,
-      email, password, isPwd,
     }
   }
 }
@@ -115,5 +134,9 @@ export default {
   font-weight: bold;
   font-size: 25px;
   text-align: end;
+}
+
+.bg-logo-color {
+  background: rgb(187, 210, 255) !important;
 }
 </style>
