@@ -1,4 +1,3 @@
-
 <!-- 필수 항목 -->
 
 ## 프로젝트 소개
@@ -15,4 +14,3 @@
   - JWT Authentication
   - REST API
 
-test입니다.
