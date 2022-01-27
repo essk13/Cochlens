@@ -118,7 +118,7 @@
 <script>
 import logo from '@/assets/logo.svg'
 import { reactive } from 'vue'
-// import { useStore } from 'vuex'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -127,7 +127,7 @@ export default {
   },
 
   setup() {
-    // const store = useStore()
+    const store = useStore()
     const router = useRouter()
     const state = reactive({
       logo,
@@ -140,12 +140,21 @@ export default {
       isPwdC: true
     })
 
+    // Created
+    if (localStorage.getItem('JWT')) {
+      router.push({ name: 'home' })
+    }
+
     function moveLogin() {
       router.push({ name: 'login' })
     }
 
     function clickSingup() {
-      router.push({ name: 'login' })
+      store.dispatch('userSignup', { id: state.email, password: state.password })
+      .then(res => {
+        console.log(res)
+        router.push({ name: 'login' })
+      })
     }
 
     return {

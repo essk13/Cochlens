@@ -92,9 +92,17 @@ export default {
       isPwd: true
     })
 
-    function clickLogin() {
-      store.dispatch('userLogin')
+    // Created
+    if (localStorage.getItem('JWT')) {
       router.push({ name: 'home' })
+    }
+
+    function clickLogin() {
+      store.dispatch('userLogin', { id: state.email, password: state.password })
+      .then(res => {
+        console.log(res)
+        router.push({ name: 'home' })
+      })
     }
 
     function moveSingup() {

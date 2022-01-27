@@ -107,9 +107,14 @@ export default {
     })
 
     // Created
+    if (localStorage.getItem('JWT')) {
+      store.dispatch('set_user')
+    } else {
+      router.push({ name: 'login' })
+    }
+
     const user = computed(() => store.state.user)
     console.log(user.value)
-
     if (user.value == null) {
       state.mainNav = false
       router.push({ name: 'login' })
@@ -135,6 +140,7 @@ export default {
 
     function clickProfile() {
       state.drawer = true
+      router.push({ name: 'profile' })
       state.drawerItems = [
         { title: '프로필', icon: '', method: ''},
         { title: '수강 중인 강좌', icon: '', method: ''},
@@ -144,6 +150,7 @@ export default {
 
     function clickClass() {
       state.drawer = true
+      router.push({ name: 'classlist' })
       state.drawerItems = [
         { title: '강의 목록', icon: '', method: ''},
         { title: '라이브 강좌', icon: '', method: ''},
@@ -153,6 +160,7 @@ export default {
 
     function clickInstructor() {
       state.drawer = true
+      router.push({ name: 'instructorlist' })
       state.drawerItems = [
         { title: '강사 목록', icon: '', method: ''},
         { title: '강사 프로필', icon: '', method: ''},
@@ -169,6 +177,7 @@ export default {
     function clickLogout() {
       state.drawer = false
       state.mainNav = false
+      localStorage.removeItem('JWT')
       store.dispatch('userLogout')
       router.push({ name: 'login' })
     }
@@ -191,7 +200,7 @@ export default {
 }
 
 .main-menu {
-  font-size: 18px !important;
+  font-size: 17px !important;
   font-weight: bold;
 }
 
