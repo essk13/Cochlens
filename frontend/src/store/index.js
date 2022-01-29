@@ -6,7 +6,7 @@ import classroomStore from '@/store/modules/classroomStore'
 import instructorStore from '@/store/modules/instructorStore'
 import profileStore from '@/store/modules/profileStore'
 
-const BASE_URL = 'https://localhost:8443/api/v1/'
+const BASE_URL = 'http://localhost:8080/api/v1'
 
 export default createStore({
   state: {
@@ -26,7 +26,7 @@ export default createStore({
     userLogin({ commit }, data) {
       axios({
         method: 'post',
-        url: `${BASE_URL}auth/login`,
+        url: `${BASE_URL}/auth/login`,
         data: data
       })
         .then(res => {
@@ -47,11 +47,11 @@ export default createStore({
     userLogout({ commit }) {
       commit('DEL_USER')
     },
-    userSignup(data) {
-      console.log(data)
+    userSignup({ state }, data) {
+      console.log(state, data)
       axios({
         method: 'post',
-        url: `${BASE_URL}users`,
+        url: `${BASE_URL}/users`,
         data: data
       })
         .then(res => {

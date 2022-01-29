@@ -61,9 +61,18 @@
               color="primary"
               @click="moveSingup"
               class="full-width q-mb-md"
-            >회원가입</q-btn>
-            <q-btn color="white" text-color="dark" class="full-width q-mb-md">구글 로그인</q-btn>
-            <q-btn color="positive" class="full-width">네이버 로그인</q-btn>
+            >
+              <img :src="state.logo_nt" height="20" class="q-mr-sm">
+              회 원 가 입
+            </q-btn>
+            <q-btn color="white" text-color="dark" class="full-width q-mb-md">
+              <img :src="state.google" height="20" class="q-mr-sm">
+              구글 로그인
+            </q-btn>
+            <q-btn color="positive" class="full-width">
+              <img :src="state.naver" height="18" class="q-mr-sm">
+              네이버 로그인
+            </q-btn>
           </div>
         </div>
       </div>
@@ -73,6 +82,9 @@
 </template>
 <script>
 import logo from '@/assets/logo.svg'
+import logo_nt from '@/assets/logo-none-title.svg'
+import google from '@/assets/google.svg'
+import naver from '@/assets/naver.svg'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
@@ -87,6 +99,9 @@ export default {
     const router = useRouter()
     const state = reactive({
       logo,
+      logo_nt,
+      google,
+      naver,
       email: '',
       password: '',
       isPwd: true
@@ -99,6 +114,7 @@ export default {
 
     function clickLogin() {
       store.dispatch('userLogin', { id: state.email, password: state.password })
+      router.push({ name: 'home' })
       .then(res => {
         console.log(res)
         router.push({ name: 'home' })
