@@ -1,5 +1,7 @@
 package com.ssafy.api.controller;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.db.entity.QUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -38,7 +40,11 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
-	
+
+	@Autowired
+	private JPAQueryFactory jpaQueryFactory;
+	QUser qUser = QUser.user;
+
 	@PostMapping()
 	@ApiOperation(value = "회원 가입", notes = "<strong>아이디와 패스워드</strong>를 통해 회원가입 한다.") 
     @ApiResponses({
@@ -49,11 +55,29 @@ public class UserController {
     })
 	public ResponseEntity<? extends BaseResponseBody> register(
 			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo) {
-		
-		//임의로 리턴된 User 인스턴스. 현재 코드는 회원 가입 성공 여부만 판단하기 때문에 굳이 Insert 된 유저 정보를 응답하지 않음.
-		User user = userService.createUser(registerInfo);
-		
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+
+		System.out.println("temp : " + registerInfo.getId());
+		System.out.println("temp : " + registerInfo.getName());
+		System.out.println("temp : " + registerInfo.getNickname());
+		System.out.println("temp : " + registerInfo.getPassword());
+
+		String userIdCheck = registerInfo.getId();
+
+		User userCheck = jpaQueryFactory.select(qUser).from(qUser)
+				.where(qUser.userId.eq(userIdCheck)).fetchOne();
+
+
+//		DB에 없을 때
+		if(userCheck == null) {
+			System.out.println("not existed");
+			User user = userService.createUser(registerInfo);
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		}
+//		DB에 있을 때
+		else {
+			System.out.println("existed");
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "ID중복"));
+		}
 	}
 	
 	@GetMapping("/me")
@@ -72,7 +96,12 @@ public class UserController {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userId = userDetails.getUsername();
 		User user = userService.getUserByUserId(userId);
-		
+
+		System.out.println("temp : " + user.getId());
+		System.out.println("temp : " + user.getName());
+		System.out.println("temp : " + user.getNickname());
+		System.out.println("temp : " + user.getPassword());
+
 		return ResponseEntity.status(200).body(UserRes.of(user));
 	}
 }
