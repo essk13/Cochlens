@@ -3,7 +3,7 @@
     <div class="full-width full-height row justify-center items-center content-center">
       <div class="col-1"></div>
       <div class="col-5 full-height row justify-center items-center content-center">
-        <img @click="clickLogin" :src="state.logo" height="250"/>
+        <img :src="state.logo" height="250"/>
       </div>
 
       <!-- Input -->

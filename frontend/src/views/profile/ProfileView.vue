@@ -4,20 +4,20 @@
     <div class="profile-img text-white">프로필 사진</div>
     <div class="profile-description text-white">회원 정보</div>
     <profile-main></profile-main>
-    <taking-class></taking-class>
+    <taking-course></taking-course>
     <wish-list></wish-list>
   </div>
 </template>
 <script>
 import ProfileMain from "@/components/profile/ProfileMain"
-import TakingClass from "@/components/profile/TakingClass"
+import TakingCourse from "@/components/profile/TakingCourse"
 import WishList from "@/components/profile/WishList"
 
 export default {
   name: 'ProfileView',
   components: {
     ProfileMain,
-    TakingClass,
+    TakingCourse,
     WishList,
   },
 }

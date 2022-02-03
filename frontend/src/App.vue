@@ -150,7 +150,7 @@ export default {
 
     function clickClass() {
       state.drawer = true
-      router.push({ name: 'classlist' })
+      router.push({ name: 'courselist' })
       state.drawerItems = [
         { title: '강의 목록', icon: '', method: ''},
         { title: '라이브 강좌', icon: '', method: ''},

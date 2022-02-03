@@ -5,67 +5,75 @@ import SignupView from '../views/accounts/SignupView'
 
 // Menu Bar
 import HomeView from '../views/HomeView'
-import SettingView from '../views/SettingView'
 import ProfileView from '../views/profile/ProfileView'
-import ClassView from '../views/classroom/ClassView'
-import VODView from '../views/classroom/VODView'
-import ClassListView from '../views/classroom/ClassListView'
+import CourseDetailView from '../views/course/CourseDetailView'
+import CourseListView from '../views/course/CourseListView'
+import LectureListView from '../views/course/LectureListView'
 import InstructorListView from '../views/instructor/InstructorListView'
-import InstructorProfileView from '../views/instructor/InstructorProfileView'
+import InstructorDetailView from '../views/instructor/InstructorDetailView'
+import SettingView from '../views/SettingView'
 
 
 const routes = [
+  // 홈
   { // 메인 페이지
     path: '/',
     name: 'home',
     component: HomeView
   },
-  { // 설정 페이지
-    path: '/setting',
-    name: 'setting',
-    component: SettingView
+
+  // 사용자 인증
+  { // 로그인
+    path: '/accounts/login',
+    name: 'login',
+    component: LoginView
   },
+  { // 회원가입
+    path: '/accounts/signup',
+    name: 'signup',
+    component: SignupView
+  },
+
+  // 프로필
   { // 프로필 페이지
     path: '/profile',
     name: 'profile',
     component: ProfileView
   },
-  { // 강의실 페이지
-    path: '/classroom',
-    name: 'classroom',
-    component: ClassView
+
+  // 강좌
+  { // 강좌 상세 페이지
+    path: '/course',
+    name: 'course',
+    component: CourseDetailView
+  },
+  { // 강좌 조회
+    path: '/courselist',
+    name: 'courselist',
+    component: CourseListView
   },
   { // 강의실 페이지
-    path: '/vod',
-    name: 'vod',
-    component: VODView
+    path: '/lecture',
+    name: 'lecture',
+    component: LectureListView
   },
-  { // 강좌 조회(검색)
-    path: '/classlist',
-    name: 'classlist',
-    component: ClassListView
-  },
+
+  // 강사
   { // 강사 조회(검색)
     path: '/instructorlist',
     name: 'instructorlist',
     component: InstructorListView
   },
   { // 강사 프로필 페이지
-    path: '/instructorprofile',
-    name: 'instructorprofile',
-    component: InstructorProfileView
+    path: '/instructor',
+    name: 'instructor',
+    component: InstructorDetailView
   },
 
-  // accounts
-  {
-    path: '/accounts/login',
-    name: 'login',
-    component: LoginView
-  },
-  {
-    path: '/accounts/signup',
-    name: 'signup',
-    component: SignupView
+  { // 설정 페이지
+    path: '/setting',
+    name: 'setting',
+    component: SettingView
   },
 ]
 
