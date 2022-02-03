@@ -8,9 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 /**
  * 유저 모델 정의.
@@ -19,32 +17,48 @@ import javax.persistence.Enumerated;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User extends BaseEntity{
-    String position;
-    String department;
-    String name;
-    String userId;
-    String nickname;
-    String picture;
-
+public class User {
+    @Id
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long userId;
+    @Column(name = "email", nullable = false)
+    String email;
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "password", nullable = false)
     String password;
-
+    @Column(name = "user_name", nullable = false)
+    String userName;
+    @Column(name = "user_nickname", nullable = false)
+    String userNickname;
+    @Column(name = "user_description")
+    String userDescription;
+    @Column(name = "is_subtitle")
+    boolean isSubtitle;
+    @Column(name = "is_command")
+    boolean isCommand;
+    @Column(name = "is_tts")
+    boolean isTTS;
+    @Column(name = "is_face_focusing")
+    boolean isFaceFocusing;
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     Role role;
+    @Column(name = "profile_image")
+    String profileImage;
 
     @Builder
-    public User(String name, String nickname, String picture, Role role) {
-        this.name = name;
-        this.nickname = nickname;
-        this.picture = picture;
+    public User(String userName, String email, String profileImage, Role role) {
+        this.userName = userName;
+        this.email = email;
+        this.profileImage = profileImage;
         this.role = role;
     }
 
-    public User update(String name, String picture){
-        this.name = name;
-        this.picture = picture;
+    public User update(String userName, String profileImage){
+        this.userName = userName;
+        this.profileImage = profileImage;
 
         return this;
     }

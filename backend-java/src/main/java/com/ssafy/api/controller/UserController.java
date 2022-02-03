@@ -5,23 +5,18 @@ import com.ssafy.db.entity.QUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.api.request.UserLoginPostReq;
 import com.ssafy.api.request.UserRegisterPostReq;
-import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
-import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.db.entity.User;
-import com.ssafy.db.repository.UserRepositorySupport;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,15 +51,15 @@ public class UserController {
 	public ResponseEntity<? extends BaseResponseBody> register(
 			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo) {
 
-		System.out.println("temp : " + registerInfo.getId());
+		System.out.println("temp : " + registerInfo.getEmail());
 		System.out.println("temp : " + registerInfo.getName());
 		System.out.println("temp : " + registerInfo.getNickname());
 		System.out.println("temp : " + registerInfo.getPassword());
 
-		String userIdCheck = registerInfo.getId();
+		String emailCheck = registerInfo.getEmail();
 
 		User userCheck = jpaQueryFactory.select(qUser).from(qUser)
-				.where(qUser.userId.eq(userIdCheck)).fetchOne();
+				.where(qUser.email.eq(emailCheck)).fetchOne();
 
 
 //		DB에 없을 때
@@ -94,12 +89,12 @@ public class UserController {
 		 * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
 		 */
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-		String userId = userDetails.getUsername();
-		User user = userService.getUserByUserId(userId);
+		String email = userDetails.getUsername();
+		User user = userService.getUserByEmail(email);
 
-		System.out.println("temp : " + user.getId());
-		System.out.println("temp : " + user.getName());
-		System.out.println("temp : " + user.getNickname());
+		System.out.println("temp : " + user.getEmail());
+		System.out.println("temp : " + user.getUserName());
+		System.out.println("temp : " + user.getUserNickname());
 		System.out.println("temp : " + user.getPassword());
 
 		return ResponseEntity.status(200).body(UserRes.of(user));
