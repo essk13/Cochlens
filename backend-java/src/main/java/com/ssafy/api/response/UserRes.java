@@ -17,6 +17,10 @@ import lombok.Setter;
 public class UserRes{
 	@ApiModelProperty(name="User ID")
 	String userId;
+	@ApiModelProperty(name="User Name")
+	String name;
+	@ApiModelProperty(name="User Nickname")
+	String nickName;
 	
 	public static UserRes of(User user) {
 		UserRes res = new UserRes();

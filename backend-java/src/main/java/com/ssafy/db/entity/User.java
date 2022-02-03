@@ -24,7 +24,7 @@ public class User extends BaseEntity{
     String department;
     String name;
     String userId;
-    String email;
+    String nickname;
     String picture;
 
     @JsonIgnore
@@ -35,9 +35,9 @@ public class User extends BaseEntity{
     Role role;
 
     @Builder
-    public User(String name, String email, String picture, Role role) {
+    public User(String name, String nickname, String picture, Role role) {
         this.name = name;
-        this.email = email;
+        this.nickname = nickname;
         this.picture = picture;
         this.role = role;
     }

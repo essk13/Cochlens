@@ -103,10 +103,16 @@
 
           <div class="row">
             <div class="col-6 q-pr-sm">
-              <q-btn color="white" text-color="dark" class="full-width q-mb-md">구글 로그인</q-btn>
+              <q-btn color="white" text-color="dark" class="full-width q-mb-md">
+                <img :src="state.google" height="20" class="q-mr-sm">
+                구글 로그인
+              </q-btn>
             </div>
             <div class="col-6 q-pl-sm">
-              <q-btn color="positive" class="full-width">네이버 로그인</q-btn>
+              <q-btn color="positive" class="full-width">
+                <img :src="state.naver" height="18" class="q-mr-sm">
+                네이버 로그인
+              </q-btn>
             </div>
           </div>
         </div>
@@ -117,6 +123,8 @@
 </template>
 <script>
 import logo from '@/assets/logo.svg'
+import google from '@/assets/google.svg'
+import naver from '@/assets/naver.svg'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
@@ -131,6 +139,8 @@ export default {
     const router = useRouter()
     const state = reactive({
       logo,
+      google,
+      naver,
       email: '',
       name: '',
       nickname: '',
@@ -150,7 +160,9 @@ export default {
     }
 
     function clickSingup() {
-      store.dispatch('userSignup', { id: state.email, password: state.password })
+      store.dispatch('userSignup',
+        { id: state.email, name: state.name, nickname: state.nickname, password: state.password }
+      )
       .then(res => {
         console.log(res)
         router.push({ name: 'login' })
