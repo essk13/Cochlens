@@ -8,12 +8,12 @@ import java.io.Serializable;
 @Getter
 public class SessionUser implements Serializable {
     private String name;
-    private String nickname;
+    private String email;
     private String picture;
 
     public SessionUser(User user) {
-        this.name = user.getName();
-        this.nickname = user.getNickname();
-        this.picture = user.getPicture();
+        this.name = user.getUserName();
+        this.email = user.getEmail();
+        this.picture = user.getProfileImage();
     }
 }
