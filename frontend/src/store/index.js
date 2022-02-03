@@ -39,9 +39,6 @@ export default createStore({
         .catch(err => {
           console.log(err)
           alert('Err')
-          // 임시
-          localStorage.setItem('JWT', 'hj')
-          commit('SET_USER')
         })
     },
     userLogout({ commit }) {
