@@ -1,5 +1,6 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -35,4 +36,12 @@ public class Lecture {
     @Temporal(TemporalType.DATE)
     @Column(name = "lecture_close_time")
     Date lectureCloseTime;
+
+    @Builder
+    public Lecture(String lectureName, Date lectureDate, String lectureState){
+
+        this.lectureName = lectureName;
+        this.lectureDate = lectureDate;
+        this.lectureState = lectureState;
+    }
 }

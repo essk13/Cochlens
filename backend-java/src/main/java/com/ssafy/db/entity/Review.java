@@ -1,5 +1,6 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Review {
     @Id
     @Column(name = "review_id")
@@ -25,4 +30,14 @@ public class Review {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     Course course;
+
+    @Builder
+    public Review(Date reviewDate, String reviewContent, int reviewGrade, User user, Course course){
+
+        this.reviewDate = reviewDate;
+        this.reviewContent = reviewContent;
+        this.reviewGrade = reviewGrade;
+        this.user = user;
+        this.course = course;
+    }
 }
