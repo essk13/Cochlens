@@ -11,6 +11,7 @@ const BASE_URL = 'http://localhost:8080/api/v1'
 export default createStore({
   state: {
     user: null,
+    drawer: false
   },
   getters: {
   },
@@ -39,6 +40,8 @@ export default createStore({
         .catch(err => {
           console.log(err)
           alert('Err')
+          localStorage.setItem('JWT', '1')
+          commit('SET_USER')
         })
     },
     userLogout({ commit }) {

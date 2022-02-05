@@ -6,9 +6,12 @@ import SignupView from '../views/accounts/SignupView'
 // Menu Bar
 import HomeView from '../views/HomeView'
 import ProfileView from '../views/profile/ProfileView'
+
 import CourseDetailView from '../views/course/CourseDetailView'
 import CourseListView from '../views/course/CourseListView'
 import LectureListView from '../views/course/LectureListView'
+import CourseReviewView from '../views/course/CourseReviewView'
+
 import InstructorListView from '../views/instructor/InstructorListView'
 import InstructorDetailView from '../views/instructor/InstructorDetailView'
 import SettingView from '../views/SettingView'
@@ -56,6 +59,11 @@ const routes = [
     path: '/lecture',
     name: 'lecture',
     component: LectureListView
+  },
+  { // 강좌 리뷰
+    path: '/course/review',
+    name: 'courseReview',
+    component: CourseReviewView
   },
 
   // 강사

@@ -108,7 +108,9 @@ export default {
     })
 
     // Created
+    console.log('>>', localStorage.getItem('JWT'))
     if (localStorage.getItem('JWT')) {
+      console.log('login!!!!')
       router.push({ name: 'home' })
     }
 

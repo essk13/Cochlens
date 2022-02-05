@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>강의 목록(커리큘럼) 페이지</h3>
+    <h3>강좌 리뷰 페이지</h3>
   </div>
 </template>
 <script>

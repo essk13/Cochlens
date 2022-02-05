@@ -84,7 +84,6 @@ import { computed } from '@vue/runtime-core'
 import { useRouter } from 'vue-router'
 import { watch } from 'vue'
 
-
 export default {
   setup() {
     const store = useStore()
@@ -139,23 +138,33 @@ export default {
     }
 
     function clickProfile() {
-      state.drawer = true
+      state.drawer = false
+      store.state.drawer = !store.state.drawer
       router.push({ name: 'profile' })
-      state.drawerItems = [
-        { title: '프로필', icon: '', method: ''},
-        { title: '수강 중인 강좌', icon: '', method: ''},
-        { title: '내가 찜한 강좌', icon: '', method: ''}
-      ]
     }
 
     function clickClass() {
       state.drawer = true
       router.push({ name: 'courselist' })
       state.drawerItems = [
-        { title: '강의 목록', icon: '', method: ''},
-        { title: '라이브 강좌', icon: '', method: ''},
-        { title: '인기 강좌', icon: '', method: ''},
+        { title: '강좌 목록', icon: '', method: moveCourseList },
+        { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
+        { title: '강의 목록', icon: '', method: moveLecture },
+        { title: '강좌 리뷰', icon: '', method: moveCourseReview },
       ]
+    }
+
+    function moveCourseList() {
+      router.push({ name: 'courselist' })
+    }
+    function moveCourseDetail() {
+      router.push({ name: 'course' })
+    }
+    function moveLecture() {
+      router.push({ name: 'lecture' })
+    }
+    function moveCourseReview() {
+      router.push({ name: 'courseReview' })
     }
 
     function clickInstructor() {
