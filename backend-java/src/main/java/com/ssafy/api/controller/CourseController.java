@@ -110,14 +110,21 @@ public class CourseController {
         int day = value % 100;
         Date date = new GregorianCalendar(year, month, day).getTime();
 
+
+        String close_date = body.get("courseCloseDate").toString();
+        Integer value_close = Integer.parseInt(close_date);
+        int year_close = value_close / 10000;
+        int month_close = ((value_close % 10000) / 100) - 1;
+        int day_close = value_close % 100;
+        Date date_close = new GregorianCalendar(year_close, month_close, day_close).getTime();
+
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetails userDetails = (UserDetails)principal;
 
         System.out.println("principal : " + principal);
-        System.out.println("userDetails : " + userDetails);
         Course course = option.get();
         course.setCourseName(body.get("courseName").toString());
         course.setCourseOpenDate(date);
+        course.setCourseCloseDate(date_close);
         course.setCourseCycle(Integer.parseInt(body.get("courseCycle").toString()));
         course.setCourseThumbnail(body.get("courseThumbnail").toString());
         course.setCourseIntroVideo(body.get("courseIntroVideo").toString());
