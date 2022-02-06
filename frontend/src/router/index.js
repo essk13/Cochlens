@@ -11,6 +11,7 @@ import CourseDetailView from '../views/course/CourseDetailView'
 import CourseListView from '../views/course/CourseListView'
 import LectureListView from '../views/course/LectureListView'
 import CourseReviewView from '../views/course/CourseReviewView'
+import CourseCreateView from '../views/course/CourseCreateView'
 
 import InstructorListView from '../views/instructor/InstructorListView'
 import InstructorDetailView from '../views/instructor/InstructorDetailView'
@@ -64,6 +65,11 @@ const routes = [
     path: '/course/review',
     name: 'courseReview',
     component: CourseReviewView
+  },
+  { // 강좌 생성
+    path: '/course/create',
+    name: 'courseCreate',
+    component: CourseCreateView
   },
 
   // 강사

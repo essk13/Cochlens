@@ -151,6 +151,7 @@ export default {
         { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
         { title: '강의 목록', icon: '', method: moveLecture },
         { title: '강좌 리뷰', icon: '', method: moveCourseReview },
+        { title: '강좌 개설', icon: '', method: moveCourseCreate },
       ]
     }
 
@@ -165,6 +166,9 @@ export default {
     }
     function moveCourseReview() {
       router.push({ name: 'courseReview' })
+    }
+    function moveCourseCreate() {
+      router.push({ name: 'courseCreate' })
     }
 
     function clickInstructor() {
