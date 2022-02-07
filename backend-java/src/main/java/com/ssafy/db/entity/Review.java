@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Review {
     @Id
     @Column(name = "review_id")
