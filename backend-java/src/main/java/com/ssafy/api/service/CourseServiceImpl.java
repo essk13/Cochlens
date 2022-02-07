@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ssafy.db.entity.Course;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -31,6 +30,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepositorySupport.findCourseByCourseId(courseId).get();
         return course;
     }
+
 
     @Override
     public List<Map<String, Object>> getCourseList(){
@@ -135,6 +135,22 @@ public class CourseServiceImpl implements CourseService {
         course.setCourseFee(Integer.parseInt(body.get("courseFee").toString()));
 
         return courseRepository.save(course);
+    }
+
+
+    @Override
+    public List<Map<String, Object>> getCourseByUserEmail(String email) {
+        User user = userService.getUserByEmail(email);
+        List<Map<String, Object>> result = new ArrayList<>();
+            courseRepository.findAll().forEach(courseList -> {
+            Map<String, Object> obj = new HashMap<>();
+            User userCheck = courseList.getUser();
+            if (userCheck == user){
+                obj.put("courseId", courseList.getCourseId());
+                result.add(obj);
+            }
+        });
+        return result;
     }
 }
 

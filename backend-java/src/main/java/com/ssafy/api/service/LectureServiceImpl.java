@@ -1,32 +1,16 @@
 package com.ssafy.api.service;
 
 import com.ssafy.db.entity.Lecture;
-import com.ssafy.db.entity.User;
-import com.ssafy.db.repository.CourseRepository;
-import com.ssafy.db.repository.CourseRepositorySupport;
 import com.ssafy.db.repository.LectureRepository;
 import lombok.var;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ssafy.db.entity.Course;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
 @Service("lectureService")
 public class LectureServiceImpl implements LectureService{
-
-    @Autowired
-    CourseRepositorySupport courseRepositorySupport;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    CourseRepository courseRepository;
 
     @Autowired
     LectureRepository lectureRepository;
@@ -128,4 +112,18 @@ public class LectureServiceImpl implements LectureService{
         lecture.setLectureCloseTime(dateCloseTime);
         return lectureRepository.save(lecture);
     }
+
+//    @Override
+//    public List<Map<String, Object>> getLectureByCourseId(Long courseId) {
+//        Course course = courseService.getCourseByCourseId(courseId);
+//        List<Map<String, Object>> result = new ArrayList<>();
+//        lectureRepository.findAll().forEach(lectureList -> {
+//            Map<String, Object> obj = new HashMap<>();
+//            if (lectureList.getCourse() == course){
+//                obj.put("lectureId", lectureList.getLectureId());
+//                result.add(obj);
+//            }
+//        });
+//        return result;
+//    }
 }

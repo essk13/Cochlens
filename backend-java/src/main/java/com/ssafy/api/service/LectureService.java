@@ -1,6 +1,5 @@
 package com.ssafy.api.service;
 
-import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
 
 import java.util.List;
@@ -11,4 +10,5 @@ public interface LectureService {
     Lecture updateLecture(Long lectureId, Map<String, Object> body);
     List<Map<String, Object>> getLectureList();
     Map<String, Object> getLectureInfo(Long courseId);
+//    List<Map<String, Object>> getLectureByCourseId(Long courseId);
 }

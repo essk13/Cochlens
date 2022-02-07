@@ -2,9 +2,6 @@ package com.ssafy.api.service;
 
 import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.User;
-import com.ssafy.db.repository.CourseRepository;
-import com.ssafy.db.repository.CourseRepositorySupport;
-import com.ssafy.db.repository.LectureRepository;
 import com.ssafy.db.repository.ReviewRepository;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ssafy.db.entity.Course;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 

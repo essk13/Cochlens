@@ -1,6 +1,7 @@
 package com.ssafy.api.controller;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.api.service.CourseService;
 import com.ssafy.db.entity.QUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,9 +32,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-	
+
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	CourseService courseService;
 
 	@Autowired
 	private JPAQueryFactory jpaQueryFactory;
@@ -119,6 +124,17 @@ public class UserController {
 		} else {
 			return ResponseEntity.status(200).body(BaseResponseBody.of(401, "Fail"));
 		}
+	}
+
+	@GetMapping("/course")
+	public List<Map<String, Object>> getCourseByUserEmail(@ApiIgnore Authentication authentication) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String email = userDetails.getUsername();
+
+		List<Map<String, Object>> result = courseService.getCourseByUserEmail(email);
+
+		return result;
+
 	}
 
 }
