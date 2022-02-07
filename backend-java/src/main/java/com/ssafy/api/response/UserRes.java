@@ -1,6 +1,7 @@
 package com.ssafy.api.response;
 
 import com.ssafy.common.model.response.BaseResponseBody;
+import com.ssafy.db.entity.Role;
 import com.ssafy.db.entity.User;
 
 import io.swagger.annotations.ApiModel;
@@ -18,13 +19,36 @@ public class UserRes{
 	@ApiModelProperty(name="User ID")
 	String email;
 	@ApiModelProperty(name="User Name")
-	String name;
+	String userName;
 	@ApiModelProperty(name="User Nickname")
-	String nickName;
+	String userNickname;
+	@ApiModelProperty(name="User Description")
+	String userDescription;
+	@ApiModelProperty(name="IsSubtitle")
+	Boolean isSubtitle;
+	@ApiModelProperty(name="IsCommand")
+	Boolean isCommand;
+	@ApiModelProperty(name="IsTts")
+	Boolean isTTS;
+	@ApiModelProperty(name="IsFaceFocusing")
+	Boolean isFaceFocusing;
+	@ApiModelProperty(name="Role")
+	Role role;
+	@ApiModelProperty(name="ProfileImage")
+	String profileImage;
 	
 	public static UserRes of(User user) {
 		UserRes res = new UserRes();
 		res.setEmail(user.getEmail());
+		res.setUserName(user.getUserName());
+		res.setUserNickname(user.getUserNickname());
+		res.setUserDescription(user.getUserDescription());
+		res.setIsSubtitle(user.isSubtitle());
+		res.setIsCommand(user.isCommand());
+		res.setIsTTS(user.isTTS());
+		res.setIsFaceFocusing(user.isFaceFocusing());
+		res.setRole(user.getRole());
+		res.setProfileImage(user.getProfileImage());
 		return res;
 	}
 }
