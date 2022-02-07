@@ -5,8 +5,8 @@
     <div id="room" style="display: block;">
       <h2 id="room-header"></h2>
       <div id="participants"></div>
-      <!-- <input type="button" id="button-leave" onmouseup="leaveRoom"
-        value="Leave room"> -->
+      <input type="button" id="button-leave" onmouseup="leaveRoom"
+        value="Leave room">
     </div>
   </div>
 </template>
