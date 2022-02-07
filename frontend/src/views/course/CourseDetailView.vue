@@ -36,6 +36,16 @@
             </p>
           </div>
         </div>
+        <div class="course-detail-curriculum row">
+          <div class="course-detail-thumbnail"></div>
+          <div>
+            <p class="curriculum-title">제 2강 닭 한마리 완전 정복</p>
+            <p class="curriculum-description">
+              강사 : 강태훈<br>
+            </p>
+          </div>
+          <q-btn color="purple">강의 시작하기</q-btn>
+        </div>
         <div class="course-detail-curriculum"></div>
         <div class="course-detail-curriculum"></div>
         <div class="course-detail-curriculum"></div>
