@@ -35,7 +35,7 @@ module.exports = defineConfig({
     historyApiFallback: true,
     hot: true
   },
-  css: {
-    requireModuleExtension: false
-  },
+  // css: {
+  //   requireModuleExtension: false
+  // },
 })
