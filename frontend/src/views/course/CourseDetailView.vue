@@ -1,18 +1,19 @@
 <template lang="">
   <div>
-    <input @click="register()" type="button" name="join" value="Join!">
+    <input v-model="state.name">
+    <input @click="register()" type="button" value="Join!">
     <div id="room" style="display: block;">
       <h2 id="room-header"></h2>
       <div id="participants"></div>
-      <input type="button" id="button-leave" onmouseup="leaveRoom();"
-        value="Leave room">
+      <!-- <input type="button" id="button-leave" onmouseup="leaveRoom"
+        value="Leave room"> -->
     </div>
   </div>
 </template>
 
 <script>
 import { reactive } from '@vue/reactivity'
-import { kurentoUtils } from 'kurento-utils'
+import kurentoUtils from 'kurento-utils'
 
 export default {
   name: 'CourseDetailView',
@@ -62,7 +63,7 @@ export default {
 
       let message = {
         id : 'joinRoom',
-        name : 'testname',
+        name : state.name,
         room : 'testroom',
       }
       sendMessage(message);
