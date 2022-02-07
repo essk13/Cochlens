@@ -347,11 +347,6 @@ export default {
   height: 100%;
 }
 
-.participant > video {
-  width: 100%;
-  height: 100%;
-}
-
 .main-screen-block {
   background-color: black;
   width: 100%;
