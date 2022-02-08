@@ -115,6 +115,7 @@ const courseStore = {
         video : {
           mandatory : {
             maxWidth : 320,
+            maxHeight : 120,
             maxFrameRate : 15,
             minFrameRate : 15
           }
