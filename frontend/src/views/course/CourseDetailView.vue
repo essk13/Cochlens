@@ -28,7 +28,7 @@ export default {
       name: '',
       room: '',
     })
-    
+
     function joinLeacture() {
       let message = {
         id : 'joinRoom',

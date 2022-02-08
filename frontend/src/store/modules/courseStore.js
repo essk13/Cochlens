@@ -1,12 +1,12 @@
 import Participant from './js/participant.js'
 import kurentoUtils from 'kurento-utils'
-import Vue from 'vue'
 
 const courseStore = {
   namespaced: true,
   state: {
     ws: '',
     participants: {},
+    name: '',
     room: '',
   },
 
@@ -14,23 +14,28 @@ const courseStore = {
   },
 
   mutations: {
-    SET_WS({ state }, url) {
+    SET_WS(state, url) {
       state.ws = new WebSocket(url)
     },
 
-    ADD_PARTICIPANT({ state }, { name, participant }) {
-      console.log('ADD_PARTICIPANT: ' + name)
-      Vue.set(state.participants, name, participant)
+    SET_NAME(state, name) {
+      state.name = name
     },
 
-    DISPOSE_PARTICIPANT({ state }, name) {
-      Vue.delete(state.participants, name)
+    ADD_PARTICIPANT(state, { name, participant }) {
+      console.log('ADD_PARTICIPANT: ' + name)
+      state.participants[name] = participant
+    },
+
+    DISPOSE_PARTICIPANT(state, name) {
+      delete state.participants[name]
     }
   },
 
   actions: {
     // ws 설정
     setWs({ commit, dispatch, state }, url) {
+      console.log('set_ws: ' + url)
       commit('SET_WS', url)
       state.ws.onmessage = function (msg) {
         console.log('set_ws: ' + msg.data)
@@ -115,9 +120,9 @@ const courseStore = {
           }
         }
       }
-      console.log(state.user + " registered in room " + state.room)
-      var participant = new Participant(state.user)
-      commit('ADD_PARTICIPANT', { name: state.user, participant })
+      console.log(state.name + " registered in room " + state.room)
+      var participant = new Participant(state.name)
+      commit('ADD_PARTICIPANT', { name: state.name, participant })
       var video = participant.getVideoElement()
 
       var options = {
@@ -149,6 +154,7 @@ const courseStore = {
 
     register({ dispatch }, msg) {
       dispatch('sendMessage', msg)
+      dispatch('SET_NAME', msg.name)
     },
 
     leaveLeacture({ commit, dispatch, state }) {
