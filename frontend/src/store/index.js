@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 
 // modules
-import classroomStore from '@/store/modules/classroomStore'
+import courseStore from '@/store/modules/courseStore'
 import instructorStore from '@/store/modules/instructorStore'
 import profileStore from '@/store/modules/profileStore'
 
@@ -67,7 +67,7 @@ export default createStore({
     }
   },
   modules: {
-    classroomStore: classroomStore,
+    courseStore: courseStore,
     instructorStore: instructorStore,
     profileStore: profileStore
   }

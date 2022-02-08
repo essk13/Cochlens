@@ -154,8 +154,12 @@ export default {
       state.drawerItems = [
         { title: '강의 목록', icon: '', method: ''},
         { title: '라이브 강좌', icon: '', method: ''},
-        { title: '인기 강좌', icon: '', method: ''},
+        { title: '인기 강좌', icon: '', method: moveCourse},
       ]
+    }
+
+    function moveCourse() {
+      router.push({ name: 'course' })
     }
 
     function clickInstructor() {
