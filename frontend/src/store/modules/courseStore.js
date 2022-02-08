@@ -20,11 +20,14 @@ const courseStore = {
 
     SET_NAME(state, name) {
       state.name = name
+      state.room = 'testroom'
+      console.log('now_state' + state.name + state.room)
     },
 
     ADD_PARTICIPANT(state, { name, participant }) {
       console.log('ADD_PARTICIPANT: ' + name)
       state.participants[name] = participant
+      console.log('now participants' + state.participants)
     },
 
     DISPOSE_PARTICIPANT(state, name) {
@@ -75,14 +78,16 @@ const courseStore = {
       }
     },
 
+    // 새 참가자 식별
     onNewParticipant({ dispatch }, request) {
       console.log('on_new_participant: ' + request)
       dispatch('receiveVideo', request.name)
     },
 
+    // 다른 유저 비디오 수신
     receiveVideo({ commit }, sender) {
+      console.log('recive_video: ' + sender)
       let participant = new Participant(sender)
-      commit('ADD_PARTICIPANT', { name: sender, participant })
       var video = participant.getVideoElement()
 
       var options = {
@@ -97,7 +102,9 @@ const courseStore = {
             return console.error(error);
           }
           this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-      });
+      })
+
+      commit('ADD_PARTICIPANT', { name: sender, participant })
     },
 
     receiveVideoResponse({ state }, res) {
@@ -109,6 +116,7 @@ const courseStore = {
       });
     },
 
+    // 유저 기본 설정
     onExistingParticipants({ commit, dispatch, state }, msg) {
       let constraints = {
         audio : true,
@@ -146,34 +154,41 @@ const courseStore = {
       })
     },
 
-    onParticipantLeft({ commit, state }, request) {
+    // 다른 유저 퇴실
+    onParticipantLeft({ state }, request) {
       console.log('Participant ' + request.name + ' left')
       var participant = state.participants[request.name]
       participant.dispose()
-      commit('DISPOSE_PARTICIPANT', request.name)
     },
 
-    register({ dispatch }, msg) {
+    // 입실
+    register({ commit, dispatch }, msg) {
+      commit('SET_NAME', msg.name)
       dispatch('sendMessage', msg)
-      dispatch('SET_NAME', msg.name)
     },
 
-    leaveLeacture({ commit, dispatch, state }) {
+    // 퇴실
+    leaveLecture({ dispatch, state }) {
       dispatch('sendMessage', {id: 'leaveRoom'})
 
       for ( var key in state.participants) {
         state.participants[key].dispose()
-        commit('DISPOSE_PARTICIPANT', key)
       }
 
       state.ws.close();
     },
 
+    // 데이터 전송
     sendMessage({ state }, msg) {
       var jsonMessage = JSON.stringify(msg);
       console.log('send_message: ' + jsonMessage);
       state.ws.send(jsonMessage);
-    }
+    },
+
+    // 유저 제거
+    disposeParticipant({ commit }, participantName) {
+      commit('DISPOSE_PARTICIPANT', participantName);
+    },
   },
 }
 

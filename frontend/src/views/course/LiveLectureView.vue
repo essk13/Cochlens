@@ -85,7 +85,7 @@ export default {
     })
 
     function leaveRoom() {
-      store.dispatch('leaveLeacture')
+      store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'course' })
     }
 

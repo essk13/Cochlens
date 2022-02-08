@@ -10,7 +10,6 @@ export default function Participant(name) {
   container.id = name;
   let span = document.createElement('span');
   let video = document.createElement('video');
-  let rtcPeer;
 
   container.appendChild(video);
   container.appendChild(span);
@@ -76,7 +75,7 @@ export default function Participant(name) {
 
   this.dispose = function() {
     console.log('Disposing participant ' + this.name);
-    rtcPeer.dispose();
+    this.rtcPeer.dispose();
     container.parentNode.removeChild(container);
   };
 }

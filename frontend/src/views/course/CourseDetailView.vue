@@ -35,8 +35,8 @@ export default {
         name : state.name,
         room : 'testroom',
       }
-      router.push({ name: 'live' })
       store.dispatch('courseStore/register', message)
+      router.push({ name: 'live' })
     }
 
 
