@@ -1,6 +1,7 @@
 const profileStore = {
   namespaced: true,
   state: {
+    component: 'home',
   },
   getters: {
   },

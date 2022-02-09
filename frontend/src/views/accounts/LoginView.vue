@@ -3,7 +3,8 @@
     <div class="full-width full-height row justify-center items-center content-center">
       <div class="col-1"></div>
       <div class="col-5 full-height row justify-center items-center content-center">
-        <img :src="state.logo" height="250"/>
+        <!-- click test -->
+        <img @click="clickLogin" :src="state.logo" height="250"/>
       </div>
 
       <!-- Input -->
@@ -108,7 +109,9 @@ export default {
     })
 
     // Created
+    console.log('>>', localStorage.getItem('JWT'))
     if (localStorage.getItem('JWT')) {
+      console.log('login!!!!')
       router.push({ name: 'home' })
     }
 
@@ -134,7 +137,7 @@ export default {
 <style>
 .login-view {
   background-color: rgb(211, 239, 255);
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
 

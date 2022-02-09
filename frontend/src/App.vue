@@ -1,79 +1,53 @@
 <template>
-  <v-app>
-    <!-- Main Nav -->
-    <v-navigation-drawer
-      width="200"
-      class="navbar pa-3"
-      v-model="state.mainNav"
-    >
-      <v-list
-        nav
-        dense
-      >
-        <v-list-item
-          v-for="item in state.mainNavItem"
-          @click="item.method"
-          :key="item.title"
-          link
-        >
-          <v-list-item-icon class="mr-2">
-            <img v-if="item.title == 'Cochlens'" :src="state.logo" height="20" alt="logo">
-            <v-icon v-else>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title class="main-menu">{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <v-btn
-          variant="none"
-          class="menu-close"
-        >
-          <v-icon @click="clickLogout" class="text-lg-h5">mdi-window-close</v-icon>
-        </v-btn>
-    </v-navigation-drawer>
-
-    <!-- Sub Nav -->
-    <v-navigation-drawer
-      v-model="state.drawer"
+  <q-layout view="lhh LpR lff" class="shadow-2 rounded-borders">
+    <q-drawer
+      v-model="state.subNav"
+      bordered
+      :width="200"
+      :breakpoint="500"
       class="sub-nav"
-      width="250"
     >
-      <v-list
-        nav
-        dense
-      >
-        <v-list-item>
-          메뉴
-        </v-list-item>
-        <hr color="balck">
+      <q-list>
+        <template v-for="(navItem, index) in state.subNavItems" :key="index">
+          <q-item clickable :active="navItem.title === 'Outbox'" v-ripple @click="navItem.method">
+            <q-item-section>
+              {{ navItem.title }}
+            </q-item-section>
+            <q-item-section v-if="navItem.icon" avatar>
+              <q-icon :name="navItem.icon" />
+            </q-item-section>
+          </q-item>
+          <q-separator :key="'sep' + index" v-if="navItem.separator" />
+        </template>
+      </q-list>
+    </q-drawer>
 
-        <v-list-item
-          v-for="item in state.drawerItems"
-          @click="item.method"
-          :key="item.title"
-          link
-        >
-          <v-list-item-content>
-            <v-list-item-title class="sub-menu">{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+    <q-drawer
+      v-model="state.mainNav"
+      :width="200"
+      :breakpoint="700"
+      bordered
+      class="navbar"
+    >
+      <q-list>
+        <template v-for="(navItem, index) in state.mainNavItem" :key="index">
+          <q-item clickable :active="navItem.title === 'Outbox'" v-ripple @click="navItem.method">
+            <q-item-section avatar>
+              <q-icon :name="navItem.icon" />
+            </q-item-section>
+            <q-item-section>
+              {{ navItem.title }}
+            </q-item-section>
+          </q-item>
+          <q-separator :key="'sep' + index"  v-if="navItem.separator" />
+        </template>
+      </q-list>
+    </q-drawer>
 
-        <v-btn
-          variant="none"
-          class="menu-close"
-        >
-          <v-icon @click="state.drawer = false" class="text-lg-h4">mdi-chevron-double-left</v-icon>
-        </v-btn>
-
-    </v-navigation-drawer>
-
-    <v-main>
+    <q-page-container class="page" id="main-content">
       <router-view/>
-    </v-main>
-  </v-app>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script>
@@ -84,7 +58,6 @@ import { computed } from '@vue/runtime-core'
 import { useRouter } from 'vue-router'
 import { watch } from 'vue'
 
-
 export default {
   setup() {
     const store = useStore()
@@ -92,17 +65,17 @@ export default {
 
     const state = reactive({
       logo,
-      drawer: false,
-      drawerItems: [],
-      group: null,
       mainNav: true,
       mainNavItem: [
-        { title: 'Cochlens', icon: 'mdi-view-dashboard', method: clickHome },
-        { title: '내 정보', icon: 'mdi-account-circle', method: clickProfile },
-        { title: '강좌 조회', icon: 'mdi-cast-education', method: clickClass },
-        { title: '강사 조회', icon: 'mdi-clipboard-account', method: clickInstructor },
-        { title: '설정', icon: 'mdi-cog', method: clickSetting },
+        { title: 'Cochlens', icon: 'dashboard', method: clickHome },
+        { title: '내 정보', icon: 'account_circle', method: clickProfile },
+        { title: '강좌 조회', icon: 'cast', method: clickClass },
+        { title: '강사 조회', icon: 'co_present', method: clickInstructor },
+        { title: '설정', icon: 'settings', method: clickSetting },
+        { title: '로그아웃', icon: 'close', method: clickLogout },
       ],
+      subNav: false,
+      subNavItems: [],
       toggle_item: false
     })
 
@@ -129,53 +102,121 @@ export default {
         console.log('new', newUser, 'old', oldUser)
         if (newUser != null) {
           state.mainNav = true
+        } else {
+          state.mainNav = false
+        }
       }
-    })
+    )
+
+    watch(
+      computed(() => state.subNav),
+      (newSubNav, oldSubNav) => {
+        console.log(newSubNav)
+        console.log(oldSubNav)
+        const target = document.getElementById('main-content')
+        if (newSubNav) {
+          target.classList.add("sub-open")
+        } else {
+          target.classList.remove("sub-open")
+        }
+      }
+    )
+
+    watch(
+      computed(() => state.subNav),
+      (newsubNav, oldsubNav) => {
+        console.log(newsubNav, oldsubNav)
+        const target = document.getElementById('main-content')
+        if (!newsubNav && state.mainNav) {
+          target.classList.add("main-open")
+        } else {
+          target.classList.remove("main-open")
+        }
+      }
+    )
+
 
     // Function
+    function subNavClose() {
+      state.subNav = !state.subNav
+    }
+
     function clickHome() {
-      state.drawer = false
+      state.subNav = false
       router.push({ name: 'home' })
     }
 
     function clickProfile() {
-      state.drawer = true
+      state.subNav = true
       router.push({ name: 'profile' })
-      state.drawerItems = [
-        { title: '프로필', icon: '', method: ''},
-        { title: '수강 중인 강좌', icon: '', method: ''},
-        { title: '내가 찜한 강좌', icon: '', method: ''}
+      state.subNavItems = [
+        { title: '프로필 홈', icon: '', method: clickProfileHome},
+        { title: '수강 중인 강좌', icon: '', method: clickProfileTaking},
+        { title: '내가 찜한 강좌', icon: '', method: clickProfileWish},
+        { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
+    }
+
+    function clickProfileHome() {
+      store.state.profileStore.component = 'home'
+    }
+
+    function clickProfileTaking() {
+      store.state.profileStore.component = 'taking'
+    }
+
+    function clickProfileWish() {
+      store.state.profileStore.component = 'wish'
     }
 
     function clickClass() {
-      state.drawer = true
+      state.subNav = true
       router.push({ name: 'courselist' })
-      state.drawerItems = [
-        { title: '강의 목록', icon: '', method: ''},
-        { title: '라이브 강좌', icon: '', method: ''},
-        { title: '인기 강좌', icon: '', method: ''},
+      state.subNavItems = [
+        { title: '강좌 목록', icon: '', method: moveCourseList },
+        { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
+        { title: '강의 목록', icon: '', method: moveLecture },
+        { title: '강좌 리뷰', icon: '', method: moveCourseReview },
+        { title: '강좌 개설', icon: '', method: moveCourseCreate },
+        { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
     }
 
+    function moveCourseList() {
+      router.push({ name: 'courselist' })
+    }
+    function moveCourseDetail() {
+      router.push({ name: 'course' })
+    }
+    function moveLecture() {
+      router.push({ name: 'lecture' })
+    }
+    function moveCourseReview() {
+      router.push({ name: 'courseReview' })
+    }
+    function moveCourseCreate() {
+      router.push({ name: 'courseCreate' })
+    }
+
     function clickInstructor() {
-      state.drawer = true
+      state.subNav = true
       router.push({ name: 'instructorlist' })
-      state.drawerItems = [
+      state.subNavItems = [
         { title: '강사 목록', icon: '', method: ''},
         { title: '강사 프로필', icon: '', method: ''},
         { title: '전체 강좌', icon: '', method: ''},
         { title: '강사 리뷰', icon: '', method: ''},
+        { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
     }
 
     function clickSetting() {
-      state.drawer = false
+      state.subNav = false
       router.push({ name: 'setting' })
     }
 
     function clickLogout() {
-      state.drawer = false
+      state.subNav = false
       state.mainNav = false
       localStorage.removeItem('JWT')
       store.dispatch('userLogout')
@@ -197,6 +238,7 @@ export default {
 
 .sub-nav {
   background-color: rgb(166, 222, 255);
+  margin-left: 200px !important;
 }
 
 .main-menu {
@@ -209,9 +251,17 @@ export default {
   font-weight: bold;
 }
 
-.menu-close {
+.x-btn {
   position: absolute;
   bottom: 30px;
   right: 10px;
+}
+
+.sub-open {
+  padding-left: 399px !important;
+}
+
+.main-open {
+  padding-left: 200px !important;
 }
 </style>
