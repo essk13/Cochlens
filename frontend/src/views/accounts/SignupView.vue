@@ -178,7 +178,7 @@ export default {
 <style>
 .singup-view {
   background-color: rgb(211, 239, 255);
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
 </style>
