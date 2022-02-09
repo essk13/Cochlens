@@ -160,11 +160,9 @@ export default {
     function clickProfileHome() {
       store.state.profileStore.component = 'home'
     }
-
     function clickProfileTaking() {
       store.state.profileStore.component = 'taking'
     }
-
     function clickProfileWish() {
       store.state.profileStore.component = 'wish'
     }
@@ -202,13 +200,21 @@ export default {
       state.subNav = true
       router.push({ name: 'instructorlist' })
       state.subNavItems = [
-        { title: '강사 목록', icon: '', method: ''},
-        { title: '강사 프로필', icon: '', method: ''},
-        { title: '전체 강좌', icon: '', method: ''},
+        { title: '강사 목록', icon: '', method: clickInstructorList},
+        { title: '강사 프로필', icon: '', method: clickInstructorDetail},
+        { title: '전체 강좌', icon: '', method: clickInstructorCourse},
         { title: '강사 리뷰', icon: '', method: ''},
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
     }
+
+    function clickInstructorList() {
+      router.push({ name: 'instructorlist' })
+    }
+    function clickInstructorDetail() {
+      router.push({ name: 'instructor' })
+    }
+    function clickInstructorCourse() {}
 
     function clickSetting() {
       state.subNav = false

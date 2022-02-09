@@ -59,10 +59,10 @@
   <!-- 하단 메뉴 -->
   <div class="row profile-downer-area">
     <div class="col-6 q-pr-md">
-      <dir class="row">
+      <div class="row">
         <p class="profile-menu-title q-mr-sm">수강 중인 강좌</p>
         <a href="">더보기</a>
-      </dir>
+      </div>
       <div class="profile-home-row-menu">
         <div
           class="course-profile q-mb-md"
@@ -73,10 +73,10 @@
     </div>
 
     <div class="col-6 q-pl-md">
-      <dir class="row">
+      <div class="row">
         <p class="profile-menu-title q-mr-sm">내가 찜한 강좌</p>
         <a href="">더보기</a>
-      </dir>
+      </div>
       <div class="profile-home-row-menu">
         <div
           class="course-profile q-mb-md"
