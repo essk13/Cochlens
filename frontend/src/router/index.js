@@ -12,6 +12,7 @@ import CourseListView from '../views/course/CourseListView'
 import LectureListView from '../views/course/LectureListView'
 import CourseReviewView from '../views/course/CourseReviewView'
 import CourseCreateView from '../views/course/CourseCreateView'
+import LiveLectureView from '../views/course/LiveLectureView'
 
 import InstructorListView from '../views/instructor/InstructorListView'
 import InstructorDetailView from '../views/instructor/InstructorDetailView'
@@ -70,6 +71,12 @@ const routes = [
     path: '/course/create',
     name: 'courseCreate',
     component: CourseCreateView
+  },
+  { // 라이브 강의실
+    path: '/live',
+    name: 'live',
+    component: LiveLectureView
+
   },
 
   // 강사
