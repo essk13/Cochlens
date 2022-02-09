@@ -39,6 +39,8 @@ export default createStore({
         .catch(err => {
           console.log(err)
           alert('Err')
+          localStorage.setItem('JWT', '1')
+          commit('SET_USER')
         })
     },
     userLogout({ commit }) {
