@@ -1,26 +1,28 @@
 package com.ssafy.api.controller;
 
+import com.ssafy.api.dto.LectureDto;
 import com.ssafy.api.service.LectureService;
 import com.ssafy.api.service.UserService;
 
 
+import com.ssafy.common.auth.SsafyUserDetails;
+import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Lecture;
-import com.ssafy.db.repository.LectureRepository;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.AllArgsConstructor;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.List;
 
+
+@Api(value = "강의 API", tags = {"Lecture"})
 @RestController
-@AllArgsConstructor
-@RequestMapping("/lecture")
-@CrossOrigin("*")
+@RequestMapping("/api/v1/lecture")
 public class LectureController {
-
-    @Autowired
-    LectureRepository lectureRepository;
 
     @Autowired
     UserService userService;
@@ -28,43 +30,88 @@ public class LectureController {
     @Autowired
     LectureService lectureService;
 
+    @PostMapping
+    @ApiOperation(value = "강의 생성", notes = "강의를 생성한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<? extends BaseResponseBody> createRecture(@RequestBody @ApiParam(value="강의 생성 정보", required = true) LectureDto.LectureInsertReq lectureInsertInfo) {
+        Lecture lecture = lectureService.createLecture(lectureInsertInfo);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+    }
+
     @GetMapping
-    public List<Map<String, Object>> list() {
+    @ApiOperation(value = "강의 조회", notes = "생성된 강의를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<List<LectureDto.LectureRes>> getLectureList(@ApiIgnore Authentication authentication) {
+        SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+        String email = userDetails.getUsername();
 
-        List<Map<String, Object>> result = lectureService.getLectureList();
-        return result;
-
+        return ResponseEntity.status(200).body(lectureService.getLectureList(email));
     }
 
     @GetMapping("/{lectureId}")
-    public Map<String, Object> lecture(@PathVariable Long lectureId){
-
-        Map<String, Object> lecture = lectureService.getLectureInfo(lectureId);
-        return lecture;
-    }
-
-    @DeleteMapping("/{lectureId}")
-    public void delete(@PathVariable Long lectureId){
-        lectureRepository.deleteById(lectureId);
-    }
-
-    @PostMapping
-    public Long post(@RequestBody Map<String, Object> body) {
-
-
-        Lecture lecture = lectureService.createLecture(body);
-
-        return Long.valueOf(1);
+    @ApiOperation(value = "강의 조회", notes = "생성된 강의를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<LectureDto.LectureRes> getLecture(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long lectureId) {
+        Lecture lecture = lectureService.getLectureInfo(lectureId);
+        return ResponseEntity.status(200).body(LectureDto.LectureRes.of(lecture));
     }
 
     @PutMapping("/{lectureId}")
-    public Map<String, Object> update(@PathVariable Long lectureId, @RequestBody Map<String, Object> body) {
+    @ApiOperation(value = "강의 수정", notes = "강의를 수정한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<LectureDto.LectureRes> updateLecture(@ApiParam(value="강의 id 정보", required = true) @PathVariable Long lectureId,
+                                                               @ApiParam(value="강좌 id 정보", required = true) @RequestBody LectureDto.LectureInsertReq lectureInsertInfo) {
+        Lecture lecture = lectureService.updateLecture(lectureId, lectureInsertInfo);
 
-        Lecture lecture = lectureService.updateLecture(lectureId, body);
-
-        if (lecture == null){
-            return Map.of("Message", "lecture수정실패");
-        }
-        return Map.of("Message", "lecture수정");
+        return ResponseEntity.status(200).body(LectureDto.LectureRes.of(lecture));
     }
+
+    @PutMapping("/{lectureId}/open")
+    @ApiOperation(value = "강의 라이브 시작", notes = "강의라이브를 시작한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<?> openLecture() {
+        return ResponseEntity.status(200).build();
+    }
+
+    @PutMapping("/{lectureId}/close")
+    @ApiOperation(value = "강의 라이브 종료", notes = "강의라이브를 종료한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<?> closeLecture() {
+        return ResponseEntity.status(200).build();
+    }
+//    @DeleteMapping("/{lectureId}")
+//    public void delete(@PathVariable Long lectureId){
+//        lectureRepository.deleteById(lectureId);
+//    }
+
 }

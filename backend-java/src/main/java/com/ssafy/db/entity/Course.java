@@ -44,10 +44,11 @@ public class Course {
     User user;
 
     @Builder
-    public Course(String courseName, String courseDescription, Date courseOpenDate,
+    public Course(Long courseId, String courseName, String courseDescription, Date courseOpenDate,
                   String courseCategory, int courseCycle, String courseThumbnail, String courseIntroVideo,
                   int courseLimitPeople, int courseFee, User user){
 
+        this.courseId = courseId;
         this.courseName = courseName;
         this.courseCycle = courseCycle;
         this.courseThumbnail = courseThumbnail;

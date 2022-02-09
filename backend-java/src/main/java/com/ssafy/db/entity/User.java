@@ -49,9 +49,9 @@ public class User {
     String profileImage;
 
     @Builder
-    public User(String userName, String email, String profileImage, Role role) {
-        this.userName = userName;
+    public User(String email, String userName, String profileImage, Role role) {
         this.email = email;
+        this.userName = userName;
         this.profileImage = profileImage;
         this.role = role;
     }

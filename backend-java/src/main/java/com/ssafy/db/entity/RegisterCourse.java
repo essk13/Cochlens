@@ -1,15 +1,16 @@
 package com.ssafy.db.entity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class Register_course {
+public class RegisterCourse {
     @Id
     @Column(name = "register_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +23,10 @@ public class Register_course {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     Course course;
+
+    @Builder
+    public RegisterCourse(User user, Course course) {
+        this.user = user;
+        this.course = course;
+    }
 }

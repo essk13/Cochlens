@@ -1,14 +1,14 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Lecture;
 
 import java.util.List;
-import java.util.Map;
 
 public interface LectureService {
-    Lecture createLecture(Map<String, Object> body);
-    Lecture updateLecture(Long lectureId, Map<String, Object> body);
-    List<Map<String, Object>> getLectureList();
-    Map<String, Object> getLectureInfo(Long courseId);
+    Lecture createLecture(LectureDto.LectureInsertReq lectureInsertInfo);
+    List<LectureDto.LectureRes> getLectureList(String email);
+    Lecture getLectureInfo(Long courseId);
+    Lecture updateLecture(Long lectureId, LectureDto.LectureInsertReq lectureInsertInfo);
 //    List<Map<String, Object>> getLectureByCourseId(Long courseId);
 }
