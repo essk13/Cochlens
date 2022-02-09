@@ -1,50 +1,15 @@
 <template>
-  <div>
-    <v-navigation-drawer
-      v-model="state.drawer"
-      class="sub-nav"
-      width="250"
-    >
-      <v-list
-        nav
-        dense
-      >
-        <v-list-item>
-          메뉴
-        </v-list-item>
-        <hr color="balck">
-
-        <v-list-item
-          v-for="item in state.drawerItems"
-          @click="item.method"
-          :key="item.title"
-          link
-        >
-          <v-list-item-content>
-            <v-list-item-title class="sub-menu">{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-        <v-btn
-          variant="none"
-          class="menu-close"
-        >
-          <v-icon @click="state.drawer = false" class="text-lg-h4">mdi-chevron-double-left</v-icon>
-        </v-btn>
-
-    </v-navigation-drawer>
-
+  <div class="course-roof">
     <div class="profile-roof"></div>
     <div class="profile-roof-cover"></div>
     <div class="profile-img text-white"></div>
     <div class="profile-description text-white">회원 정보</div>
+  </div>
 
-    <div class="profile-component">
-      <profile-main v-if="state.isHome"></profile-main>
-      <taking-course v-else-if="state.isTaking"></taking-course>
-      <wish-list v-else></wish-list>
-    </div>
+  <div class="profile-component">
+    <profile-main v-if="state.home"></profile-main>
+    <taking-course v-else-if="state.taking"></taking-course>
+    <wish-list v-else></wish-list>
   </div>
 </template>
 <script>
@@ -67,47 +32,33 @@ export default {
   setup () {
     const store = useStore()
     const state = reactive({
-      isHome: true,
-      isTaking: false,
-      isWish: false,
-      drawer: true,
-      drawerItems: [
-        { title: '프로필 홈', icon: '', method: clickProfileHome},
-        { title: '수강 중인 강좌', icon: '', method: clickProfileTaking},
-        { title: '내가 찜한 강좌', icon: '', method: clickProfileWish}
-      ],
+      home: true,
+      taking: false,
+      wish: false,
     })
 
     // Watch
     watch(
-      computed(() => store.state.drawer),
-      (newDrawer, oldDrawer) => {
-        console.log('new', newDrawer, 'old', oldDrawer)
-        state.drawer = !state.drawer
+      computed(() => store.state.profileStore.component),
+      (newComponent, oldComponent) => {
+        console.log('new', newComponent, 'old', oldComponent)
+        if (newComponent === 'home') {
+          state.home = true
+          state.taking = false
+          state.wish = false
+        } else if (newComponent === 'taking') {
+          state.home = false
+          state.taking = true
+          state.wish = false
+        } else {
+          state.home = false
+          state.taking = false
+          state.wish = true
+        }
     })
-
-    // Function
-    function clickProfileHome() {
-      state.isHome = true
-      state.isTaking = false
-      state.isWish = false
-    }
-
-    function clickProfileTaking() {
-      state.isHome = false
-      state.isTaking = true
-      state.isWish = false
-    }
-
-    function clickProfileWish() {
-      state.isHome = false
-      state.isTaking = false
-      state.isWish = true
-    }
 
     return {
       state,
-      clickProfileHome, clickProfileTaking, clickProfileWish
     }
   }
 }

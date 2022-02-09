@@ -10,81 +10,45 @@
       <p class="profile-menu-title">접근성 설정</p>
       <div class="profile-home-menu">
         <!-- 자막 -->
-        <div class="q-mb-md">
-          <q-btn-toggle
+        <div>
+          <q-toggle
             v-model="state.subtitle"
-            class="my-custom-toggle"
-            padding="0px 8px"
-            no-caps
-            rounded
-            unelevated
-            toggle-color="primary"
-            color="white"
-            text-color="primary"
-            :options="[
-              {label: 'ON', value: 'on'},
-              {label: 'OFF', value: 'off'}
-            ]"
+            checked-icon="check"
+            color="blue"
+            unchecked-icon="clear"
           />
           자막
         </div>
 
         <!-- 동작 명령어 -->
-        <div class="q-my-md">
-          <q-btn-toggle
+        <div>
+          <q-toggle
             v-model="state.command"
-            class="my-custom-toggle"
-            padding="0px 8px"
-            no-caps
-            rounded
-            unelevated
-            toggle-color="primary"
-            color="white"
-            text-color="primary"
-            :options="[
-              {label: 'ON', value: 'on'},
-              {label: 'OFF', value: 'off'}
-            ]"
+            checked-icon="check"
+            color="blue"
+            unchecked-icon="clear"
           />
           동작 명령어
         </div>
 
         <!-- 문자 음성 변환 -->
-        <div class="q-my-md">
-          <q-btn-toggle
+        <div>
+          <q-toggle
             v-model="state.tts"
-            class="my-custom-toggle"
-            padding="0px 8px"
-            no-caps
-            rounded
-            unelevated
-            toggle-color="primary"
-            color="white"
-            text-color="primary"
-            :options="[
-              {label: 'ON', value: 'on'},
-              {label: 'OFF', value: 'off'}
-            ]"
+            checked-icon="check"
+            color="blue"
+            unchecked-icon="clear"
           />
           문자 음성 변환
         </div>
 
         <!-- 강사 얼굴 확대 -->
-        <div class="q-mt-md">
-          <q-btn-toggle
+        <div>
+          <q-toggle
             v-model="state.faceFocusing"
-            class="my-custom-toggle"
-            padding="0px 8px"
-            no-caps
-            rounded
-            unelevated
-            toggle-color="primary"
-            color="white"
-            text-color="primary"
-            :options="[
-              {label: 'ON', value: 'on'},
-              {label: 'OFF', value: 'off'}
-            ]"
+            checked-icon="check"
+            color="blue"
+            unchecked-icon="clear"
           />
           얼굴 확대
         </div>
@@ -130,12 +94,12 @@ export default {
   name: 'ProfileMain',
   setup () {
     const state = reactive({
-      subtitle: 'on',
-      command: 'on',
-      tts: 'on',
-      faceFocusing: 'on',
+      subtitle: true,
+      command: true,
+      tts: true,
+      faceFocusing: true,
       takingCourseList: [1, 2, 3, 4],
-      wishCourseList: [1, 2, 3, 4]
+      wishCourseList: [1, 2, 3, 4],
     })
     return {
       state
