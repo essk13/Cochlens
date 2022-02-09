@@ -109,7 +109,9 @@ export default {
     })
 
     // Created
+    console.log('>>', localStorage.getItem('JWT'))
     if (localStorage.getItem('JWT')) {
+      console.log('login!!!!')
       router.push({ name: 'home' })
     }
 
@@ -135,7 +137,7 @@ export default {
 <style>
 .login-view {
   background-color: rgb(211, 239, 255);
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
 

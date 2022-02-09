@@ -161,7 +161,7 @@ export default {
 
     function clickSingup() {
       store.dispatch('userSignup',
-        { id: state.email, name: state.name, nickname: state.nickname, password: state.password }
+        { email: state.email, name: state.name, nickname: state.nickname, password: state.password }
       )
       .then(res => {
         console.log(res)
@@ -178,7 +178,7 @@ export default {
 <style>
 .singup-view {
   background-color: rgb(211, 239, 255);
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
 </style>
