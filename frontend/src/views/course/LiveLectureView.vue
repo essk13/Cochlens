@@ -90,6 +90,12 @@ export default {
       res: '',
     })
 
+    // Mounted
+    onMounted(() => {
+      init()
+    })
+
+    // Function
     function leaveRoom() {
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'course' })
