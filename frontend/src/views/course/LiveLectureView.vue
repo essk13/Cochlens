@@ -13,9 +13,9 @@
         class="screen-list bg-grey-1 shadow-2"
       >
         <q-carousel-slide :name="1" class="column no-wrap">
-          <div class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+          <div id="participants" class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
+            <!-- <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" /> -->
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
@@ -58,7 +58,7 @@
       <div class="col-2 row justify-between items-center">
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-1 row justify-center items-center">
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
@@ -69,6 +69,8 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import router from '@/router'
 
 export default {
   name: 'LiveLectureView',
@@ -76,13 +78,20 @@ export default {
   },
 
   setup() {
+    const store = useStore()
     const state = reactive({
       screenSlide: 1,
       isMainScreen: true,
     })
 
+    function leaveRoom() {
+      store.dispatch('courseStore/leaveLecture')
+      router.push({ name: 'course' })
+    }
+
     return {
       state,
+      leaveRoom,
     }
   }
 }
