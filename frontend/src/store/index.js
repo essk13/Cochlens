@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 
 // modules
-import classroomStore from '@/store/modules/classroomStore'
+import courseStore from '@/store/modules/courseStore'
 import instructorStore from '@/store/modules/instructorStore'
 import profileStore from '@/store/modules/profileStore'
 
@@ -37,6 +37,8 @@ export default createStore({
           commit('SET_USER')
         })
         .catch(err => {
+          localStorage.setItem('JWT', 'test')
+          commit('SET_USER')
           console.log(err)
           alert('Err')
           // test
@@ -68,7 +70,7 @@ export default createStore({
     }
   },
   modules: {
-    classroomStore: classroomStore,
+    courseStore: courseStore,
     instructorStore: instructorStore,
     profileStore: profileStore
   }
