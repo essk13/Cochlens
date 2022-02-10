@@ -92,7 +92,14 @@ const courseStore = {
 
       var options = {
           remoteVideo: video,
-          onicecandidate: participant.onIceCandidate.bind(participant)
+          onicecandidate: participant.onIceCandidate.bind(participant),
+          configuration: {
+            iceServers: [{
+              'urls': 'turn:3.34.253.8:3478?transport=udp',
+              'username': 'myuser',
+              'credential': 'mypassword'
+            }]
+          }
         }
 
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
@@ -137,7 +144,14 @@ const courseStore = {
       var options = {
             localVideo: video,
             mediaConstraints: constraints,
-            onicecandidate: participant.onIceCandidate.bind(participant)
+            onicecandidate: participant.onIceCandidate.bind(participant),
+            configuration: {
+              iceServers: [{
+                'urls': 'turn:3.34.253.8:3478?transport=udp',
+                'username': 'myuser',
+                'credential': 'mypassword'
+              }]
+            }
           }
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
         options,
