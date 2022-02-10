@@ -22,9 +22,9 @@
 
       <!-- 커리큘럼 -->
       <div>
-        <dir class="row">
+        <div>
           <p class="profile-menu-title">커리큘럼</p>
-        </dir>
+        </div>
         <div class="course-detail-curriculum row">
           <div class="course-detail-thumbnail"></div>
           <div>
