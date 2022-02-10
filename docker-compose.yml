@@ -42,9 +42,9 @@ services:
       - "8888:8888"
     environment:
       TZ: "Asia/Seoul"
-      KMS_STUN_IP: ""
+      KMS_STUN_IP: "3.34.253.8"
       KMS_STUN_PORT: "3478"
-      KMS_TURN_URL: "myuser:mypassword@:3478?transport=udp"
+      KMS_TURN_URL: "myuser:mypassword@3.34.253.8:3478?transport=udp"
     platform: linux/x86_64
     networks:
       - backend
