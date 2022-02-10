@@ -44,15 +44,8 @@ public class UserController {
     })
 	public ResponseEntity<? extends BaseResponseBody> register(
 			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserDto.UserRegisterPostReq registerInfo) {
-		User userCheck = userService.getUserByEmail(registerInfo.getEmail());
-
-		if(userCheck == null) {
-			User user = userService.createUser(registerInfo);
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-		}
-		else {
-			return ResponseEntity.status(402).body(BaseResponseBody.of(402, "email 중복"));
-		}
+		User user = userService.createUser(registerInfo);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/me")

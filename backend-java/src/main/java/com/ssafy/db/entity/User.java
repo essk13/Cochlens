@@ -49,7 +49,7 @@ public class User {
     String profileImage;
 
     @Builder
-    public User(String email, String userName, String profileImage, Role role) {
+    public User(String email, String password, String userName, String profileImage, Role role) {
         this.email = email;
         this.userName = userName;
         this.profileImage = profileImage;
