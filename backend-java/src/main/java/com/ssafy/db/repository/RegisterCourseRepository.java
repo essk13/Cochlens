@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RegisterCourseRepository extends JpaRepository<RegisterCourse, Long> {
-    RegisterCourse findByUserIdAndCourseId(Long userId, Long courseId);
+//    RegisterCourse findByUserIdAndCourseId(Long userId, Long courseId);
 }

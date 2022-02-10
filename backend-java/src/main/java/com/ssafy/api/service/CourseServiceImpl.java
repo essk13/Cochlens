@@ -27,18 +27,18 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo) {
-        Course course = new Course();
-
-        course.setCourseName(courseInsertInfo.getCourseName());
-        course.setCourseDescription(courseInsertInfo.getCourseDescription());
-        course.setCourseOpenDate(courseInsertInfo.getCourseOpenDate());
-        course.setCourseCycle(courseInsertInfo.getCourseCycle());
-        course.setCourseThumbnail(courseInsertInfo.getCourseThumbnail());
-        course.setCourseCategory(courseInsertInfo.getCourseCategory());
-        course.setCourseLimitPeople(courseInsertInfo.getCourseLimitPeople());
-        course.setCourseFee(courseInsertInfo.getCourseFee());
-        course.setCourseIntroVideo(courseInsertInfo.getCourseIntroVideo());
-        course.setUser(user);
+        Course course = Course.builder()
+                .courseName(courseInsertInfo.getCourseName())
+                .courseDescription(courseInsertInfo.getCourseDescription())
+                .courseOpenDate(courseInsertInfo.getCourseOpenDate())
+                .courseCycle(courseInsertInfo.getCourseCycle())
+                .courseThumbnail(courseInsertInfo.getCourseThumbnail())
+                .courseCategory(courseInsertInfo.getCourseCategory())
+                .courseLimitPeople(courseInsertInfo.getCourseLimitPeople())
+                .courseFee(courseInsertInfo.getCourseFee())
+                .courseIntroVideo(courseInsertInfo.getCourseIntroVideo())
+                .user(user)
+                .build();
 
         return courseRepository.save(course);
     }
@@ -104,4 +104,3 @@ public class CourseServiceImpl implements CourseService {
     public void deregisterCourse(Long userId, Long courseId) {
     }
 }
-
