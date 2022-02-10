@@ -27,10 +27,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo) {
+
+
         Course course = Course.builder()
                 .courseName(courseInsertInfo.getCourseName())
                 .courseDescription(courseInsertInfo.getCourseDescription())
                 .courseOpenDate(courseInsertInfo.getCourseOpenDate())
+                .courseCloseDate(courseInsertInfo.getCourseCloseDate())
                 .courseCycle(courseInsertInfo.getCourseCycle())
                 .courseThumbnail(courseInsertInfo.getCourseThumbnail())
                 .courseCategory(courseInsertInfo.getCourseCategory())
@@ -40,7 +43,10 @@ public class CourseServiceImpl implements CourseService {
                 .user(user)
                 .build();
 
-        return courseRepository.save(course);
+        courseRepository.save(course);
+        return course;
+//        return courseRepository.save(course);
+
     }
 
     @Override
@@ -77,30 +83,87 @@ public class CourseServiceImpl implements CourseService {
                 .courseName(courseInsertInfo.getCourseName())
                 .courseDescription(courseInsertInfo.getCourseDescription())
                 .courseOpenDate(courseInsertInfo.getCourseOpenDate())
+                .courseCloseDate(courseInsertInfo.getCourseCloseDate())
                 .courseCycle(courseInsertInfo.getCourseCycle())
                 .courseThumbnail(courseInsertInfo.getCourseThumbnail())
                 .courseCategory(courseInsertInfo.getCourseCategory())
                 .courseLimitPeople(courseInsertInfo.getCourseLimitPeople())
-                .courseFee(course.getCourseFee())
+                .courseFee(courseInsertInfo.getCourseFee())
                 .courseIntroVideo(courseInsertInfo.getCourseIntroVideo())
                 .user(course.getUser())
                 .build();
 
-        return courseRepository.save(newCourse);
+        courseRepository.save(newCourse);
+
+        System.out.println("return = " + newCourse);
+
+        return newCourse;
+//        return courseRepository.save(newCourse);
     }
 
     @Override
-    public void registerCourse(Long userId, Long courseId) {
+    public Map<String, Object> registerCourse(Long userId, Long courseId) {
+//    public void registerCourse(Long userId, Long courseId) {
         User user = userRepository.getOne(userId);
         Course course = courseRepository.getOne(courseId);
         RegisterCourse registerCourse = RegisterCourse.builder()
                 .user(user)
                 .course(course)
+                .isCancel(true)
                 .build();
         registerCourseRepository.save(registerCourse);
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        registerCourseRepository.findAll().forEach(registerCourseList -> {
+            Map<String, Object> obj = new HashMap<>();
+            Course courseCheck = registerCourseList.getCourse();
+            if (courseCheck == course){
+                obj.put("courseId", registerCourseList.getRegisterId());
+                result.add(obj);
+            }
+        });
+
+        int joinCount = result.size();
+        boolean isJoin = registerCourse.isCancel();
+
+        Map<String, Object> returnValue = new HashMap<String, Object>();
+        returnValue.put("joinCount", joinCount);
+        returnValue.put("isJoin", isJoin);
+
+        return returnValue;
     }
 
     @Override
-    public void deregisterCourse(Long userId, Long courseId) {
+//    public void deregisterCourse(Long userId, Long courseId) {
+    public Map<String, Object> deregisterCourse(Long userId, Long courseId) {
+        User user = userRepository.getOne(userId);
+        Course course = courseRepository.getOne(courseId);
+
+        registerCourseRepository.findAll().forEach(registerCourseList -> {
+            Course courseCheck = registerCourseList.getCourse();
+            User userCheck = registerCourseList.getUser();
+            if (courseCheck == course && userCheck == user){
+                registerCourseRepository.delete(registerCourseList);
+            }
+        });
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        registerCourseRepository.findAll().forEach(registerCourseList -> {
+            Map<String, Object> obj = new HashMap<>();
+            Course courseCheck = registerCourseList.getCourse();
+            if (courseCheck == course){
+                obj.put("courseId", registerCourseList.getRegisterId());
+                result.add(obj);
+            }
+        });
+
+        int joinCount = result.size();
+        boolean isJoin = false;
+
+        Map<String, Object> returnValue = new HashMap<String, Object>();
+        returnValue.put("joinCount", joinCount);
+        returnValue.put("isJoin", isJoin);
+
+        return returnValue;
     }
 }

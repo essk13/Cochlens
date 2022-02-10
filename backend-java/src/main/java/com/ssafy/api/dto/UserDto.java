@@ -65,26 +65,28 @@ public class UserDto {
     @Setter
     @ApiModel("UserResponse")
     public static class UserRes{
-        @ApiModelProperty(name="User ID")
+        @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
         String email;
-        @ApiModelProperty(name="User Name")
+        @ApiModelProperty(name="User Name", example="ssafy")
         String userName;
-        @ApiModelProperty(name="User Nickname")
+        @ApiModelProperty(name="User Nickname", example="hotsix")
         String userNickname;
-        @ApiModelProperty(name="User Description")
+        @ApiModelProperty(name="User Description", example="notexisted")
         String userDescription;
-        @ApiModelProperty(name="IsSubtitle")
+        @ApiModelProperty(name="IsSubtitle", example="false")
         Boolean isSubtitle;
-        @ApiModelProperty(name="IsCommand")
+        @ApiModelProperty(name="IsCommand", example="false")
         Boolean isCommand;
-        @ApiModelProperty(name="IsTts")
-        Boolean isTTS;
-        @ApiModelProperty(name="IsFaceFocusing")
+        @ApiModelProperty(name="IsSTT", example="false")
+        Boolean isSTT;
+        @ApiModelProperty(name="IsFaceFocusing", example="false")
         Boolean isFaceFocusing;
-        @ApiModelProperty(name="Role")
+        @ApiModelProperty(name="Role", example="User")
         Role role;
-        @ApiModelProperty(name="ProfileImage")
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
         String profileImage;
+        @ApiModelProperty(name="ThumbnailImage", example="notexisted")
+        String thumbnailImage;
 
         public static UserRes of(User user) {
             UserRes res = new UserRes();
@@ -94,10 +96,59 @@ public class UserDto {
             res.setUserDescription(user.getUserDescription());
             res.setIsSubtitle(user.isSubtitle());
             res.setIsCommand(user.isCommand());
-            res.setIsTTS(user.isTTS());
+            res.setIsSTT(user.isSTT());
             res.setIsFaceFocusing(user.isFaceFocusing());
             res.setRole(user.getRole());
             res.setProfileImage(user.getProfileImage());
+            res.setThumbnailImage(user.getThumbnailImage());
+            return res;
+        }
+    }
+    /**
+     * 회원 본인 정보 조회 API ([PUT] /api/v1/users/me) 요청에 대한 응답값 정의.
+     */
+    @Getter
+    @Setter
+    @ApiModel("UserPutResponse")
+    public static class UserPutRes {
+        @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
+        String email;
+        @ApiModelProperty(name="User Name", example="ssafy")
+        String userName;
+        @ApiModelProperty(name="User Nickname", example="hotsix")
+        String userNickname;
+        @ApiModelProperty(name="User Description", example="notexisted")
+        String userDescription;
+        @ApiModelProperty(name="IsSubtitle", example="false")
+        Boolean isSubtitle;
+        @ApiModelProperty(name="IsCommand", example="false")
+        Boolean isCommand;
+        @ApiModelProperty(name="IsSTT", example="false")
+        Boolean isSTT;
+        @ApiModelProperty(name="IsFaceFocusing", example="false")
+        Boolean isFaceFocusing;
+        @ApiModelProperty(name="Role", example="User")
+        Role role;
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        String profileImage;
+        @ApiModelProperty(name="ThumbnailImage", example="notexisted")
+        String thumbnailImage;
+        @ApiModelProperty(name = "유저 Password", example = "your_password")
+        String password;
+
+        public static UserPutRes of(User user) {
+            UserPutRes res = new UserPutRes();
+            res.setEmail(user.getEmail());
+            res.setUserName(user.getUserName());
+            res.setUserNickname(user.getUserNickname());
+            res.setUserDescription(user.getUserDescription());
+            res.setIsSubtitle(user.isSubtitle());
+            res.setIsCommand(user.isCommand());
+            res.setIsSTT(user.isSTT());
+            res.setIsFaceFocusing(user.isFaceFocusing());
+            res.setRole(user.getRole());
+            res.setProfileImage(user.getProfileImage());
+            res.setThumbnailImage(user.getThumbnailImage());
             return res;
         }
     }

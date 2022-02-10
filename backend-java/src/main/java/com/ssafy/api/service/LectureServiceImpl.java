@@ -1,7 +1,9 @@
 package com.ssafy.api.service;
 
 import com.ssafy.api.dto.LectureDto;
+import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
+import com.ssafy.db.repository.CourseRepository;
 import com.ssafy.db.repository.LectureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,9 +16,27 @@ public class LectureServiceImpl implements LectureService{
     @Autowired
     LectureRepository lectureRepository;
 
+    @Autowired
+    CourseRepository courseRepository;
+
     @Override
     public Lecture createLecture(LectureDto.LectureInsertReq lectureInsertInfo) {
 
+
+        Lecture lecture = Lecture.builder()
+                .lectureName(lectureInsertInfo.getLectureName())
+                .lectureRuntime(lectureInsertInfo.getLectureRuntime())
+                .lectureThumbnail(lectureInsertInfo.getLectureThumbnail())
+                .lectureDate(lectureInsertInfo.getLectureDate())
+                .lectureState(lectureInsertInfo.getLectureState())
+                .lectureVod(lectureInsertInfo.getLectureVod())
+                .lectureOpenTime(lectureInsertInfo.getLectureOpenTime())
+                .lectureCloseTime(lectureInsertInfo.getLectureCloseTime())
+                .course(lectureInsertInfo.getCourse())
+                .build();
+
+        lectureRepository.save(lecture);
+        return lecture;
 //        String lectureDate = body.get("lectureDate").toString();
 //        Integer value = Integer.parseInt(lectureDate);
 //        int year = value / 10000;
@@ -24,13 +44,13 @@ public class LectureServiceImpl implements LectureService{
 //        int day = value % 100;
 //        Date date = new GregorianCalendar(year, month, day).getTime();
 //
-        Lecture lecture = new Lecture();
+//        Lecture lecture = new Lecture();
 //
 //        lecture.setLectureName(body.get("lectureName").toString());
 //        lecture.setLectureDate(date);
 //        lecture.setLectureState(body.get("lectureState").toString());
 
-        return lectureRepository.save(lecture);
+//        return lectureRepository.save(lecture);
     }
 
     @Override

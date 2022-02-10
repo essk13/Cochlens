@@ -44,7 +44,7 @@ public class Course {
     User user;
 
     @Builder
-    public Course(Long courseId, String courseName, String courseDescription, Date courseOpenDate,
+    public Course(Long courseId, String courseName, String courseDescription, Date courseOpenDate, Date courseCloseDate,
                   String courseCategory, int courseCycle, String courseThumbnail, String courseIntroVideo,
                   int courseLimitPeople, int courseFee, User user){
 
@@ -58,6 +58,7 @@ public class Course {
         this.courseLimitPeople = courseLimitPeople;
         this.courseFee = courseFee;
         this.courseOpenDate = courseOpenDate;
+        this.courseCloseDate = courseCloseDate;
         this.user = user;
     }
 }

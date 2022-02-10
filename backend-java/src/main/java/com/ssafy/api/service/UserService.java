@@ -11,6 +11,7 @@ import java.util.Map;
 public interface UserService {
 	User createUser(UserDto.UserRegisterPostReq userRegisterInfo);
 	User getUserByEmail(String email);
-	User update(String email, UserDto.UserRegisterPostReq userRegisterPostReq);
+	//	User update(String email, UserDto.UserRegisterPutReq userRegisterPutReq);
+	User update(String email, UserDto.UserPutRes userPutRes);
 	void delete(String email);
 }

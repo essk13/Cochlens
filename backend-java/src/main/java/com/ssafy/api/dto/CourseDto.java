@@ -1,7 +1,9 @@
 package com.ssafy.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
+import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -15,12 +17,16 @@ public class CourseDto {
     @Setter
     @ApiModel("CourseInsertReq")
     public static class CourseInsertReq {
-        @ApiModelProperty(name="course name", example="tets")
+        @ApiModelProperty(name="course name", example="test")
         String courseName;
         @ApiModelProperty(name="courseDescription", example="description")
         String courseDescription;
-        @ApiModelProperty(name="courseOpenDate", example="yyyy-mm-dd")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+        @ApiModelProperty(name="courseOpenDate", example="2022/02/10")
         Date courseOpenDate;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+        @ApiModelProperty(name="courseCloseDate", example="2023/02/10")
+        Date courseCloseDate;
         @ApiModelProperty(name="courseCycle", example="1")
         int courseCycle;
         @ApiModelProperty(name="courseThumbnail", example="thumbnail address")
@@ -34,6 +40,7 @@ public class CourseDto {
         @ApiModelProperty(name="courseIntroVideo", example="intro video address")
         String courseIntroVideo;
     }
+
 
     @Getter
     @Setter
@@ -116,6 +123,7 @@ public class CourseDto {
             res.setCourseIntroVideo(course.getCourseIntroVideo());
             res.setInstructorName(course.getUser().getUserName());
             res.setLectureList(lectureList);
+            res.setCourseCloseDate(course.getCourseCloseDate());
 
             return res;
         }

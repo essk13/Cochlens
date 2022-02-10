@@ -25,8 +25,9 @@ public class RegisterCourse {
     Course course;
 
     @Builder
-    public RegisterCourse(User user, Course course) {
+    public RegisterCourse(User user, Course course, boolean isCancel) {
         this.user = user;
         this.course = course;
+        this.isCancel = isCancel;
     }
 }

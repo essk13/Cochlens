@@ -76,15 +76,33 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<UserDto.UserRes> update(@ApiIgnore Authentication authentication,
-												  @RequestBody @ApiParam(value = "회원 수정 정보", required = true) UserDto.UserRegisterPostReq userRegisterPostReq) {
+	public ResponseEntity<UserDto.UserPutRes> update(@ApiIgnore Authentication authentication,
+												  @RequestBody @ApiParam(value = "회원 수정 정보", required = true) UserDto.UserPutRes userPutRes) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String email = userDetails.getUsername();
 
-		User user = userService.update(email, userRegisterPostReq);
+		User user = userService.update(email, userPutRes);
 
-		return ResponseEntity.status(200).body(UserDto.UserRes.of(user));
+		return ResponseEntity.status(200).body(UserDto.UserPutRes.of(user));
 	}
+
+//	@PutMapping("/me")
+//	@ApiOperation(value = "회원 본인 정보 수정", notes = "로그인한 회원 본인의 정보를 수정한다.")
+//	@ApiResponses({
+//			@ApiResponse(code = 200, message = "성공"),
+//			@ApiResponse(code = 401, message = "인증 실패"),
+//			@ApiResponse(code = 404, message = "사용자 없음"),
+//			@ApiResponse(code = 500, message = "서버 오류")
+//	})
+//	public ResponseEntity<UserDto.UserRes> update(@ApiIgnore Authentication authentication,
+//												  @RequestBody @ApiParam(value = "회원 수정 정보", required = true) UserDto.UserRegisterPostReq userRegisterPostReq) {
+//		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+//		String email = userDetails.getUsername();
+//
+//		User user = userService.update(email, userRegisterPostReq);
+//
+//		return ResponseEntity.status(200).body(UserDto.UserRes.of(user));
+//	}
 
 	@DeleteMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 삭제", notes = "로그인한 회원을 탈퇴한다.")
