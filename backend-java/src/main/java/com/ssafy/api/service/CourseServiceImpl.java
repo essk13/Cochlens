@@ -1,10 +1,13 @@
 package com.ssafy.api.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.dto.CourseDto;
+import com.ssafy.db.entity.QRegisterCourse;
 import com.ssafy.db.entity.RegisterCourse;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.repository.CourseRepository;
 import com.ssafy.db.repository.RegisterCourseRepository;
+import com.ssafy.db.repository.RegisterCourseRepositorySupport;
 import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,6 +28,13 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     RegisterCourseRepository registerCourseRepository;
 
+    @Autowired
+    RegisterCourseRepositorySupport registerCourseRepositorySupport;
+
+    @Autowired
+    private JPAQueryFactory jpaQueryFactory;
+    QRegisterCourse qRegisterCourse = QRegisterCourse.registerCourse;
+
     @Override
     public Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo) {
 
@@ -43,9 +53,7 @@ public class CourseServiceImpl implements CourseService {
                 .user(user)
                 .build();
 
-        courseRepository.save(course);
-        return course;
-//        return courseRepository.save(course);
+        return courseRepository.save(course);
 
     }
 
@@ -93,23 +101,18 @@ public class CourseServiceImpl implements CourseService {
                 .user(course.getUser())
                 .build();
 
-        courseRepository.save(newCourse);
 
-        System.out.println("return = " + newCourse);
-
-        return newCourse;
-//        return courseRepository.save(newCourse);
+        return courseRepository.save(newCourse);
     }
 
     @Override
-    public Map<String, Object> registerCourse(Long userId, Long courseId) {
-//    public void registerCourse(Long userId, Long courseId) {
+    public void registerCourse(Long userId, Long courseId) {
         User user = userRepository.getOne(userId);
         Course course = courseRepository.getOne(courseId);
+//        System.out.println("joinCount1");
         RegisterCourse registerCourse = RegisterCourse.builder()
                 .user(user)
                 .course(course)
-                .isCancel(true)
                 .build();
         registerCourseRepository.save(registerCourse);
 
@@ -122,48 +125,20 @@ public class CourseServiceImpl implements CourseService {
                 result.add(obj);
             }
         });
-
-        int joinCount = result.size();
-        boolean isJoin = registerCourse.isCancel();
-
-        Map<String, Object> returnValue = new HashMap<String, Object>();
-        returnValue.put("joinCount", joinCount);
-        returnValue.put("isJoin", isJoin);
-
-        return returnValue;
+        Integer joinCount = result.size();
     }
 
     @Override
-//    public void deregisterCourse(Long userId, Long courseId) {
-    public Map<String, Object> deregisterCourse(Long userId, Long courseId) {
+    public void deregisterCourse(Long userId, Long courseId) {
         User user = userRepository.getOne(userId);
         Course course = courseRepository.getOne(courseId);
 
-        registerCourseRepository.findAll().forEach(registerCourseList -> {
-            Course courseCheck = registerCourseList.getCourse();
-            User userCheck = registerCourseList.getUser();
-            if (courseCheck == course && userCheck == user){
-                registerCourseRepository.delete(registerCourseList);
-            }
-        });
+//        JPA썼음
+        RegisterCourse registerCourse = jpaQueryFactory.select(qRegisterCourse).from(qRegisterCourse)
+        .where(qRegisterCourse.user.eq(user)).where(qRegisterCourse.course.eq(course)).fetchOne();
+//        RegisterCourse registerCourse = registerCourseRepository.findByUserIdAndCourseId(userId, courseId).get();
 
-        List<Map<String, Object>> result = new ArrayList<>();
-        registerCourseRepository.findAll().forEach(registerCourseList -> {
-            Map<String, Object> obj = new HashMap<>();
-            Course courseCheck = registerCourseList.getCourse();
-            if (courseCheck == course){
-                obj.put("courseId", registerCourseList.getRegisterId());
-                result.add(obj);
-            }
-        });
-
-        int joinCount = result.size();
-        boolean isJoin = false;
-
-        Map<String, Object> returnValue = new HashMap<String, Object>();
-        returnValue.put("joinCount", joinCount);
-        returnValue.put("isJoin", isJoin);
-
-        return returnValue;
+//        RegisterCourse registerCourse = registerCourseRepository.findByUserIdAndCourseId(userId, courseId).get();
+        registerCourseRepository.delete(registerCourse);
     }
 }

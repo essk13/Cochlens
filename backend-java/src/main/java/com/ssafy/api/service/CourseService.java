@@ -12,8 +12,6 @@ public interface CourseService {
     List<CourseDto.CourseListRes> getCourseList();
     Course getCourseByCourseId(Long courseId);
     Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
-    Map<String, Object> registerCourse(Long userId, Long courseId);
-//    void registerCourse(Long userId, Long courseId);
-    Map<String, Object> deregisterCourse(Long userId, Long courseId);
-//    void deregisterCourse(Long userId, Long courseId);
+    void registerCourse(Long userId, Long courseId);
+    void deregisterCourse(Long userId, Long courseId);
 }

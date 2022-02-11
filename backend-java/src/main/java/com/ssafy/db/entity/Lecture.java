@@ -41,10 +41,10 @@ public class Lecture {
     Course course;
 
     @Builder
-    public Lecture(String lectureName, Date lectureRuntime, String lectureThumbnail,
+    public Lecture(Long lectureId, String lectureName, Date lectureRuntime, String lectureThumbnail,
                    Date lectureDate, String lectureState, String lectureVod,
                    Date lectureOpenTime, Date lectureCloseTime, Course course) {
-
+        this.lectureId = lectureId;
         this.lectureName = lectureName;
         this.lectureRuntime = lectureRuntime;
         this.lectureThumbnail = lectureThumbnail;

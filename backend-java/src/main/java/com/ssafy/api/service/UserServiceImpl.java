@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
 		}
 //		userRepository.findByEmail(userRegisterInfo.getEmail()).ifPresent(() -> new BusinessException(DUPLICATE_RESOURCE));
 //		userRepository.findByEmail(userRegisterInfo.getEmail()).orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+//		userRepository.findByEmail(userRegisterInfo.getEmail()).orElseThrow(() -> new BusinessException(DUPLICATE_RESOURCE));
 
 //		QUser qUser = QUser.user;
 //		String email = userRegisterInfo.getEmail();
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
 //				.userName(userRegisterInfo.getName())
 //				.role(Role.USER)
 //				.build();
-
+//
 		user.setUserNickname(userRegisterInfo.getNickname());
 		// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
 
@@ -98,13 +99,17 @@ public class UserServiceImpl implements UserService {
 	public User update(String email, UserDto.UserPutRes userPutRes) {
 
 		String emailCheck = userPutRes.getEmail();
+//		User userCheck = userRepositorySupport.findUserByEmail(emailCheck).get();
 
-		QUser qUser = QUser.user;
+//		System.out.println("userCheckuserCheckuserCheck = "+userCheck);
 
-		User userCheck = jpaQueryFactory.select(qUser).from(qUser)
-				.where(qUser.email.eq(emailCheck)).fetchOne();
-//		입력한 이메일이 DB에 있을 때
-		if(userCheck != null && !email.equals(emailCheck)) return null;
+//		QUser qUser = QUser.user;
+//
+//		User userCheck = jpaQueryFactory.select(qUser).from(qUser)
+//				.where(qUser.email.eq(emailCheck)).fetchOne();
+//		입력한 이메일이 DB에 있고 현재 계정의 이메일과 다를 경우
+		if(userRepository.findByEmail(emailCheck) != userRepository.findByEmail("notexisted") && !email.equals(emailCheck)) return null;
+//		if(userCheck != null && !email.equals(emailCheck)) return null;
 
 //		입력한 이메일이 DB에 없거나, 현재 계정의 이메일과 같을 경우
 		User user = userRepositorySupport.findUserByEmail(email).get();
@@ -112,9 +117,16 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(userPutRes.getEmail());
 		user.setUserName(userPutRes.getUserName());
 		user.setUserNickname(userPutRes.getUserNickname());
-		user.setUserName(userPutRes.getProfileImage());
-		user.setUserName(userPutRes.getThumbnailImage());
+		user.setProfileImage(userPutRes.getProfileImage());
+		user.setThumbnailImage(userPutRes.getThumbnailImage());
+		user.setUserDescription(userPutRes.getUserDescription());
 		user.setPassword(passwordEncoder.encode(userPutRes.getPassword()));
+		user.setCommand(userPutRes.getIsCommand());
+		user.setRole(userPutRes.getRole());
+		user.setFaceFocusing(userPutRes.getIsFaceFocusing());
+		user.setSubtitle(userPutRes.getIsSubtitle());
+		user.setSTT(userPutRes.getIsSTT());
+
 		return userRepository.save(user);
 	}
 

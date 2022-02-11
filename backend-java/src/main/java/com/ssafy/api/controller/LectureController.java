@@ -38,12 +38,10 @@ public class LectureController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-//    public ResponseEntity<? extends BaseResponseBody> createRecture(@RequestBody @ApiParam(value="강의 생성 정보", required = true) LectureDto.LectureInsertReq lectureInsertInfo) {
-    public Lecture createRecture(@RequestBody @ApiParam(value="강의 생성 정보", required = true) LectureDto.LectureInsertReq lectureInsertInfo) {
+    public ResponseEntity<? extends BaseResponseBody> createLecture(@RequestBody @ApiParam(value="강의 생성 정보", required = true) LectureDto.LectureInsertReq lectureInsertInfo) {
 
-        Lecture lecture = lectureService.createLecture(lectureInsertInfo);
-        return lecture;
-//        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+        lectureService.createLecture(lectureInsertInfo);
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
     }
 
     @GetMapping

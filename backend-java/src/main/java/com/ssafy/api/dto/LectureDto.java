@@ -35,6 +35,8 @@ public class LectureDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
         @ApiModelProperty(name="lectureCloseTime", example="12:10")
         Date lectureCloseTime;
+        @ApiModelProperty(name="courseId", example="1")
+        Long courseId;
     }
 
     @Getter
@@ -59,6 +61,8 @@ public class LectureDto {
         Date lectureOpenTime;
         @ApiModelProperty(name="lectureCloseTime")
         Date lectureCloseTime;
+        @ApiModelProperty(name="course")
+        Course course;
 
         public static LectureRes of(Lecture lecture) {
             LectureRes res = new LectureRes();
@@ -72,6 +76,7 @@ public class LectureDto {
             res.setLectureVod(lecture.getLectureVod());
             res.setLectureOpenTime(lecture.getLectureOpenTime());
             res.setLectureCloseTime(lecture.getLectureCloseTime());
+            res.setCourse(lecture.getCourse());
 
             return res;
         }

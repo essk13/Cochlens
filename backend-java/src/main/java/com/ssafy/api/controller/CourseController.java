@@ -6,6 +6,7 @@ import com.ssafy.api.service.CourseService;
 import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Course;
+import com.ssafy.db.repository.CourseRepository;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,9 @@ public class CourseController {
     @Autowired
     CourseService courseService;
 
+    @Autowired
+    CourseRepository courseRepository;
+
     @PostMapping
     @ApiOperation(value = "강좌 생성", notes = "강좌를 생성한다.")
     @ApiResponses({
@@ -32,15 +36,12 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-//    public ResponseEntity<? extends BaseResponseBody> createCourse(@ApiIgnore Authentication authentication,
-//                                                                    @RequestBody @ApiParam(value="강좌 생성 정보", required = true) CourseDto.CourseInsertReq courseInsertInfo) {
-    public Course createCourse(@ApiIgnore Authentication authentication,
-                                                                   @RequestBody @ApiParam(value="강좌 생성 정보", required = true) CourseDto.CourseInsertReq courseInsertInfo) {
+    public ResponseEntity<? extends BaseResponseBody> createCourse(@ApiIgnore Authentication authentication,
+                                                                    @RequestBody @ApiParam(value="강좌 생성 정보", required = true) CourseDto.CourseInsertReq courseInsertInfo) {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-        Course course = courseService.createCourse(userDetails.getUser(), courseInsertInfo);
-        return course;
-//        return ResponseEntity.noContent().build();
+        courseService.createCourse(userDetails.getUser(), courseInsertInfo);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -78,17 +79,13 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-//    public ResponseEntity<CourseDto.CourseRes> updateCourse(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
-//                                                            @ApiParam(value="강좌 id 정보", required = true) @RequestBody CourseDto.CourseInsertReq courseInsertInfo) {
-    public Course updateCourse(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
+    public ResponseEntity<CourseDto.CourseRes> updateCourse(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
                                                             @ApiParam(value="강좌 id 정보", required = true) @RequestBody CourseDto.CourseInsertReq courseInsertInfo) {
 
-        System.out.println("first = "+ courseInsertInfo);
-        Course course = courseService.updateCourse(courseId, courseInsertInfo);
-        System.out.println("finish = "+ courseInsertInfo);
-        return course;
-//        return ResponseEntity.noContent().build();
+        courseService.updateCourse(courseId, courseInsertInfo);
+        return ResponseEntity.noContent().build();
     }
+
 
     @PostMapping("/{courseId}/register")
     @ApiOperation(value = "강좌 수강 신청", notes = "강좌 수강 신청한다.")
@@ -98,16 +95,15 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-//    public ResponseEntity<? extends BaseResponseBody> registerCourse(@ApiIgnore Authentication authentication,
-//                                                                     @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId) {
-        public Map<String, Object> registerCourse(@ApiIgnore Authentication authentication,
+    public ResponseEntity<? extends BaseResponseBody> registerCourse(@ApiIgnore Authentication authentication,
                                                                      @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId) {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         Long userId = userDetails.getUser().getUserId();
-        Map<String, Object> courseRegister = courseService.registerCourse(userId, courseId);
-        return courseRegister;
-//        return ResponseEntity.noContent().build();
+        System.out.println("joinCount0");
+        courseService.registerCourse(userId, courseId);
+        System.out.println("joinCount1111111111111111111111");
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{courseId}/deregister")
@@ -118,34 +114,34 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-//    public ResponseEntity<? extends BaseResponseBody> deregisterCourse(@ApiIgnore Authentication authentication,
-//                                              @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId) {
-    public Map<String, Object> deregisterCourse(@ApiIgnore Authentication authentication,
+    public ResponseEntity<? extends BaseResponseBody> deregisterCourse(@ApiIgnore Authentication authentication,
                                               @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId) {
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         Long userId = userDetails.getUser().getUserId();
-        Map<String, Object> courseRegister = courseService.deregisterCourse(userId, courseId);
-        return courseRegister;
-//        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{courseId}/review")
-    @ApiOperation(value = "강좌 리뷰 조회", notes = "강좌 리뷰 리스트를 조회한다.")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 401, message = "인증 실패"),
-            @ApiResponse(code = 404, message = "사용자 없음"),
-            @ApiResponse(code = 500, message = "서버 오류")
-    })
-    public ResponseEntity<?> getCourseReivew(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId) {
-
-        return ResponseEntity.ok().build();
+        courseService.deregisterCourse(userId, courseId);
+        return ResponseEntity.noContent().build();
     }
 
 //    @DeleteMapping("/{courseId}")
 //    public void delete(@PathVariable Long courseId){
+//
 //        courseRepository.deleteById(courseId);
 //    }
+
+//    @GetMapping("/{courseId}/review")
+//    @ApiOperation(value = "강좌 리뷰 조회", notes = "강좌 리뷰 리스트를 조회한다.")
+//    @ApiResponses({
+//            @ApiResponse(code = 200, message = "성공"),
+//            @ApiResponse(code = 401, message = "인증 실패"),
+//            @ApiResponse(code = 404, message = "사용자 없음"),
+//            @ApiResponse(code = 500, message = "서버 오류")
+//    })
+//    public ResponseEntity<?> getCourseReivew(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId) {
+//
+//        return ResponseEntity.ok().build();
+//    }
+
+
 
 
 //    강좌를 통한 강의 검색
