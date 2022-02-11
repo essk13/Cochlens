@@ -19,11 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class GroupcallConfig implements WebSocketConfigurer {
-
-    public static void main(String[] args) {
-        SpringApplication.run(GroupCallApplication.class, args);
-    }
-
+    
     @Bean
     public UserRegistry registry() {
         return new UserRegistry();
