@@ -32,8 +32,9 @@ public class Review {
     Course course;
 
     @Builder
-    public Review(Date reviewDate, String reviewContent, int reviewGrade, User user, Course course){
+    public Review(Long reviewId, Date reviewDate, String reviewContent, int reviewGrade, User user, Course course){
 
+        this.reviewId = reviewId;
         this.reviewDate = reviewDate;
         this.reviewContent = reviewContent;
         this.reviewGrade = reviewGrade;

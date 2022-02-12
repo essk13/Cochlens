@@ -1,8 +1,12 @@
 package com.ssafy.api.service;
 
+import com.ssafy.api.dto.CourseDto;
+import com.ssafy.api.dto.RegisterCourseDto;
 import com.ssafy.api.dto.UserDto;
+import com.ssafy.api.dto.WishlistDto;
 import com.ssafy.db.entity.User;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,4 +18,12 @@ public interface UserService {
 	//	User update(String email, UserDto.UserRegisterPutReq userRegisterPutReq);
 	User update(String email, UserDto.UserPutRes userPutRes);
 	void delete(String email);
+
+	List<UserDto.UserRes> getInstructorList();
+
+	List<RegisterCourseDto.RegisterCourseListRes> getRegisterCourseList(String email);
+
+	List<WishlistDto.WishlistRes> getWishlist(String email);
+
+	List<UserDto.UserRes> getBestInstructorList();
 }

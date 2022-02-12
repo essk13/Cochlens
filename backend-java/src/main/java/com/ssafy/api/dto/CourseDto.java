@@ -46,17 +46,17 @@ public class CourseDto {
     @Setter
     @ApiModel("CourseListRes")
     public static class CourseListRes {
-        @ApiModelProperty(name="courseId")
+        @ApiModelProperty(name="courseId", example="1")
         Long courseId;
-        @ApiModelProperty(name="courseName")
+        @ApiModelProperty(name="courseName", example="test")
         String courseName;
-        @ApiModelProperty(name="courseDescription")
+        @ApiModelProperty(name="courseDescription", example="description")
         String courseDescription;
-        @ApiModelProperty(name="courseThumbnail")
+        @ApiModelProperty(name="courseThumbnail", example="thumbnail address")
         String courseThumbnail;
-        @ApiModelProperty(name="courseCategory")
+        @ApiModelProperty(name="courseCategory", example="category")
         String courseCategory;
-        @ApiModelProperty(name="instructorName")
+        @ApiModelProperty(name="instructorName", example="ssafy")
         String instructorName;
 
         public static CourseListRes of(Course course) {
@@ -77,30 +77,30 @@ public class CourseDto {
     @Setter
     @ApiModel("CourseRes")
     public static class CourseRes {
-        @ApiModelProperty(name="courseId")
+        @ApiModelProperty(name="courseId", example = "1")
         Long courseId;
-        @ApiModelProperty(name="courseName")
+        @ApiModelProperty(name="courseName", example = "test")
         String courseName;
-        @ApiModelProperty(name="courseDescription")
+        @ApiModelProperty(name="courseDescription", example = "description")
         String courseDescription;
-        @ApiModelProperty(name="courseOpenDate")
+        @ApiModelProperty(name="courseOpenDate", example="2022/02/10")
         Date courseOpenDate;
-        @ApiModelProperty(name="courseCloseDate")
+        @ApiModelProperty(name="courseCloseDate", example="2022/02/10")
         Date courseCloseDate;
-        @ApiModelProperty(name="courseCycle")
+        @ApiModelProperty(name="courseCycle", example="7")
         int courseCycle;
-        @ApiModelProperty(name="courseThumbnail")
+        @ApiModelProperty(name="courseThumbnail", example="thumbnail address")
         String courseThumbnail;
-        @ApiModelProperty(name="courseCategory")
+        @ApiModelProperty(name="courseCategory", example="category")
         String courseCategory;
-        @ApiModelProperty(name="courseLimitPeople")
+        @ApiModelProperty(name="courseLimitPeople", example="100")
         int courseLimitPeople;
-        @ApiModelProperty(name="courseFee")
+        @ApiModelProperty(name="courseFee", example="30000")
         int courseFee;
-        @ApiModelProperty(name="courseIntroVideo")
+        @ApiModelProperty(name="courseIntroVideo", example="intro video address")
         String courseIntroVideo;
 
-        @ApiModelProperty(name="instructorName")
+        @ApiModelProperty(name="instructorName", example="ssafy")
         String instructorName;
 
         @ApiModelProperty(name="lectureList")

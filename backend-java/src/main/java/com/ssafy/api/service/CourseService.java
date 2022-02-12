@@ -14,4 +14,10 @@ public interface CourseService {
     Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
     void registerCourse(Long userId, Long courseId);
     void deregisterCourse(Long userId, Long courseId);
+    void registerWishlist(Long userId, Long courseId);
+    void deregisterWishlist(Long userId, Long courseId);
+    List<CourseDto.CourseListRes> getBestCourseList();
+
+    List<CourseDto.CourseListRes> getRecentCourseList(Long userId);
+
 }

@@ -22,18 +22,28 @@ public class RegisterCourseRepositorySupport {
 
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
-    QRegisterCourse qRegisterCourse = QRegisterCourse.registerCourse;
-
-//        public Optional<RegisterCourse> findRegisterCourseByUserIdAndCourseId(Long userId, Long courseId) {
+//    QRegisterCourse qRegisterCourse = QRegisterCourse.registerCourse;
 //
-//        User user = userRepository.getOne(userId);
-//        Course course = courseRepository.getOne(courseId);
+//    public Optional<RegisterCourse> findRegisterCourseByUserIdAndCourseId(User user, Course course) {
+//
 //
 //        RegisterCourse registerCourse = jpaQueryFactory.select(qRegisterCourse).from(qRegisterCourse)
 //                .where(qRegisterCourse.user.eq(user)).where(qRegisterCourse.course.eq(course)).fetchOne();
 //
 //        if(registerCourse == null) return Optional.empty();
 //        return Optional.ofNullable(registerCourse);
+//
+//    }
+//    public Optional<RegisterCourse> findRegisterCourseByUserIdAndCourseId(Long userId, Long courseId) {
+//
+//    User user = userRepository.getOne(userId);
+//    Course course = courseRepository.getOne(courseId);
+//
+//    RegisterCourse registerCourse = jpaQueryFactory.select(qRegisterCourse).from(qRegisterCourse)
+//            .where(qRegisterCourse.user.eq(user)).where(qRegisterCourse.course.eq(course)).fetchOne();
+//
+//    if(registerCourse == null) return Optional.empty();
+//    return Optional.ofNullable(registerCourse);
 //
 //    }
 //    public RegisterCourse findRegisterCourseByUserIdAndCourseId(Long userId, Long courseId) {
@@ -45,6 +55,6 @@ public class RegisterCourseRepositorySupport {
 //                .where(qRegisterCourse.user.eq(user)).where(qRegisterCourse.course.eq(course)).fetchOne();
 //        RegisterCourse registerCourse = new RegisterCourse();
 //        return registerCourse;
-//
+
 //    }
 }

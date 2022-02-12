@@ -35,33 +35,31 @@ public class LectureDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
         @ApiModelProperty(name="lectureCloseTime", example="12:10")
         Date lectureCloseTime;
-        @ApiModelProperty(name="courseId", example="1")
-        Long courseId;
     }
 
     @Getter
     @Setter
     @ApiModel("LectureRes")
     public static class LectureRes {
-        @ApiModelProperty(name="lectureId")
+        @ApiModelProperty(name="lectureId", example="1")
         Long lectureId;
-        @ApiModelProperty(name="lectureName")
+        @ApiModelProperty(name="lectureName", example="test")
         String lectureName;
-        @ApiModelProperty(name="lectureRuntime")
+        @ApiModelProperty(name="lectureRuntime", example="02:00")
         Date lectureRuntime;
-        @ApiModelProperty(name="lectureThumbnail")
+        @ApiModelProperty(name="lectureThumbnail", example="thumbnail address")
         String lectureThumbnail;
-        @ApiModelProperty(name="lectureDate")
+        @ApiModelProperty(name="lectureDate", example="2022/02/11")
         Date lectureDate;
-        @ApiModelProperty(name="lectureState")
+        @ApiModelProperty(name="lectureState", example="start")
         String lectureState;
-        @ApiModelProperty(name="lectureVod")
+        @ApiModelProperty(name="lectureVod", example="vod address")
         String lectureVod;
-        @ApiModelProperty(name="lectureOpenTime")
+        @ApiModelProperty(name="lectureOpenTime", example="10:10")
         Date lectureOpenTime;
-        @ApiModelProperty(name="lectureCloseTime")
+        @ApiModelProperty(name="lectureCloseTime", example="12:10")
         Date lectureCloseTime;
-        @ApiModelProperty(name="course")
+        @ApiModelProperty(name="course", example="course object")
         Course course;
 
         public static LectureRes of(Lecture lecture) {

@@ -1,7 +1,8 @@
 package com.ssafy.api.controller;
 
-import com.ssafy.api.dto.UserDto;
-import com.ssafy.api.service.CourseService;
+import com.ssafy.api.dto.*;
+import com.ssafy.api.service.ReviewService;
+import com.ssafy.db.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 /**
  * 유저 관련 API 요청 처리를 위한 컨트롤러 정의.
  */
@@ -31,7 +34,10 @@ public class UserController {
 	UserService userService;
 
 	@Autowired
-	CourseService courseService;
+	ReviewService reviewService;
+
+	@Autowired
+	UserRepository userRepository;
 
 	@PostMapping()
 	@ApiOperation(value = "회원 가입", notes = "<strong>아이디와 패스워드</strong>를 통해 회원가입 한다.") 
@@ -86,23 +92,6 @@ public class UserController {
 		return ResponseEntity.status(200).body(UserDto.UserPutRes.of(user));
 	}
 
-//	@PutMapping("/me")
-//	@ApiOperation(value = "회원 본인 정보 수정", notes = "로그인한 회원 본인의 정보를 수정한다.")
-//	@ApiResponses({
-//			@ApiResponse(code = 200, message = "성공"),
-//			@ApiResponse(code = 401, message = "인증 실패"),
-//			@ApiResponse(code = 404, message = "사용자 없음"),
-//			@ApiResponse(code = 500, message = "서버 오류")
-//	})
-//	public ResponseEntity<UserDto.UserRes> update(@ApiIgnore Authentication authentication,
-//												  @RequestBody @ApiParam(value = "회원 수정 정보", required = true) UserDto.UserRegisterPostReq userRegisterPostReq) {
-//		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-//		String email = userDetails.getUsername();
-//
-//		User user = userService.update(email, userRegisterPostReq);
-//
-//		return ResponseEntity.status(200).body(UserDto.UserRes.of(user));
-//	}
 
 	@DeleteMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 삭제", notes = "로그인한 회원을 탈퇴한다.")
@@ -123,42 +112,102 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@GetMapping("/me/register-course-list")
+	@ApiOperation(value = "수강신청 목록 조회", notes = "수강신청 강좌 list를 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<RegisterCourseDto.RegisterCourseListRes>> getRegisterCourseList(@ApiIgnore Authentication authentication) {
+
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String email = userDetails.getUsername();
+
+		List<RegisterCourseDto.RegisterCourseListRes> list = userService.getRegisterCourseList(email);
+		return ResponseEntity.ok().body(list);
+	}
+
+	@GetMapping("/me/wishlist")
+	@ApiOperation(value = "찜목록 조회", notes = "찜 강좌 list를 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<WishlistDto.WishlistRes>> getWishlist(@ApiIgnore Authentication authentication) {
+
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String email = userDetails.getUsername();
+
+		List<WishlistDto.WishlistRes> list = userService.getWishlist(email);
+		return ResponseEntity.ok().body(list);
+	}
+
+	@GetMapping("/me/review")
+	@ApiOperation(value = "작성 리뷰 목록 조회", notes = "작성 리뷰 list를 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<ReviewDto.ReviewListRes>> getReview(@ApiIgnore Authentication authentication) {
+
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String email = userDetails.getUsername();
+
+		List<ReviewDto.ReviewListRes> list = reviewService.getReviewListByEmail(email);
+		return ResponseEntity.ok().body(list);
+	}
+
+
+
+
 	@GetMapping("/instructor")
-	@ApiOperation(value = "강사 정보 조회", notes = "강사 목록을 조회한다.")
+	@ApiOperation(value = "강사 조회", notes = " 강사를 조회한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
 			@ApiResponse(code = 401, message = "인증 실패"),
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<?> getInstructorList() {
+	public ResponseEntity<List<UserDto.UserRes>> getInstructorList() {
 
-		return ResponseEntity.status(200).build();
+		List<UserDto.UserRes> list = userService.getInstructorList();
+		return ResponseEntity.ok().body(list);
 	}
 
 
-	@GetMapping("/review")
-	@ApiOperation(value = "강사 리뷰 조회", notes = "강사 리뷰 목록을 조회한다.")
+
+	@GetMapping("/{userId}")
+	@ApiOperation(value = "강사 상세 조회", notes = "강사 리뷰 목록을 조회한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
 			@ApiResponse(code = 401, message = "인증 실패"),
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<?> getInstructorReivew() {
+	public ResponseEntity<UserDto.UserRes> getInstructorInfo(@ApiParam(value="강사 id 정보", required = true) @PathVariable Long userId) {
 
-		return ResponseEntity.status(200).build();
+		User user = userRepository.getOne(userId);
+		return ResponseEntity.status(200).body(UserDto.UserRes.of(user));
 	}
 
-//	@GetMapping("/course")
-//	public List<Map<String, Object>> getCourseByUserEmail(@ApiIgnore Authentication authentication) {
-//		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-//		String email = userDetails.getUsername();
-//
-//		List<Map<String, Object>> result = courseService.getCourseByUserEmail(email);
-//
-//		return result;
-//
-//	}
+	@GetMapping("/instructor/best")
+	@ApiOperation(value = "베스트 강사 조회", notes = "베스트 강사 list를 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<UserDto.UserRes>> getBestInstructorList() {
+//        찜이 가장 많은 강좌를 갖고있는 강사를 최대 5개까지 가져옴
+		List<UserDto.UserRes> list = userService.getBestInstructorList();
+		return ResponseEntity.ok().body(list);
+	}
 
 }

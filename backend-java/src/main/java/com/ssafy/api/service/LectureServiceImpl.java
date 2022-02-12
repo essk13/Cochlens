@@ -21,8 +21,8 @@ public class LectureServiceImpl implements LectureService{
     CourseRepository courseRepository;
 
     @Override
-    public Lecture createLecture(LectureDto.LectureInsertReq lectureInsertInfo) {
-        Course course = courseRepository.getOne(lectureInsertInfo.getCourseId());
+    public Lecture createLecture(Long courseId, LectureDto.LectureInsertReq lectureInsertInfo) {
+        Course course = courseRepository.getOne(courseId);
 
         Lecture lecture = Lecture.builder()
                 .lectureName(lectureInsertInfo.getLectureName())

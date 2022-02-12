@@ -2,7 +2,6 @@ package com.ssafy.api.controller;
 
 import com.ssafy.api.dto.LectureDto;
 import com.ssafy.api.service.LectureService;
-import com.ssafy.api.service.UserService;
 
 
 import com.ssafy.common.auth.SsafyUserDetails;
@@ -25,12 +24,9 @@ import java.util.List;
 public class LectureController {
 
     @Autowired
-    UserService userService;
-
-    @Autowired
     LectureService lectureService;
 
-    @PostMapping
+    @PostMapping("/{courseId}")
     @ApiOperation(value = "강의 생성", notes = "강의를 생성한다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
@@ -38,25 +34,11 @@ public class LectureController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<? extends BaseResponseBody> createLecture(@RequestBody @ApiParam(value="강의 생성 정보", required = true) LectureDto.LectureInsertReq lectureInsertInfo) {
+    public ResponseEntity<? extends BaseResponseBody> createLecture(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
+            @RequestBody @ApiParam(value="강의 생성 정보", required = true) LectureDto.LectureInsertReq lectureInsertInfo) {
 
-        lectureService.createLecture(lectureInsertInfo);
+        lectureService.createLecture(courseId, lectureInsertInfo);
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-    }
-
-    @GetMapping
-    @ApiOperation(value = "강의 조회", notes = "생성된 강의를 조회한다.")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 401, message = "인증 실패"),
-            @ApiResponse(code = 404, message = "사용자 없음"),
-            @ApiResponse(code = 500, message = "서버 오류")
-    })
-    public ResponseEntity<List<LectureDto.LectureRes>> getLectureList(@ApiIgnore Authentication authentication) {
-        SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-        String email = userDetails.getUsername();
-
-        return ResponseEntity.status(200).body(lectureService.getLectureList(email));
     }
 
     @GetMapping("/{lectureId}")
@@ -67,7 +49,7 @@ public class LectureController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<LectureDto.LectureRes> getLecture(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long lectureId) {
+    public ResponseEntity<LectureDto.LectureRes> getLecture(@ApiParam(value="강의 id 정보", required = true) @PathVariable Long lectureId) {
         Lecture lecture = lectureService.getLectureInfo(lectureId);
         return ResponseEntity.status(200).body(LectureDto.LectureRes.of(lecture));
     }
@@ -81,7 +63,7 @@ public class LectureController {
             @ApiResponse(code = 500, message = "서버 오류")
     })
     public ResponseEntity<LectureDto.LectureRes> updateLecture(@ApiParam(value="강의 id 정보", required = true) @PathVariable Long lectureId,
-                                                               @ApiParam(value="강좌 id 정보", required = true) @RequestBody LectureDto.LectureInsertReq lectureInsertInfo) {
+                                                               @ApiParam(value="강의 수정 정보", required = true) @RequestBody LectureDto.LectureInsertReq lectureInsertInfo) {
         Lecture lecture = lectureService.updateLecture(lectureId, lectureInsertInfo);
 
         return ResponseEntity.status(200).body(LectureDto.LectureRes.of(lecture));
