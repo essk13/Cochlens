@@ -15,11 +15,11 @@
         <q-carousel-slide :name="1" class="column no-wrap">
           <div id="participants" class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
             <!-- <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" /> -->
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
           </div>
         </q-carousel-slide>
         <q-carousel-slide :name="2" class="column no-wrap">
@@ -45,7 +45,7 @@
       </q-carousel>
     </div>
     <div v-if="state.isMainScreen" class="main-screen-block">
-      <img src="https://cdn.quasar.dev/img/mountains.jpg">
+      <video id="detection" width="400" height="400" autoplay muted></video>
       <span class="main-screen-subtitles">이것은 자막입니다. 이것은 자막입니다.</span>
     </div>
     <div v-else class="all-screen-list-block">
@@ -56,7 +56,7 @@
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-2 row justify-between items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="startVideo" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
@@ -71,6 +71,7 @@
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
+import * as faceapi from 'face-api.js'
 
 export default {
   name: 'LiveLectureView',
@@ -87,11 +88,53 @@ export default {
     function leaveRoom() {
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'course' })
+      const video = document.getElementById('detection')
+      video.srcObject = null
     }
+
+    function startVideo() {
+      const video = document.getElementById('detection')
+      navigator.getUserMedia(
+        { video: {} },
+        stream => video.srcObject = stream,
+        err => console.error(err)
+      )
+      console.log('video start')
+      console.log(video)
+      addEvent()
+    }
+
+    function addEvent() {
+      const video = document.getElementById('detection')
+      video.addEventListener('play', () => {
+        console.log('add event')
+        const canvas = faceapi.createCanvasFromMedia(video)
+        document.body.append(canvas)
+        const displaySize = { width: video.width, height: video.height }
+        faceapi.matchDimensions(canvas, displaySize)
+        setInterval(async () => {
+          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+          const resizedDetections = faceapi.resizeResults(detections, displaySize)
+          canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+          faceapi.draw.drawDetections(canvas, resizedDetections)
+          faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+        }, 100)
+      })
+    }
+
+    function load() {
+      Promise.all([
+        faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
+      ]).then(console.log('success')).catch(console.log('err'))
+      console.log('nets')
+      console.log(faceapi.nets)
+    }
+
+    load()
 
     return {
       state,
-      leaveRoom,
+      leaveRoom, load, startVideo
     }
   }
 }
@@ -142,5 +185,9 @@ export default {
 .menu-block {
   width: 100%;
   height: 8vh;
+}
+
+canvas {
+  position: absolute;
 }
 </style>
