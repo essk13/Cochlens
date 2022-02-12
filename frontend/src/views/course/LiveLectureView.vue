@@ -45,11 +45,107 @@
       </q-carousel>
     </div>
     <div v-if="state.isMainScreen" class="main-screen-block">
-      <video id="detection" width="400" height="400" autoplay muted></video>
-      <span class="main-screen-subtitles">이것은 자막입니다. 이것은 자막입니다.</span>
+      <!-- face detection test -->
+
+      <div class="center-content page-container">
+
+        <div class="progress" id="loader">
+          <div class="indeterminate"></div>
+        </div>
+        <div style="position: relative" class="margin">
+          <video @onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
+          <canvas id="overlay" />
+        </div>
+
+        <div class="row side-by-side">
+
+          <!-- face_detector_selection_control -->
+          <div id="face_detector_selection_control" class="row input-field" style="margin-right: 20px;">
+            <select id="selectFaceDetector">
+              <option value="ssd_mobilenetv1">SSD Mobilenet V1</option>
+              <option value="tiny_face_detector">Tiny Face Detector</option>
+            </select>
+            <label>Select Face Detector</label>
+          </div>
+          <!-- face_detector_selection_control -->
+
+          <!-- fps_meter -->
+          <div id="fps_meter" class="row side-by-side">
+            <div>
+              <label for="time">Time:</label>
+              <input disabled value="-" id="time" type="text" class="bold">
+              <label for="fps">Estimated Fps:</label>
+              <input disabled value="-" id="fps" type="text" class="bold">
+            </div>
+          </div>
+          <!-- fps_meter -->
+
+        </div>
+
+
+        <!-- ssd_mobilenetv1_controls -->
+        <span id="ssd_mobilenetv1_controls">
+          <div class="row side-by-side">
+            <div class="row">
+              <label for="minConfidence">Min Confidence:</label>
+              <input disabled value="0.5" id="minConfidence" type="text" class="bold">
+            </div>
+            <button
+              class="waves-effect waves-light btn"
+              @onclick="onDecreaseMinConfidence()"
+            >
+              <i class="material-icons left">-</i>
+            </button>
+            <button
+              class="waves-effect waves-light btn"
+              @onclick="onIncreaseMinConfidence()"
+            >
+              <i class="material-icons left">+</i>
+            </button>
+          </div>
+        </span>
+        <!-- ssd_mobilenetv1_controls -->
+
+        <!-- tiny_face_detector_controls -->
+        <span id="tiny_face_detector_controls">
+          <div class="row side-by-side">
+            <div class="row input-field" style="margin-right: 20px;">
+              <select id="inputSize">
+                <option value="" disabled selected>Input Size:</option>
+                <option value="128">128 x 128</option>
+                <option value="160">160 x 160</option>
+                <option value="224">224 x 224</option>
+                <option value="320">320 x 320</option>
+                <option value="416">416 x 416</option>
+                <option value="512">512 x 512</option>
+                <option value="608">608 x 608</option>
+              </select>
+              <label>Input Size</label>
+            </div>
+            <div class="row">
+              <label for="scoreThreshold">Score Threshold:</label>
+              <input disabled value="0.5" id="scoreThreshold" type="text" class="bold">
+            </div>
+            <button
+              class="waves-effect waves-light btn"
+              @onclick="onDecreaseScoreThreshold()"
+            >
+              <i class="material-icons left">-</i>
+            </button>
+            <button
+              class="waves-effect waves-light btn"
+              @onclick="onIncreaseScoreThreshold()"
+            >
+              <i class="material-icons left">+</i>
+            </button>
+          </div>
+        </span>
+        <!-- tiny_face_detector_controls -->
+      </div>
+
+      <!-- face detection test -->
     </div>
     <div v-else class="all-screen-list-block">
-
     </div>
     <div class="menu-block row justify-between">
       <div class="col-1 row justify-center items-center">
@@ -71,7 +167,9 @@
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
+
 import * as faceapi from 'face-api.js'
+import $ from 'jquery'
 
 export default {
   name: 'LiveLectureView',
@@ -85,6 +183,174 @@ export default {
       isMainScreen: true,
     })
 
+    // js-var
+    const SSD_MOBILENETV1 = 'ssd_mobilenetv1'
+    const TINY_FACE_DETECTOR = 'tiny_face_detector'
+    let selectedFaceDetector = SSD_MOBILENETV1
+    // ssd_mobilenetv1 options
+    let minConfidence = 0.5
+    // tiny_face_detector options
+    let inputSize = 512
+    let scoreThreshold = 0.5
+
+    // html-var
+    let forwardTimes = []
+
+    // js-script
+    // 얼굴 인식 옵션
+    function getFaceDetectorOptions() {
+      return selectedFaceDetector === SSD_MOBILENETV1
+        ? new faceapi.SsdMobilenetv1Options({ minConfidence })
+        : new faceapi.TinyFaceDetectorOptions({ inputSize, scoreThreshold })
+    }
+    // 얼굴 인식 모델 로드
+    function isFaceDetectionModelLoaded() {
+      return !!getCurrentFaceDetectionNet().params
+    }
+    // 얼굴 인식 모델 선정
+    function getCurrentFaceDetectionNet() {
+      if (selectedFaceDetector === SSD_MOBILENETV1) {
+        return faceapi.nets.ssdMobilenetv1
+      }
+      if (selectedFaceDetector === TINY_FACE_DETECTOR) {
+        return faceapi.nets.tinyFaceDetector
+      }
+    }
+    // 얼굴 인식 컨트롤러 변경
+    async function changeFaceDetector(detector) {
+      ['#ssd_mobilenetv1_controls', '#tiny_face_detector_controls']
+        .forEach(id => $(id).hide())
+
+      selectedFaceDetector = detector
+      const faceDetectorSelect = $('#selectFaceDetector')
+      faceDetectorSelect.val(detector)
+      faceDetectorSelect.select()
+
+      $('#loader').show()
+      if (!isFaceDetectionModelLoaded()) {
+        await getCurrentFaceDetectionNet().load('/models')
+      }
+
+      $(`#${detector}_controls`).show()
+      $('#loader').hide()
+    }
+    // 얼굴 인식 사이즈 변경
+    function changeInputSize(size) {
+      inputSize = parseInt(size)
+
+      const inputSizeSelect = $('#inputSize')
+      inputSizeSelect.val(inputSize)
+      inputSizeSelect.select()
+    }
+    // 얼굴 인식 컨트롤러 변경 선택
+    async function onSelectedFaceDetectorChanged(e) {
+      selectedFaceDetector = e.target.value
+
+      await changeFaceDetector(e.target.value)
+      updateResults()
+    }
+    // 얼굴 인식 사이즈 변경 입력
+    function onInputSizeChanged(e) {
+      changeInputSize(e.target.value)
+      updateResults()
+    }
+    // 얼굴 인식 컨트롤러 삽입
+    function initFaceDetectionControls() {
+      const faceDetectorSelect = $('#selectFaceDetector')
+      faceDetectorSelect.val(selectedFaceDetector)
+      faceDetectorSelect.on('change', onSelectedFaceDetectorChanged)
+      faceDetectorSelect.select()
+
+      const inputSizeSelect = $('#inputSize')
+      inputSizeSelect.val(inputSize)
+      inputSizeSelect.on('change', onInputSizeChanged)
+      inputSizeSelect.select()
+    }
+    // 일치율 증가
+    function onIncreaseScoreThreshold() {
+      scoreThreshold = Math.min(faceapi.utils.round(scoreThreshold + 0.1), 1.0)
+      $('#scoreThreshold').val(scoreThreshold)
+      updateResults()
+    }
+    // 일치율 감소
+    function onDecreaseScoreThreshold() {
+      scoreThreshold = Math.max(faceapi.utils.round(scoreThreshold - 0.1), 0.1)
+      $('#scoreThreshold').val(scoreThreshold)
+      updateResults()
+    }
+    // 최소 신뢰도 증가
+    function onIncreaseMinConfidence() {
+      minConfidence = Math.min(faceapi.utils.round(minConfidence + 0.1), 1.0)
+      $('#minConfidence').val(minConfidence)
+      updateResults()
+    }
+    // 최소 신뢰도 감소
+    function onDecreaseMinConfidence() {
+      minConfidence = Math.max(faceapi.utils.round(minConfidence - 0.1), 0.1)
+      $('#minConfidence').val(minConfidence)
+      updateResults()
+    }
+
+
+
+    // html-script
+    // 업데이트 상태 표시
+    function updateTimeStats(timeInMs) {
+      forwardTimes = [timeInMs].concat(forwardTimes).slice(0, 30)
+      const avgTimeInMs = forwardTimes.reduce((total, t) => total + t) / forwardTimes.length
+      $('#time').val(`${Math.round(avgTimeInMs)} ms`)
+      $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
+    }
+    // 영상 재생
+    async function onPlay() {
+      const video = document.getElementById('inputVideo')
+      navigator.getUserMedia(
+        { video: {} },
+        stream => video.srcObject = stream,
+        err => console.error(err)
+      )
+
+      const videoEl = $('#inputVideo').get(0)
+      console.log('videoEl--')
+      console.log(videoEl)
+      console.log(video)
+      console.log('---------')
+
+      if(videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
+        return setTimeout(() => onPlay())
+
+      const options = getFaceDetectorOptions()
+
+      const ts = Date.now()
+
+      const result = await faceapi.detectSingleFace(videoEl, options)
+
+      updateTimeStats(Date.now() - ts)
+
+      if (result) {
+        const canvas = $('#overlay').get(0)
+        const dims = faceapi.matchDimensions(canvas, videoEl, true)
+        faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
+      }
+
+      setTimeout(() => onPlay())
+    }
+    // 얼굴 인식 시작
+    async function run() {
+      // load face detection model
+      await changeFaceDetector(SSD_MOBILENETV1)
+      changeInputSize(128)
+
+      // try to access users webcam and stream the images
+      // to the video element
+      const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
+      const videoEl = $('#inputVideo').get(0)
+      videoEl.srcObject = stream
+    }
+    // 업데이트 결과
+    function updateResults() {}
+
+
     function leaveRoom() {
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'course' })
@@ -92,55 +358,27 @@ export default {
       video.srcObject = null
     }
 
-    function startVideo() {
-      const video = document.getElementById('detection')
-      navigator.getUserMedia(
-        { video: {} },
-        stream => video.srcObject = stream,
-        err => console.error(err)
-      )
-      console.log('video start')
-      console.log(video)
-      addEvent()
-    }
-
-    function addEvent() {
-      const video = document.getElementById('detection')
-      video.addEventListener('play', () => {
-        console.log('add event')
-        const canvas = faceapi.createCanvasFromMedia(video)
-        document.body.append(canvas)
-        const displaySize = { width: video.width, height: video.height }
-        faceapi.matchDimensions(canvas, displaySize)
-        setInterval(async () => {
-          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
-          const resizedDetections = faceapi.resizeResults(detections, displaySize)
-          canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-          faceapi.draw.drawDetections(canvas, resizedDetections)
-          faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-        }, 100)
-      })
-    }
-
-    function load() {
-      Promise.all([
-        faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
-      ]).then(console.log('success')).catch(console.log('err'))
-      console.log('nets')
-      console.log(faceapi.nets)
-    }
-
-    load()
+    onPlay()
+    initFaceDetectionControls()
+    run()
 
     return {
       state,
-      leaveRoom, load, startVideo
+      leaveRoom, onPlay,
+      onIncreaseScoreThreshold,
+      onDecreaseScoreThreshold,
+      onIncreaseMinConfidence,
+      onDecreaseMinConfidence,
     }
   }
 }
 </script>
 
 <style scoped>
+.overlay {
+  position: absolute;
+}
+
 .screen-list-block {
   width: 100%;
   height: 15vh;
@@ -153,7 +391,7 @@ export default {
 }
 
 .main-screen-block {
-  background-color: black;
+  background-color: gray;
   width: 100%;
   height: 77vh;
   overflow: hidden;
