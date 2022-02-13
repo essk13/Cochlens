@@ -177,7 +177,7 @@ import router from '@/router'
 
 import * as faceapi from 'face-api.js'
 import $ from 'jquery'
-import { onMounted } from '@vue/runtime-core'
+import { watch, computed, onMounted } from '@vue/runtime-core'
 
 export default {
   name: 'LiveLectureView',
@@ -334,7 +334,6 @@ export default {
       updateTimeStats(Date.now() - ts)
 
       if (result) {
-        console.log(result.box)
         state.face_width = result.box.width
         state.face_height = result.box.height
         state.face_x = result.box.x
@@ -354,6 +353,18 @@ export default {
 
 
     // local-script
+    // Watch
+    watch(
+      computed(() => store.state.courseStore.isJoin),
+      (newJoin, oldJoin) => {
+        console.log('new' + newJoin, 'old' + oldJoin)
+        if (newJoin) {
+          onCam()
+          onPlay()
+        }
+    })
+
+    // Function
     function doLoad() {
       const video = document.getElementById("video-test")
       video.addEventListener("play", computeFrame())
@@ -396,7 +407,7 @@ export default {
     }
 
     onMounted(() => {
-      onPlay()
+      setTimeout(() => { onCam(), onPlay() }, 1000 )
     })
 
     initFaceDetectionControls()
