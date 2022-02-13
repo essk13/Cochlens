@@ -66,10 +66,12 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<CourseDto.CourseRes> getCourse(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId){
-        Course course = courseService.getCourseByCourseId(courseId);
-        List<LectureDto.LectureRes> list = null;
-        return ResponseEntity.ok().body(CourseDto.CourseRes.of(course, list));
+    public ResponseEntity<CourseDto.CourseRes> getCourse(@ApiIgnore Authentication authentication,
+            @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId){
+        SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+        String email = userDetails.getUsername();
+        CourseDto.CourseRes course = courseService.getCourseByCourseId(courseId, email);
+        return ResponseEntity.ok().body(course);
     }
 
     @PutMapping("/{courseId}")
@@ -187,7 +189,7 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<List<ReviewDto.ReviewListRes>> getCourseReivew(@ApiParam(value="강좌 id 정보", required = true)
+    public ResponseEntity<List<ReviewDto.ReviewListRes>> getCourseReview(@ApiParam(value="강좌 id 정보", required = true)
                                                                              @PathVariable Long courseId) {
 
 
@@ -223,6 +225,21 @@ public class CourseController {
     public ResponseEntity<List<CourseDto.CourseListRes>> getBestCourseList() {
 //        찜이 가장 많은 강좌를 최대 5개까지 가져옴
         List<CourseDto.CourseListRes> list = courseService.getBestCourseList();
+        return ResponseEntity.ok().body(list);
+    }
+
+
+
+    @GetMapping("/search")
+    @ApiOperation(value = "강좌 검색 조회", notes = "강좌 검색 list를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<List<CourseDto.CourseListRes>> getSearchCourseList(@RequestParam String courseName) {
+        List<CourseDto.CourseListRes> list = courseService.getSearchCourseList(courseName);
         return ResponseEntity.ok().body(list);
     }
 

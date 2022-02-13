@@ -21,9 +21,9 @@ public interface UserService {
 
 	List<UserDto.UserRes> getInstructorList();
 
-	List<RegisterCourseDto.RegisterCourseListRes> getRegisterCourseList(String email);
 
 	List<WishlistDto.WishlistRes> getWishlist(String email);
 
 	List<UserDto.UserRes> getBestInstructorList();
+	UserDto.UserRes getInstructorInfo(Long userId);
 }

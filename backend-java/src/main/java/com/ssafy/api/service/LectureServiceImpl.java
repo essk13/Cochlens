@@ -75,14 +75,14 @@ public class LectureServiceImpl implements LectureService{
 
         Lecture newLecture = Lecture.builder()
                 .lectureId(lecture.getLectureId())
-                .lectureState(lecture.getLectureState())
-                .lectureVod(lecture.getLectureVod())
-                .lectureRuntime(lecture.getLectureRuntime())
-                .lectureCloseTime(lecture.getLectureCloseTime())
-                .lectureDate(lecture.getLectureDate())
-                .lectureName(lecture.getLectureName())
-                .lectureOpenTime(lecture.getLectureOpenTime())
-                .lectureThumbnail(lecture.getLectureThumbnail())
+                .lectureState(lectureInsertInfo.getLectureState())
+                .lectureVod(lectureInsertInfo.getLectureVod())
+                .lectureRuntime(lectureInsertInfo.getLectureRuntime())
+                .lectureCloseTime(lectureInsertInfo.getLectureCloseTime())
+                .lectureDate(lectureInsertInfo.getLectureDate())
+                .lectureName(lectureInsertInfo.getLectureName())
+                .lectureOpenTime(lectureInsertInfo.getLectureOpenTime())
+                .lectureThumbnail(lectureInsertInfo.getLectureThumbnail())
                 .course(lecture.getCourse())
                 .build();
 

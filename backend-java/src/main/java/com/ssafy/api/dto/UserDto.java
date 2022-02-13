@@ -1,12 +1,20 @@
 package com.ssafy.api.dto;
 
 import com.ssafy.common.model.response.BaseResponseBody;
+import com.ssafy.db.entity.Course;
+import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.Role;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.util.List;
 
 public class UserDto {
     /**
@@ -65,6 +73,10 @@ public class UserDto {
     @Setter
     @ApiModel("UserResponse")
     public static class UserRes{
+        @Id
+        @Column(name = "user_id")
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        Long userId;
         @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
         String email;
         @ApiModelProperty(name="User Name", example="ssafy")
@@ -87,9 +99,23 @@ public class UserDto {
         String profileImage;
         @ApiModelProperty(name="ThumbnailImage", example="notexisted")
         String thumbnailImage;
+        @ApiModelProperty(name="courseCount", example="10")
+        int courseCount;
+        @ApiModelProperty(name="courseReviewCount", example="10")
+        int courseReviewCount;
+        @ApiModelProperty(name="courseReviewRateAverage", example="4.88")
+        Double courseReviewRateAverage;
+        @ApiModelProperty(name="courseReviewList", example="course_review_list")
+        List<Review> courseReviewList;
+        @ApiModelProperty(name="liveOpenCourseList", example="live_open_course_list")
+        List<Course> liveOpenCourseList;
+        @ApiModelProperty(name="vodOpenCourseList", example="vod_open_course_list")
+        List<Course> vodOpenCourseList;
+
 
         public static UserRes of(User user) {
             UserRes res = new UserRes();
+            res.setUserId(user.getUserId());
             res.setEmail(user.getEmail());
             res.setUserName(user.getUserName());
             res.setUserNickname(user.getUserNickname());
@@ -101,6 +127,10 @@ public class UserDto {
             res.setRole(user.getRole());
             res.setProfileImage(user.getProfileImage());
             res.setThumbnailImage(user.getThumbnailImage());
+//            res.setCourseCount(courseCount);
+//            res.setCourseReviewCount(courseReviewCount);
+//            res.setCourseReviewRateAverage(courseReviewRateAverage);
+
             return res;
         }
     }

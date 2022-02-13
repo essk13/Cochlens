@@ -10,7 +10,7 @@ import java.util.Map;
 public interface CourseService {
     Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo);
     List<CourseDto.CourseListRes> getCourseList();
-    Course getCourseByCourseId(Long courseId);
+    CourseDto.CourseRes getCourseByCourseId(Long courseId, String email);
     Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
     void registerCourse(Long userId, Long courseId);
     void deregisterCourse(Long userId, Long courseId);
@@ -19,5 +19,6 @@ public interface CourseService {
     List<CourseDto.CourseListRes> getBestCourseList();
 
     List<CourseDto.CourseListRes> getRecentCourseList(Long userId);
+    List<CourseDto.CourseListRes> getSearchCourseList(String courseName);
 
 }

@@ -112,22 +112,6 @@ public class UserController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/me/register-course-list")
-	@ApiOperation(value = "수강신청 목록 조회", notes = "수강신청 강좌 list를 조회한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 401, message = "인증 실패"),
-			@ApiResponse(code = 404, message = "사용자 없음"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<List<RegisterCourseDto.RegisterCourseListRes>> getRegisterCourseList(@ApiIgnore Authentication authentication) {
-
-		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-		String email = userDetails.getUsername();
-
-		List<RegisterCourseDto.RegisterCourseListRes> list = userService.getRegisterCourseList(email);
-		return ResponseEntity.ok().body(list);
-	}
 
 	@GetMapping("/me/wishlist")
 	@ApiOperation(value = "찜목록 조회", notes = "찜 강좌 list를 조회한다.")
@@ -192,8 +176,8 @@ public class UserController {
 	})
 	public ResponseEntity<UserDto.UserRes> getInstructorInfo(@ApiParam(value="강사 id 정보", required = true) @PathVariable Long userId) {
 
-		User user = userRepository.getOne(userId);
-		return ResponseEntity.status(200).body(UserDto.UserRes.of(user));
+		UserDto.UserRes user = userService.getInstructorInfo(userId);
+		return ResponseEntity.status(200).body(user);
 	}
 
 	@GetMapping("/instructor/best")
