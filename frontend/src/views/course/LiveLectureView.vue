@@ -47,13 +47,12 @@
     <div v-if="state.isMainScreen" class="main-screen-block">
       <!-- face detection test -->
 
-      <div class="center-content page-container">
+      <div class="page-container">
 
         <div class="progress" id="loader">
           <div class="indeterminate"></div>
         </div>
-        <div style="position: relative" class="margin">
-          <video @onloadedmetadata="onPlay(this)" id="inputVideo" autoplay muted playsinline></video>
+        <div style="position: relative" class="margin" id="face-position">
           <canvas id="overlay" />
         </div>
 
@@ -68,6 +67,13 @@
             <label>Select Face Detector</label>
           </div>
           <!-- face_detector_selection_control -->
+
+          <!-- check boxes -->
+          <div class="row" style="width: 220px;">
+            <input type="checkbox" id="hideBoundingBoxesCheckbox" @onchange="onChangeHideBoundingBoxes(event)" />
+            <label for="hideBoundingBoxesCheckbox">Hide Bounding Boxes</label>
+          </div>
+          <!-- check boxes -->
 
           <!-- fps_meter -->
           <div id="fps_meter" class="row side-by-side">
@@ -152,8 +158,8 @@
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-2 row justify-between items-center">
-        <img @click="startVideo" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="onCam" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="instructorFace" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-1 row justify-center items-center">
@@ -170,6 +176,7 @@ import router from '@/router'
 
 import * as faceapi from 'face-api.js'
 import $ from 'jquery'
+import { onMounted } from '@vue/runtime-core'
 
 export default {
   name: 'LiveLectureView',
@@ -188,13 +195,14 @@ export default {
     const TINY_FACE_DETECTOR = 'tiny_face_detector'
     let selectedFaceDetector = SSD_MOBILENETV1
     // ssd_mobilenetv1 options
-    let minConfidence = 0.5
+    let minConfidence = 0.4
     // tiny_face_detector options
     let inputSize = 512
-    let scoreThreshold = 0.5
+    let scoreThreshold = 0.4
 
     // html-var
     let forwardTimes = []
+    let withBoxes = true
 
     // js-script
     // 얼굴 인식 옵션
@@ -228,7 +236,7 @@ export default {
 
       $('#loader').show()
       if (!isFaceDetectionModelLoaded()) {
-        await getCurrentFaceDetectionNet().load('/models')
+        await getCurrentFaceDetectionNet().load('https://storage.googleapis.com/cochlens/models/tiny_face_detector_model-weights_manifest.json')
       }
 
       $(`#${detector}_controls`).show()
@@ -301,36 +309,36 @@ export default {
       $('#time').val(`${Math.round(avgTimeInMs)} ms`)
       $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
     }
+    // 박스 체인지
+    function onChangeHideBoundingBoxes(e) {
+      withBoxes = !$(e.target).prop('checked')
+    }
     // 영상 재생
     async function onPlay() {
-      const video = document.getElementById('inputVideo')
-      navigator.getUserMedia(
-        { video: {} },
-        stream => video.srcObject = stream,
-        err => console.error(err)
-      )
+      const cam = document.getElementById('video-test')
+      // const videoEl = $('#inputVideo').get(0)
 
-      const videoEl = $('#inputVideo').get(0)
-      console.log('videoEl--')
-      console.log(videoEl)
-      console.log(video)
-      console.log('---------')
-
-      if(videoEl.paused || videoEl.ended || !isFaceDetectionModelLoaded())
+      if(cam.paused || cam.ended || !isFaceDetectionModelLoaded())
         return setTimeout(() => onPlay())
+
 
       const options = getFaceDetectorOptions()
 
       const ts = Date.now()
 
-      const result = await faceapi.detectSingleFace(videoEl, options)
+      const result = await faceapi.detectSingleFace(cam, options).withFaceLandmarks()
 
       updateTimeStats(Date.now() - ts)
 
       if (result) {
         const canvas = $('#overlay').get(0)
-        const dims = faceapi.matchDimensions(canvas, videoEl, true)
-        faceapi.draw.drawDetections(canvas, faceapi.resizeResults(result, dims))
+        const dims = faceapi.matchDimensions(canvas, cam, true)
+        const resizedResult = faceapi.resizeResults(result, dims)
+
+        if (withBoxes) {
+          faceapi.draw.drawDetections(canvas, resizedResult)
+        }
+        faceapi.draw.drawFaceLandmarks(canvas, resizedResult)
       }
 
       setTimeout(() => onPlay())
@@ -338,25 +346,38 @@ export default {
     // 얼굴 인식 시작
     async function run() {
       // load face detection model
-      await changeFaceDetector(SSD_MOBILENETV1)
-      changeInputSize(128)
+      await changeFaceDetector(TINY_FACE_DETECTOR)
+      console.log(faceapi.nets)
+      await faceapi.loadFaceLandmarkModel('https://storage.googleapis.com/cochlens/models/face_landmark_68_model-weights_manifest.json')
+      changeInputSize(224)
 
       // try to access users webcam and stream the images
       // to the video element
-      const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
-      const videoEl = $('#inputVideo').get(0)
-      videoEl.srcObject = stream
+      // const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
+      // const videoEl = $('#inputVideo').get(0)
+      // videoEl.srcObject = stream
     }
     // 업데이트 결과
     function updateResults() {}
 
 
+    function onCam() {
+      const cam = document.getElementById('video-test')
+      console.log('append')
+      const fp = document.getElementById('face-position')
+      fp.appendChild(cam)
+      console.log('done')
+      cam.addEventListener('play', onPlay())
+    }
+
     function leaveRoom() {
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'course' })
-      const video = document.getElementById('detection')
-      video.srcObject = null
     }
+
+    onMounted(() => {
+      onPlay()
+    })
 
     onPlay()
     initFaceDetectionControls()
@@ -364,19 +385,21 @@ export default {
 
     return {
       state,
-      leaveRoom, onPlay,
+      leaveRoom, onPlay, onCam,
       onIncreaseScoreThreshold,
       onDecreaseScoreThreshold,
       onIncreaseMinConfidence,
       onDecreaseMinConfidence,
+      onChangeHideBoundingBoxes,
     }
   }
 }
 </script>
 
 <style scoped>
-.overlay {
+#overlay {
   position: absolute;
+  left: 0;
 }
 
 .screen-list-block {
@@ -395,7 +418,6 @@ export default {
   width: 100%;
   height: 77vh;
   overflow: hidden;
-  text-align: center;
 }
 
 .main-screen-block > img {
@@ -423,9 +445,5 @@ export default {
 .menu-block {
   width: 100%;
   height: 8vh;
-}
-
-canvas {
-  position: absolute;
 }
 </style>
