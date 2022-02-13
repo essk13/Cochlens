@@ -13,7 +13,8 @@
         class="screen-list bg-grey-1 shadow-2"
       >
         <q-carousel-slide :name="1" class="column no-wrap">
-          <div id="participants" class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
+          <div id="participants" class="row fit q-gutter-xs q-col-gutter no-wrap">
+            <canvas id="overlay" />
             <!-- <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
@@ -52,8 +53,8 @@
         <div class="progress" id="loader">
           <div class="indeterminate"></div>
         </div>
-        <div style="position: relative" class="margin" id="face-position">
-          <canvas id="overlay" />
+        <div style="position: relative" class="margin" id="main-position">
+          <canvas id="face-video"></canvas>
         </div>
 
         <div class="row side-by-side">
@@ -159,7 +160,7 @@
       </div>
       <div class="col-2 row justify-between items-center">
         <img @click="onCam" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="instructorFace" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-1 row justify-center items-center">
@@ -188,6 +189,10 @@ export default {
     const state = reactive({
       screenSlide: 1,
       isMainScreen: true,
+      face_width: null,
+      face_height: null,
+      face_x: null,
+      face_y: null
     })
 
     // js-var
@@ -202,7 +207,7 @@ export default {
 
     // html-var
     let forwardTimes = []
-    let withBoxes = true
+    // let withBoxes = true
 
     // js-script
     // 얼굴 인식 옵션
@@ -300,7 +305,6 @@ export default {
     }
 
 
-
     // html-script
     // 업데이트 상태 표시
     function updateTimeStats(timeInMs) {
@@ -310,13 +314,12 @@ export default {
       $('#fps').val(`${faceapi.utils.round(1000 / avgTimeInMs)}`)
     }
     // 박스 체인지
-    function onChangeHideBoundingBoxes(e) {
-      withBoxes = !$(e.target).prop('checked')
-    }
+    // function onChangeHideBoundingBoxes(e) {
+    //   withBoxes = !$(e.target).prop('checked')
+    // }
     // 영상 재생
     async function onPlay() {
       const cam = document.getElementById('video-test')
-      // const videoEl = $('#inputVideo').get(0)
 
       if(cam.paused || cam.ended || !isFaceDetectionModelLoaded())
         return setTimeout(() => onPlay())
@@ -326,19 +329,16 @@ export default {
 
       const ts = Date.now()
 
-      const result = await faceapi.detectSingleFace(cam, options).withFaceLandmarks()
+      const result = await faceapi.detectSingleFace(cam, options)
 
       updateTimeStats(Date.now() - ts)
 
       if (result) {
-        const canvas = $('#overlay').get(0)
-        const dims = faceapi.matchDimensions(canvas, cam, true)
-        const resizedResult = faceapi.resizeResults(result, dims)
-
-        if (withBoxes) {
-          faceapi.draw.drawDetections(canvas, resizedResult)
-        }
-        faceapi.draw.drawFaceLandmarks(canvas, resizedResult)
+        console.log(result.box)
+        state.face_width = result.box.width
+        state.face_height = result.box.height
+        state.face_x = result.box.x
+        state.face_y = result.box.y
       }
 
       setTimeout(() => onPlay())
@@ -347,27 +347,47 @@ export default {
     async function run() {
       // load face detection model
       await changeFaceDetector(TINY_FACE_DETECTOR)
-      console.log(faceapi.nets)
-      await faceapi.loadFaceLandmarkModel('https://storage.googleapis.com/cochlens/models/face_landmark_68_model-weights_manifest.json')
       changeInputSize(224)
-
-      // try to access users webcam and stream the images
-      // to the video element
-      // const stream = await navigator.mediaDevices.getUserMedia({ video: {} })
-      // const videoEl = $('#inputVideo').get(0)
-      // videoEl.srcObject = stream
     }
     // 업데이트 결과
     function updateResults() {}
 
 
+    // local-script
+    function doLoad() {
+      const video = document.getElementById("video-test")
+      video.addEventListener("play", computeFrame())
+    }
+    // 화면 캡처
+    function computeFrame() {
+      const video = document.getElementById("video-test")
+      const width = state.face_width;
+      const height = state.face_height;
+      const canv = document.getElementById("face-video")
+      canv.style.width = `${state.face_width * 4}px`
+      canv.style.height = `${state.face_height * 4}px`
+      const ctx = canv.getContext("2d")
+      ctx.drawImage(video, state.face_x, state.face_y, width, height, 0, 0, canv.width, canv.height)
+      if (width > 0) {
+        let frame = ctx.getImageData(0, 0, width, height)
+        let l = frame.data.length / 4
+  
+        for (let i = 0; i < l; i++) {
+          let r = frame.data[i * 4 + 0]
+          let g = frame.data[i * 4 + 1]
+          let b = frame.data[i * 4 + 2]
+          if (g > 100 && r > 100 && b < 43)
+            frame.data[i * 4 + 3] = 0
+        }
+        ctx.putImageData(frame, 0, 0)
+      }
+      setTimeout(() => {computeFrame()}, 0.03*1000)
+    }
+    // 캡처 실행
     function onCam() {
       const cam = document.getElementById('video-test')
-      console.log('append')
-      const fp = document.getElementById('face-position')
-      fp.appendChild(cam)
-      console.log('done')
-      cam.addEventListener('play', onPlay())
+      cam.addEventListener('onloadedmetadata', onPlay())
+      document.addEventListener("DOMContentLoaded", doLoad())
     }
 
     function leaveRoom() {
@@ -379,7 +399,6 @@ export default {
       onPlay()
     })
 
-    onPlay()
     initFaceDetectionControls()
     run()
 
@@ -390,7 +409,6 @@ export default {
       onDecreaseScoreThreshold,
       onIncreaseMinConfidence,
       onDecreaseMinConfidence,
-      onChangeHideBoundingBoxes,
     }
   }
 }
@@ -400,6 +418,11 @@ export default {
 #overlay {
   position: absolute;
   left: 0;
+}
+
+.face-video {
+  width: 200px;
+  height: 200px;
 }
 
 .screen-list-block {
