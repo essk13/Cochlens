@@ -2,9 +2,12 @@ package com.ssafy.db.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -23,4 +26,5 @@ public class Register_course {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     Course course;
+
 }
