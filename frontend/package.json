@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "5.9.55",
     "@quasar/extras": "^1.0.0",
+    "@tensorflow/tfjs": "^3.13.0",
     "axios": "^0.25.0",
     "core-js": "^3.8.3",
     "kurento-utils": "^6.16.0",
