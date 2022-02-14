@@ -82,26 +82,14 @@
             </div>
             <div class="text-subtitle2">by John Doe</div>
           </q-card-section>
-
-          <q-card-actions align="around">
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-            <div class="course-detail-review">이것은 리뷰 입니다</div>
-          </q-card-actions>
+          <q-list bordered class="course-review-preview rounded-borders">
+            <course-review></course-review>
+            <course-review></course-review>
+            <course-review></course-review>
+            <course-review></course-review>
+            <course-review></course-review>
+            <course-review></course-review>
+          </q-list>
         </q-card>
       </div>
     </div>
@@ -112,10 +100,13 @@
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
+import CourseReview from '@/components/course/CourseReview'
 
 export default {
   name: 'CourseDetailView',
-  components: {},
+  components: {
+    CourseReview,
+  },
   setup() {
     const store = useStore()
     const url = 'wss://' + location.host + '/groupcall'
@@ -149,75 +140,79 @@ export default {
 </script>
 
 <style>
-  .course-roof {
-    position: sticky;
-    top: 0;
-  }
+.course-roof {
+  position: sticky;
+  top: 0;
+}
 
-  .course-detail-title {
-    position: absolute;
-    top: 100px;
-    left: 220px;
-    font-size: 30px;
-    font-weight: bold;
-    color: white;
-    z-index: 2;
-  }
+.course-detail-title {
+  position: absolute;
+  top: 100px;
+  left: 220px;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  z-index: 2;
+}
 
-  .course-detail-instructor {
-    position: absolute;
-    top: 145px;
-    left: 225px;
-    font-size: 15px;
-    color: white;
-    z-index: 2;
-  }
+.course-detail-instructor {
+  position: absolute;
+  top: 145px;
+  left: 225px;
+  font-size: 15px;
+  color: white;
+  z-index: 2;
+}
 
-  .course-detail-upper-area {
-    padding: 60px 60px 0 60px;
-  }
+.course-detail-upper-area {
+  padding: 60px 60px 0 60px;
+}
 
-  .reservation-card {
-    width: 100%;
-  }
+.reservation-card {
+  width: 100%;
+}
 
-  .course-detail-review {
-    width: 100%;
-  }
+.course-detail-review {
+  width: 100%;
+}
 
-  .course-detail-thumbnail {
-    width: 200px;
-    height: 130px;
-    border-radius: 5px;
-    background-image: url('@/assets/cooking.jpg');
-    background-size: cover;
-  }
+.course-detail-thumbnail {
+  width: 200px;
+  height: 130px;
+  border-radius: 5px;
+  background-image: url('@/assets/cooking.jpg');
+  background-size: cover;
+}
 
-  .course-detail-curriculum {
-    width: 100%;
-    height: 130px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    background: gray;
-  }
+.course-detail-curriculum {
+  width: 100%;
+  height: 130px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  background: gray;
+}
 
-  .curriculum-title {
-    font-size: 20px;
-    font-weight: 500;
-    color: white;
-    margin: 10px;
-  }
+.curriculum-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+  margin: 10px;
+}
 
-  .curriculum-description {
-    font-size: 15px;
-    font-weight: 200;
-    color: white;
-    margin: 10px;
-  }
+.curriculum-description {
+  font-size: 15px;
+  font-weight: 200;
+  color: white;
+  margin: 10px;
+}
 
-  .reserve {
-    position: -webkit-sticky;
-    position: sticky !important;
-    top: 255px;
-  }
+.reserve {
+  position: -webkit-sticky;
+  position: sticky !important;
+  top: 255px;
+}
+
+.course-review-preview {
+  background-color: rgb(255, 255, 238);
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="instructor-profile">
+  <div class="instructor-item">
     <div class="instructor-profile-img shadow-2">
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
     </div>
@@ -16,7 +16,7 @@
 import { reactive } from '@vue/reactivity'
 
 export default {
-  name: 'InstructorProfile',
+  name: 'InstructorItem',
   components: {
   },
 
@@ -32,7 +32,7 @@ export default {
 </script>
 
 <style scoped>
-.instructor-profile {
+.instructor-item {
   position: relative;
   width: 380px;
   height: 150px;
