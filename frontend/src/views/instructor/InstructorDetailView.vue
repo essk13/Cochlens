@@ -2,7 +2,7 @@
   <div class="header">
     <instructor-header></instructor-header>
   </div>
-  <div class="contents column q-px-xl q-mx-lg q-pt-lg q-pb-xl">
+  <div class="contents column q-px-xl q-mx-xl q-pb-xl">
     <div class="col-4 row q-pb-sm">
       <div class="instructor-description-block col-6 column q-pr-lg">
         <div class="contents-header col-auto">
@@ -27,8 +27,12 @@
         <span class="contents-title">진행중인 강좌</span>
         <span class="contents-more">더보기></span>
       </div>
-      <div class="in-progress-course-list col">
-
+      <div class="in-progress-course-list col row justify-around items-center no-wrap">
+        <course></course>
+        <course></course>
+        <course></course>
+        <course></course>
+        <course></course>
       </div>
     </div>
     <div class="all-course-block col-4 column q-py-sm">
@@ -36,8 +40,12 @@
         <span class="contents-title">전체 강좌</span>
         <span class="contents-more">더보기></span>
       </div>
-      <div class="all-course-list col">
-
+      <div class="all-course-list col row justify-around items-center no-wrap">
+        <course></course>
+        <course></course>
+        <course></course>
+        <course></course>
+        <course></course>
       </div>
     </div>
   </div>
@@ -46,11 +54,13 @@
 <script>
 import { reactive } from '@vue/reactivity'
 import InstructorHeader from "@/components/instructor/InstructorHeader"
+import Course from '@/components/course/Course'
 
 export default {
   name: 'InstructorDetailView',
   components: {
     InstructorHeader,
+    Course,
   },
 
   setup() {
@@ -64,13 +74,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header {
-  height: 25vh;
+  height: 23vh;
 }
 
 .contents {
-  height: 75vh;
+  height: 77vh;
 }
 
 .contents-header {
@@ -94,12 +104,20 @@ export default {
 }
 
 .in-progress-course-list {
-  background-color: lightblue;
+  background-color: lightgoldenrodyellow;
   border-radius: 0.5vh;
 }
 
 .all-course-list {
   background-color: lightblue;
   border-radius: 0.5vh;
+}
+
+::v-deep {
+  .course {
+    background-size: auto 100%;
+    width: 24vh;
+    height: 16vh;
+  }
 }
 </style>

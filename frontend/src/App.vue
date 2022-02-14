@@ -173,7 +173,6 @@ export default {
       state.subNavItems = [
         { title: '강좌 목록', icon: '', method: moveCourseList },
         { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
-        { title: '강의 목록', icon: '', method: moveLecture },
         { title: '강좌 리뷰', icon: '', method: moveCourseReview },
         { title: '강좌 개설', icon: '', method: moveCourseCreate },
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
@@ -185,9 +184,6 @@ export default {
     }
     function moveCourseDetail() {
       router.push({ name: 'course' })
-    }
-    function moveLecture() {
-      router.push({ name: 'lecture' })
     }
     function moveCourseReview() {
       router.push({ name: 'courseReview' })
@@ -202,7 +198,8 @@ export default {
       state.subNavItems = [
         { title: '강사 목록', icon: '', method: clickInstructorList},
         { title: '강사 프로필', icon: '', method: clickInstructorDetail},
-        { title: '전체 강좌', icon: '', method: clickInstructorCourse},
+        { title: '강사 라이브 강좌', icon: '', method: clickInstructorLive},
+        { title: '강사 전체 강좌', icon: '', method: clickInstructorCourse},
         { title: '강사 리뷰', icon: '', method: ''},
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
@@ -214,7 +211,12 @@ export default {
     function clickInstructorDetail() {
       router.push({ name: 'instructor' })
     }
-    function clickInstructorCourse() {}
+    function clickInstructorLive() {
+      router.push({ name: 'instructorlive' })
+    }
+    function clickInstructorCourse() {
+      router.push({ name: 'instructorcourse' })
+    }
 
     function clickSetting() {
       state.subNav = false

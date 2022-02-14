@@ -10,16 +10,10 @@
       <div>별점 : ★5.0 (200000)</div>
     </div>
   </div>
-  
-  <!-- <div class="instructor-bg">
-    <img src="https://cdn.quasar.dev/img/mountains.jpg">
-  </div>
-  <instructor-profile></instructor-profile> -->
 </template>
 
 <script>
 import { reactive } from '@vue/reactivity'
-// import InstructorProfile from "@/components/instructor/InstructorProfile"
 
 export default {
   name: 'InstructorHeader',
@@ -38,29 +32,15 @@ export default {
 </script>
 
 <style scoped>
-  .instructor-description {
-    width: 310px;
-    height: 130px;
-    border-radius: 5px;
-    background: rgb(102, 102, 102);
-    position: absolute;
-    padding: 10px 50px;
-    top: 70px;
-    left: 170px;
-    z-index: 2;
-  }
-
-.instructor-bg {
-  width: 100%;
-  height: 80%;
-  overflow: hidden;
-}
-
-.instructor-bg > img {
-  position: relative;
-  width: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.instructor-description {
+  width: 310px;
+  height: 130px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  padding: 12px 10px 12px 60px;
+  top: 70px;
+  left: 170px;
+  z-index: 2;
 }
 </style>

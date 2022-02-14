@@ -9,13 +9,14 @@ import ProfileView from '../views/profile/ProfileView'
 
 import CourseDetailView from '../views/course/CourseDetailView'
 import CourseListView from '../views/course/CourseListView'
-import LectureListView from '../views/course/LectureListView'
 import CourseReviewView from '../views/course/CourseReviewView'
 import CourseCreateView from '../views/course/CourseCreateView'
 import LiveLectureView from '../views/course/LiveLectureView'
 
 import InstructorListView from '../views/instructor/InstructorListView'
 import InstructorDetailView from '../views/instructor/InstructorDetailView'
+import InstructorLiveListView from '../views/instructor/InstructorLiveListView'
+import InstructorCourseListView from '../views/instructor/InstructorCourseListView'
 import SettingView from '../views/SettingView'
 
 
@@ -57,11 +58,6 @@ const routes = [
     name: 'courselist',
     component: CourseListView
   },
-  { // 강의실 페이지
-    path: '/lecture',
-    name: 'lecture',
-    component: LectureListView
-  },
   { // 강좌 리뷰
     path: '/course/review',
     name: 'courseReview',
@@ -89,6 +85,16 @@ const routes = [
     path: '/instructor',
     name: 'instructor',
     component: InstructorDetailView
+  },
+  { // 강사 라이브 강좌 목록 페이지
+    path: '/instructorlive',
+    name: 'instructorlive',
+    component: InstructorLiveListView
+  },
+  { // 강사 전체 강좌 목록 페이지
+    path: '/instructorcourse',
+    name: 'instructorcourse',
+    component: InstructorCourseListView
   },
 
   { // 설정 페이지

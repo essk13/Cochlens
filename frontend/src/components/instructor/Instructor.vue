@@ -1,10 +1,10 @@
 <template>
   <div class="instructor-profile">
-    <div class="instructor-profile-img">
+    <div class="instructor-profile-img shadow-2">
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
     </div>
-    <div class="instructor-profile-info">
-      <h6 class="q-mb-xs text-bold">아이유</h6>
+    <div class="instructor-profile-info shadow-2">
+      <div class="instructor-name q-mb-xs text-bold">아이유</div>
       <div>이메일 : iu@gmail.com</div>
       <div>강좌 수 : 200</div>
       <div>별점 : ★5.0 (200000)</div>
@@ -33,9 +33,7 @@ export default {
 
 <style scoped>
 .instructor-profile {
-  position: absolute;
-  top: 100px;
-  left: 60px;
+  position: relative;
   width: 380px;
   height: 150px;
 }
@@ -59,13 +57,17 @@ export default {
 .instructor-profile-info {
   position: absolute;
   top: 10px;
-  right: 0px;
+  left: 50px;
   z-index: 1;
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
   width: 300px;
   height: 130px;
-  padding: 12px 0px 0px 100px;
+  padding: 14px 0px 0px 115px;
   color: white;
+}
+
+.instructor-name {
+  font-size: 2vh;
 }
 </style>
