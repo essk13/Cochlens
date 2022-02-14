@@ -8,20 +8,23 @@
         <p class="q-mr-sm q-my-none text-bold text-white nickname">{{ state.userData.userNickname }}</p>
         <p class="q-my-none text-blue-grey-1">{{ state.userData.role }}</p>
       </div>
-      <p class="q-mr-sm q-mt-sm q-mb-none text-blue-grey-1">{{ state.userData.userNickname }} / {{ state.userData.email }}</p>
+      <p class="q-mr-sm q-mt-xs q-mb-none text-blue-grey-1">{{ state.userData.userName }} / {{ state.userData.email }}</p>
+      <a @click="moveUpdate" class="q-mr-sm q-mt-xs q-mb-none text-blue-1">프로필 수정</a>
     </div>
   </div>
 
   <div class="profile-component">
     <profile-main v-if="state.home"></profile-main>
     <taking-course-list v-else-if="state.taking"></taking-course-list>
-    <wish-list v-else></wish-list>
+    <wish-list v-if="state.wishList"></wish-list>
+    <profile-update v-if="state.update"></profile-update>
   </div>
 </template>
 <script>
 import ProfileMain from "@/components/profile/ProfileMain"
 import TakingCourseList from "@/components/profile/TakingCourseList"
 import WishList from "@/components/profile/WishList"
+import ProfileUpdate from "@/components/profile/ProfileUpdate"
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import { watch } from 'vue'
@@ -33,6 +36,7 @@ export default {
     ProfileMain,
     TakingCourseList,
     WishList,
+    ProfileUpdate,
   },
 
   setup () {
@@ -41,6 +45,7 @@ export default {
       home: true,
       taking: false,
       wish: false,
+      update: false,
       userData: store.state.user
     })
 
@@ -74,19 +79,32 @@ export default {
           state.home = true
           state.taking = false
           state.wish = false
+          state.update = false
         } else if (newComponent === 'taking') {
           state.home = false
           state.taking = true
           state.wish = false
-        } else {
+          state.update = false
+        } else if (newComponent === 'wish') {
           state.home = false
           state.taking = false
           state.wish = true
+          state.update = false
+        } else {
+          state.home = false
+          state.taking = false
+          state.wish = false
+          state.update = true
         }
     })
 
+    // Function
+    function moveUpdate() {
+      store.state.profileStore.component = 'update'
+    }
+
     return {
-      state,
+      state, moveUpdate
     }
   }
 }
@@ -126,7 +144,7 @@ export default {
     width: 205px;
     height: 85px;
     border-radius: 5px;
-    background: rgb(102, 102, 102);
+    background: rgb(0, 0, 0, 0.7);
     position: absolute;
     top: 95px;
     left: 203px;
@@ -135,7 +153,7 @@ export default {
   }
 
   .profile-component {
-    height: 900px;
+    /* height: 900px; */
     width: 100%;
     padding: 60px;
   }
