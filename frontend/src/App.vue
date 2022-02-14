@@ -81,26 +81,19 @@ export default {
 
     // Created
     if (localStorage.getItem('JWT')) {
-      store.dispatch('set_user')
+      console.log(localStorage.getItem('JWT'))
+      store.dispatch('getUserData')
     } else {
-      router.push({ name: 'login' })
-    }
-
-    const user = computed(() => store.state.user)
-    console.log(user.value)
-    if (user.value == null) {
       state.mainNav = false
       router.push({ name: 'login' })
-    } else {
-      state.mainNav = true
     }
 
     // Watch
     watch(
       computed(() => store.state.user),
       (newUser, oldUser) => {
-        console.log('new', newUser, 'old', oldUser)
-        if (newUser != null) {
+        console.log('new' + newUser, 'old' + oldUser)
+        if (newUser) {
           state.mainNav = true
         } else {
           state.mainNav = false
@@ -217,7 +210,6 @@ export default {
     function clickInstructorCourse() {
       router.push({ name: 'instructorcourse' })
     }
-
     function clickSetting() {
       state.subNav = false
       router.push({ name: 'setting' })
@@ -226,7 +218,6 @@ export default {
     function clickLogout() {
       state.subNav = false
       state.mainNav = false
-      localStorage.removeItem('JWT')
       store.dispatch('userLogout')
       router.push({ name: 'login' })
     }

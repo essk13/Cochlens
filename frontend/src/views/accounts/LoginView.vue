@@ -109,19 +109,15 @@ export default {
     })
 
     // Created
-    console.log('>>', localStorage.getItem('JWT'))
     if (localStorage.getItem('JWT')) {
-      console.log('login!!!!')
       router.push({ name: 'home' })
     }
 
+    // Function
     function clickLogin() {
-      store.dispatch('userLogin', { id: state.email, password: state.password })
+      store.dispatch('userLogin', { email: state.email, password: state.password })
       router.push({ name: 'home' })
-      .then(res => {
-        console.log(res)
-        router.push({ name: 'home' })
-      })
+      .then(() => { router.push({ name: 'home' }) }) 
     }
 
     function moveSingup() {
