@@ -1,6 +1,7 @@
 package com.ssafy.api.controller;
 
 import com.ssafy.api.dto.*;
+import com.ssafy.api.service.CourseService;
 import com.ssafy.api.service.ReviewService;
 import com.ssafy.db.repository.UserRepository;
 import io.swagger.annotations.*;
@@ -30,13 +31,16 @@ public class UserController {
 	UserService userService;
 
 	@Autowired
+	CourseService courseService;
+
+	@Autowired
 	ReviewService reviewService;
 
 	@Autowired
 	UserRepository userRepository;
 
-	/*
-		create
+	/**
+	 * create
 	*/
 
 	@PostMapping()
@@ -54,8 +58,8 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
-	/*
-		read
+	/**
+	 * read
 	*/
 
 	@GetMapping("/me")
@@ -108,8 +112,8 @@ public class UserController {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String email = userDetails.getUsername();
 
-		List<ReviewDto.ReviewListRes> list = reviewService.getReviewListByEmail(email);
-		return ResponseEntity.ok().body(list);
+//		List<ReviewDto.ReviewListRes> list = reviewService.getReviewListByEmail(email);
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/instructor")
@@ -120,9 +124,8 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<List<UserDto.UserRes>> getInstructorList() {
-
-		List<UserDto.UserRes> list = userService.getInstructorList();
+	public ResponseEntity<List<UserDto.UserInstructorRes>> getInstructorList() {
+		List<UserDto.UserInstructorRes> list = userService.getInstructorList();
 		return ResponseEntity.ok().body(list);
 	}
 
@@ -134,10 +137,17 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<UserDto.UserRes> getInstructorInfo(@ApiParam(value="강사 id 정보", required = true) @PathVariable Long userId) {
+	public ResponseEntity<UserDto.InstructorDetailRes> getInstructorInfo(@ApiParam(value="강사 id 정보", required = true) @PathVariable Long userId) {
 
-		UserDto.UserRes user = userService.getInstructorInfo(userId);
-		return ResponseEntity.status(200).body(user);
+		User user = userService.getUserById(userId);
+		CourseDto.CourseInstructorVO courseInstructorVO = courseService.getInstructorRate(user);
+		List<ReviewDto.ReviewListRes> courseReviewList = reviewService.getReviewListByUser(user);
+		List<CourseDto.CourseListRes> liveOpenCourseList = courseService.getCourseLiveList(user);
+		List<CourseDto.CourseListRes> vodOpenCourseList = courseService.getCourseVodList(user);
+
+		return ResponseEntity.ok().body(UserDto.InstructorDetailRes.of(
+				user, courseInstructorVO.getCourseCount(), courseInstructorVO.getCourseReviewCount(), courseInstructorVO.getCourseReviewGrade(),
+				courseReviewList, liveOpenCourseList, vodOpenCourseList));
 	}
 
 	@GetMapping("/instructor/best")
@@ -154,8 +164,8 @@ public class UserController {
 		return ResponseEntity.ok().body(list);
 	}
 
-	/*
-		update
+	/**
+	 * update
 	*/
 
 	@PutMapping("/me")
@@ -176,8 +186,8 @@ public class UserController {
 		return ResponseEntity.ok().body(UserDto.UserPutRes.of(user));
 	}
 
-	/*
-		delete
+	/**
+	 * delete
 	*/
 
 	@DeleteMapping("/me")

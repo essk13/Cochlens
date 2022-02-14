@@ -16,6 +16,11 @@ public interface CourseService {
     Course getCourse(Long courseId);
     List<CourseDto.CourseListRes> getCourseList();
     CourseDto.CourseRes getCourseByCourseId(Long courseId, String email);
+    CourseDto.CourseInstructorVO getInstructorRate(User user);
+
+    List<CourseDto.CourseListRes> getCourseLiveList(User user);
+    List<CourseDto.CourseListRes> getCourseVodList(User user);
+
     List<CourseDto.CourseListRes> getBestCourseList();
     List<CourseDto.CourseListRes> getRecentCourseList(Long userId);
     List<CourseDto.CourseListRes> getSearchCourseList(String courseName);

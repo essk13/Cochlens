@@ -15,7 +15,7 @@ public interface ReviewService {
     Review createReview(User user, Course course, ReviewDto.ReviewInsertReq reviewInsertInfo);
     /* read */
     List<ReviewDto.ReviewListRes> getReviewListByCourse(Course course);
-    List<ReviewDto.ReviewListRes> getReviewListByEmail(String email);
+    List<ReviewDto.ReviewListRes> getReviewListByUser(User user);
     /* update */
     Review updateReview(Long reviewId, ReviewDto.ReviewInsertReq reviewInsertInfo);
     void updateReviewGrade(Course course);

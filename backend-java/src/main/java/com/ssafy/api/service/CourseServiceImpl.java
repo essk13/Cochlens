@@ -1,7 +1,6 @@
 package com.ssafy.api.service;
 
 import com.google.common.primitives.Ints;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.dto.CourseDto;
 import com.ssafy.db.entity.*;
 import com.ssafy.db.repository.*;
@@ -195,6 +194,21 @@ public class CourseServiceImpl implements CourseService {
 //        System.out.println(course.getUser().getEmail());
 
         return null;
+    }
+
+    @Override
+    public CourseDto.CourseInstructorVO getInstructorRate(User user) {
+        return courseRepository.findInstructorRate(user).get();
+    }
+
+    @Override
+    public List<CourseDto.CourseListRes> getCourseLiveList(User user) {
+       return courseRepository.findAllByLiveList(user);
+    }
+
+    @Override
+    public List<CourseDto.CourseListRes> getCourseVodList(User user) {
+        return courseRepository.findAllByVodList(user);
     }
 
     @Override
@@ -409,7 +423,6 @@ public class CourseServiceImpl implements CourseService {
                 .courseIntroVideo(courseInsertInfo.getCourseIntroVideo())
                 .user(course.getUser())
                 .build();
-
 
         return courseRepository.save(newCourse);
     }

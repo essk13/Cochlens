@@ -24,9 +24,6 @@ public class UserServiceImpl implements UserService {
 	UserRepository userRepository;
 
 	@Autowired
-	UserRepositorySupport userRepositorySupport;
-
-	@Autowired
 	CourseRepository courseRepository;
 
 	@Autowired
@@ -41,11 +38,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
-	@Autowired
-	JPAQueryFactory jpaQueryFactory;
-
-	/*
-		create
+	/**
+	 * create
 	 */
 	@Override
 	public User createUser(UserDto.UserRegisterPostReq userRegisterInfo) {
@@ -62,21 +56,26 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	/*
-		read
+	/**
+	 * read
 	 */
+
+	@Override
+	public User getUserById(Long userId) {
+		return userRepository.findById(userId).get();
+	}
 
 	@Override
 	public User getUserByEmail(String email) {
 		// 디비에 유저 정보 조회 (userId 를 통한 조회).
-		User user = userRepositorySupport.findUserByEmail(email).get();
+		User user = userRepository.findByEmail(email).get();
 
 		return user;
 	}
 
 	@Override
 	public List<WishlistDto.WishlistRes> getWishlist(String email) {
-		User user = userRepositorySupport.findUserByEmail(email).get();
+		User user = userRepository.findByEmail(email).get();
 
 		List<WishlistDto.WishlistRes> result = new ArrayList<>();
 		List<Wishlist> list = wishlistRepository.findAll();
@@ -92,15 +91,78 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDto.UserRes> getInstructorList(){
-		List<User> list = userRepository.findByRole(Role.INSTRUCTOR).orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
-		List<UserDto.UserRes> result = new ArrayList<>();
-
-		for (User user : list) {
-			UserDto.UserRes userListRes = UserDto.UserRes.of(user);
-			result.add(userListRes);
-		}
+	public List<UserDto.UserInstructorRes> getInstructorList() {
+		List<UserDto.UserInstructorRes> result = userRepository.findInstructorList();
 		return result;
+	}
+
+	/*
+		수정 필요
+	 */
+	@Override
+	public UserDto.UserRes getInstructorInfo(Long userId){
+		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+
+		int courseCount = 0;
+		int courseReviewCount = 0;
+		int courseReviewRateSum = 0;
+		Double courseReviewRateAverage = 0.0;
+
+		List<Review> courseReviewList = new ArrayList<>();
+		List<Course> liveOpenCourseList = new ArrayList<>();
+		List<Course> vodOpenCourseList = new ArrayList<>();
+
+		Date date = new Date();
+
+		List<Review> reviewList = reviewRepository.findAll();
+		List<Course> courseList = courseRepository.findAll();
+		for (Course course : courseList) {
+			if ( user == course.getUser()) {
+				courseCount += 1;
+				if (date.after(course.getCourseOpenDate()) && date.before(course.getCourseCloseDate())){
+					liveOpenCourseList.add(course);
+				}
+				else {
+					vodOpenCourseList.add(course);
+				}
+				for  (Review review : reviewList){
+					if(course == review.getCourse()){
+						courseReviewCount += 1;
+						courseReviewRateSum += review.getReviewGrade();
+						courseReviewList.add(review);
+					}
+				}
+			}
+		}
+
+		if (courseReviewCount != 0){
+//                소수점 둘째자리까지 표시
+			courseReviewRateAverage = Math.round(Double.valueOf(courseReviewRateSum / courseReviewCount) * 100) / 100.0;
+		}
+
+
+		UserDto.UserRes userRes = new UserDto.UserRes();
+
+		userRes.setUserId(user.getUserId());
+		userRes.setEmail(user.getEmail());
+		userRes.setUserName(user.getUserName());
+		userRes.setUserNickname(user.getUserNickname());
+		userRes.setUserDescription(user.getUserDescription());
+//		userRes.setIsSubtitle(user.isSubtitle());
+//		userRes.setIsCommand(user.isCommand());
+//		userRes.setIsSTT(user.isSTT());
+//		userRes.setIsFaceFocusing(user.isFaceFocusing());
+//		userRes.setRole(user.getRole());
+		userRes.setProfileImage(user.getProfileImage());
+		userRes.setThumbnailImage(user.getThumbnailImage());
+
+//		userRes.setCourseCount(courseCount);
+//		userRes.setCourseReviewCount(courseReviewCount);
+//		userRes.setCourseReviewRateAverage(courseReviewRateAverage);
+//		userRes.setCourseReviewList(courseReviewList);
+//		userRes.setLiveOpenCourseList(liveOpenCourseList);
+//		userRes.setVodOpenCourseList(vodOpenCourseList);
+		return userRes;
 	}
 
 	/*
@@ -173,86 +235,17 @@ public class UserServiceImpl implements UserService {
 			userListRes.setProfileImage(user.getProfileImage());
 //			userListRes.setThumbnailImage(user.getThumbnailImage());
 
-			userListRes.setCourseCount(courseCount);
-			userListRes.setCourseReviewCount(courseReviewCount);
-			userListRes.setCourseReviewRateAverage(courseReviewRateAverage);
+//			userListRes.setCourseCount(courseCount);
+//			userListRes.setCourseReviewCount(courseReviewCount);
+//			userListRes.setCourseReviewRateAverage(courseReviewRateAverage);
 
 			result.add(userListRes);
 		}
 		return result;
 	}
 
-	/*
-		수정 필요
-	 */
-	@Override
-	public UserDto.UserRes getInstructorInfo(Long userId){
-		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
-
-		int courseCount = 0;
-		int courseReviewCount = 0;
-		int courseReviewRateSum = 0;
-		Double courseReviewRateAverage = 0.0;
-
-		List<Review> courseReviewList = new ArrayList<>();
-		List<Course> liveOpenCourseList = new ArrayList<>();
-		List<Course> vodOpenCourseList = new ArrayList<>();
-
-		Date date = new Date();
-
-		List<Review> reviewList = reviewRepository.findAll();
-		List<Course> courseList = courseRepository.findAll();
-		for (Course course : courseList) {
-			if ( user == course.getUser()) {
-				courseCount += 1;
-				if (date.after(course.getCourseOpenDate()) && date.before(course.getCourseCloseDate())){
-					liveOpenCourseList.add(course);
-				}
-				else {
-					vodOpenCourseList.add(course);
-				}
-				for  (Review review : reviewList){
-					if(course == review.getCourse()){
-						courseReviewCount += 1;
-						courseReviewRateSum += review.getReviewGrade();
-						courseReviewList.add(review);
-					}
-				}
-			}
-		}
-
-		if (courseReviewCount != 0){
-//                소수점 둘째자리까지 표시
-			courseReviewRateAverage = Math.round(Double.valueOf(courseReviewRateSum / courseReviewCount) * 100) / 100.0;
-		}
-
-
-		UserDto.UserRes userRes = new UserDto.UserRes();
-
-		userRes.setUserId(user.getUserId());
-		userRes.setEmail(user.getEmail());
-		userRes.setUserName(user.getUserName());
-		userRes.setUserNickname(user.getUserNickname());
-		userRes.setUserDescription(user.getUserDescription());
-//		userRes.setIsSubtitle(user.isSubtitle());
-//		userRes.setIsCommand(user.isCommand());
-//		userRes.setIsSTT(user.isSTT());
-//		userRes.setIsFaceFocusing(user.isFaceFocusing());
-//		userRes.setRole(user.getRole());
-		userRes.setProfileImage(user.getProfileImage());
-		userRes.setThumbnailImage(user.getThumbnailImage());
-
-		userRes.setCourseCount(courseCount);
-		userRes.setCourseReviewCount(courseReviewCount);
-		userRes.setCourseReviewRateAverage(courseReviewRateAverage);
-		userRes.setCourseReviewList(courseReviewList);
-		userRes.setLiveOpenCourseList(liveOpenCourseList);
-		userRes.setVodOpenCourseList(vodOpenCourseList);
-		return userRes;
-	}
-
-	/*
-		update
+	/**
+	 * update
 	 */
 
 	/*
@@ -262,14 +255,12 @@ public class UserServiceImpl implements UserService {
 	public User update(String email, UserDto.UserPutRes userPutRes) {
 		String emailCheck = userPutRes.getEmail();
 
-//		User userCheck = userRepositorySupport.findUserByEmail(emailCheck).get();
-
 //		입력한 이메일이 DB에 있고 현재 계정의 이메일과 다를 경우
 		if(userRepository.findByEmail(emailCheck) != userRepository.findByEmail("") && !email.equals(emailCheck)) return null;
 //		if(userCheck != null && !email.equals(emailCheck)) return null;
 
 //		입력한 이메일이 DB에 없거나, 현재 계정의 이메일과 같을 경우
-		User user = userRepositorySupport.findUserByEmail(email).get();
+		User user = userRepository.findByEmail(email).get();
 
 		user.setEmail(userPutRes.getEmail());
 		user.setUserName(userPutRes.getUserName());
@@ -287,8 +278,8 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	/*
-		delete
+	/**
+	 * delete
 	 */
 
 	@Override

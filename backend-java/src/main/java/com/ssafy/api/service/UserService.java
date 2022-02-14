@@ -16,8 +16,9 @@ public interface UserService {
 	/* create */
 	User createUser(UserDto.UserRegisterPostReq userRegisterInfo);
 	/* read */
+	User getUserById(Long userId);
 	User getUserByEmail(String email);
-	List<UserDto.UserRes> getInstructorList();
+	List<UserDto.UserInstructorRes> getInstructorList();
 	List<WishlistDto.WishlistRes> getWishlist(String email);
 	List<UserDto.UserRes> getBestInstructorList();
 	UserDto.UserRes getInstructorInfo(Long userId);

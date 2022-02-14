@@ -1,5 +1,7 @@
 package com.ssafy.api.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
+import com.querydsl.core.types.dsl.StringPath;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Review;
@@ -7,8 +9,12 @@ import com.ssafy.db.entity.Role;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.A;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -83,9 +89,7 @@ public class UserDto {
     @Setter
     @ApiModel("UserRes")
     public static class UserRes{
-        @Id
-        @Column(name = "user_id")
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @ApiModelProperty(name="User Id", example="1")
         Long userId;
         @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
         String email;
@@ -109,19 +113,6 @@ public class UserDto {
         String profileImage;
         @ApiModelProperty(name="ThumbnailImage", example="notexisted")
         String thumbnailImage;
-        @ApiModelProperty(name="courseCount", example="10")
-        int courseCount;
-        @ApiModelProperty(name="courseReviewCount", example="10")
-        int courseReviewCount;
-        @ApiModelProperty(name="courseReviewRateAverage", example="4.88")
-        Double courseReviewRateAverage;
-        @ApiModelProperty(name="courseReviewList", example="course_review_list")
-        List<Review> courseReviewList;
-        @ApiModelProperty(name="liveOpenCourseList", example="live_open_course_list")
-        List<Course> liveOpenCourseList;
-        @ApiModelProperty(name="vodOpenCourseList", example="vod_open_course_list")
-        List<Course> vodOpenCourseList;
-
 
         public static UserRes of(User user) {
             UserRes res = new UserRes();
@@ -137,17 +128,109 @@ public class UserDto {
             res.setRole(user.getRole());
             res.setProfileImage(user.getProfileImage());
             res.setThumbnailImage(user.getThumbnailImage());
-//            res.setCourseCount(courseCount);
-//            res.setCourseReviewCount(courseReviewCount);
-//            res.setCourseReviewRateAverage(courseReviewRateAverage);
 
             return res;
         }
     }
 
-    /**
-     * 회원 본인 정보 조회 API ([PUT] /api/v1/users/me) 요청에 대한 응답값 정의.
-     */
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("UserInstructorRes")
+    public static class UserInstructorRes {
+        @ApiModelProperty(name="User Id", example="1")
+        Long userId;
+        @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
+        String email;
+        @ApiModelProperty(name="User Name", example="ssafy")
+        String userName;
+        @ApiModelProperty(name="User Nickname", example="hotsix")
+        String userNickname;
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        String profileImage;
+        @ApiModelProperty(name="Course Count", example="1")
+        long courseCount;
+        @ApiModelProperty(name="Course Review Count", example="1")
+        int courseReviewCount;
+        @ApiModelProperty(name="Course Reivew RateAvg", example="4.1")
+        double courseReviewRateAverage;
+
+        public static UserInstructorRes of(User user, int courseCount, int courseReviewCount, double courseReviewRateAverage) {
+            UserInstructorRes res = new UserInstructorRes();
+
+            res.setUserId(user.getUserId());
+            res.setUserName(user.getUserName());
+            res.setEmail(user.getEmail());
+            res.setUserNickname(user.getUserNickname());
+            res.setProfileImage(user.getProfileImage());
+            res.setCourseCount(courseCount);
+            res.setCourseReviewCount(courseReviewCount);
+            res.setCourseReviewRateAverage(courseReviewRateAverage);
+
+            return res;
+        }
+    }
+
+    @Getter
+    @Setter
+    @ApiModel("InstructorDetailRes")
+    public static class InstructorDetailRes{
+        @ApiModelProperty(name="User Id", example="1")
+        Long userId;
+        @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
+        String email;
+        @ApiModelProperty(name="User Name", example="ssafy")
+        String userName;
+        @ApiModelProperty(name="User Nickname", example="hotsix")
+        String userNickname;
+        @ApiModelProperty(name="User Description", example="notexisted")
+        String userDescription;
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        String profileImage;
+        @ApiModelProperty(name="ThumbnailImage", example="notexisted")
+        String thumbnailImage;
+
+        @ApiModelProperty(name="courseCount", example="10")
+        long courseCount;
+        @ApiModelProperty(name="courseReviewCount", example="10")
+        int courseReviewCount;
+        @ApiModelProperty(name="courseReviewRateAverage", example="4.88")
+        Double courseReviewRateAverage;
+
+        @ApiModelProperty(name="courseReviewList", example="course_review_list")
+        List<ReviewDto.ReviewListRes> courseReviewList;
+        @ApiModelProperty(name="liveOpenCourseList", example="live_open_course_list")
+        List<CourseDto.CourseListRes> liveOpenCourseList;
+        @ApiModelProperty(name="vodOpenCourseList", example="vod_open_course_list")
+        List<CourseDto.CourseListRes> vodOpenCourseList;
+
+
+        public static InstructorDetailRes of(
+                User user, long courseCount, int courseReviewCount, double courseReviewRateAverage,
+                List<ReviewDto.ReviewListRes> courseReviewList, List<CourseDto.CourseListRes> liveOpenCourseList, List<CourseDto.CourseListRes> vodOpenCourseList) {
+            InstructorDetailRes res = new InstructorDetailRes();
+
+            res.setUserId(user.getUserId());
+            res.setEmail(user.getEmail());
+            res.setUserName(user.getUserName());
+            res.setUserNickname(user.getUserNickname());
+            res.setUserDescription(user.getUserDescription());
+            res.setProfileImage(user.getProfileImage());
+            res.setThumbnailImage(user.getThumbnailImage());
+
+            res.setCourseCount(courseCount);
+            res.setCourseReviewCount(courseReviewCount);
+            res.setCourseReviewRateAverage(courseReviewRateAverage);
+
+            res.setCourseReviewList(courseReviewList);
+            res.setLiveOpenCourseList(liveOpenCourseList);
+            res.setVodOpenCourseList(vodOpenCourseList);
+
+            return res;
+        }
+    }
+
     @Getter
     @Setter
     @ApiModel("UserPutRes")
@@ -198,6 +281,8 @@ public class UserDto {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @ApiModel("UserReviewRes")
     public static class UserReviewRes {
         @ApiModelProperty(name="User Name", example="ssafy")
@@ -206,7 +291,6 @@ public class UserDto {
         String userNickname;
         @ApiModelProperty(name="ProfileImage", example="notexisted")
         String profileImage;
-
 
         public static UserReviewRes of(User user) {
             UserReviewRes res = new UserReviewRes();

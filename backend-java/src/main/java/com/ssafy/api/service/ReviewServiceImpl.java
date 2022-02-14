@@ -1,19 +1,14 @@
 package com.ssafy.api.service;
 
-import com.ssafy.api.dto.CourseDto;
 import com.ssafy.api.dto.ReviewDto;
 import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.repository.ReviewRepository;
 import com.ssafy.db.repository.CourseRepository;
-import com.ssafy.db.repository.UserRepository;
-import com.ssafy.db.repository.UserRepositorySupport;
-import lombok.var;
+import com.ssafy.db.repository.UserCustomRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ssafy.db.entity.Course;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,7 +16,7 @@ import java.util.*;
 @Service("reviewService")
 public class ReviewServiceImpl implements ReviewService {
     @Autowired
-    UserRepositorySupport userRepositorySupport;
+    UserCustomRepositoryImpl userRepositorySupport;
 
     @Autowired
     ReviewRepository reviewRepository;
@@ -51,28 +46,6 @@ public class ReviewServiceImpl implements ReviewService {
     */
 
     @Override
-    public List<ReviewDto.ReviewListRes> getReviewListByEmail(String email){
-
-        User user = userRepositorySupport.findUserByEmail(email).get();
-
-        List<ReviewDto.ReviewListRes> result = new ArrayList<>();
-        List<Review> list = reviewRepository.findAll();
-
-        for (Review review : list) {
-            if (review.getUser() == user){
-                ReviewDto.ReviewListRes reviewRes = new ReviewDto.ReviewListRes();
-
-                reviewRes.setReviewId(review.getReviewId());
-                reviewRes.setReviewDate(review.getReviewDate());
-                reviewRes.setReviewGrade(review.getReviewGrade());
-                reviewRes.setReviewContent(review.getReviewContent());
-                result.add(reviewRes);
-            }
-        }
-        return result;
-    }
-
-    @Override
     public List<ReviewDto.ReviewListRes> getReviewListByCourse(Course course) {
         List<Review> list = reviewRepository.findAllByCourse(course);
 
@@ -82,6 +55,13 @@ public class ReviewServiceImpl implements ReviewService {
             ReviewDto.ReviewListRes reviewRes = ReviewDto.ReviewListRes.of(review);
             result.add(reviewRes);
         }
+        return result;
+    }
+
+    @Override
+    public List<ReviewDto.ReviewListRes> getReviewListByUser(User user) {
+        List<ReviewDto.ReviewListRes> result = reviewRepository.findAllByUser(user);
+
         return result;
     }
 

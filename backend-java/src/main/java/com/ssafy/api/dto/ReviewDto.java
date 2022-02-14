@@ -6,7 +6,9 @@ import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -37,6 +39,8 @@ public class ReviewDto {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @ApiModel("ReviewListRes")
     public static class ReviewListRes {
         @ApiModelProperty(name="reviewId", example="1")

@@ -6,13 +6,18 @@ import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.entity.Review;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
 public class CourseDto {
+    /**
+     * Request
+     */
     @Getter
     @Setter
     @ApiModel("CourseInsertReq")
@@ -41,9 +46,14 @@ public class CourseDto {
         String courseIntroVideo;
     }
 
+    /**
+     * Response
+     */
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     @ApiModel("CourseListRes")
     public static class CourseListRes {
         @ApiModelProperty(name="courseId", example="1")
@@ -176,5 +186,23 @@ public class CourseDto {
 
             return res;
         }
+    }
+
+    /**
+     *  Value Object
+     */
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("CourseInstructorVO")
+    public static class CourseInstructorVO {
+        @ApiModelProperty(name="course count", example="ssafy")
+        long courseCount;
+        @ApiModelProperty(name="course review count", example="ssafy")
+        int courseReviewCount;
+        @ApiModelProperty(name="course review grade", example="ssafy")
+        double courseReviewGrade;
     }
 }
