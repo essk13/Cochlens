@@ -21,35 +21,35 @@
   <div class="top-course-block column shadow-2">
     <div class="col-auto text-bold q-pb-sm">인기강좌 Top</div>
     <div class="col top-course-list row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
   </div>
   <!-- 강좌 목록 -->
   <div class="course-block column justify-around">
     <div class="course-list col row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
     <div class="course-list col row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
     <div class="course-list col row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
   </div>
   <!-- pagination -->
@@ -67,12 +67,12 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
-import Course from '@/components/course/Course'
+import CourseItem from '@/components/course/CourseItem'
 
 export default {
   name: 'CourseListView',
   components: {
-    Course,
+    CourseItem,
   },
   setup() {
 
@@ -122,7 +122,7 @@ export default {
 }
 
 ::v-deep {
-  .course {
+  .course-item {
     background-size: 100% auto;
     width: 24vh;
     height: 16vh;

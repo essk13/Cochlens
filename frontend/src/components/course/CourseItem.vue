@@ -1,6 +1,6 @@
 <template>
   <!-- 강좌 정보 -->
-  <div class="course column justify-end shadow-3">
+  <div class="course-item column justify-end shadow-3">
     <!-- 강좌 설명 -->
     <div class="course-info row">
       <div class="col-8 q-pl-sm q-pt-xs">
@@ -19,7 +19,7 @@
 import { reactive } from '@vue/reactivity'
 
 export default {
-  name: 'InstructorProfile',
+  name: 'CourseItem',
   components: {
   },
 
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style scoped>
-.course {
+.course-item {
   background-image: url("https://cdn.quasar.dev/img/mountains.jpg");
   background-position: center;
   border-radius: 1vh;

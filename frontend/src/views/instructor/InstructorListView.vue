@@ -21,31 +21,31 @@
   <div class="top-instructor-block column shadow-2">
     <div class="col-auto text-bold q-pb-sm">인기강사 Top</div>
     <div class="col top-instructor-list row justify-between no-wrap">
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
     </div>
   </div>
   <!-- 강사 목록 -->
   <div class="instructor-block column justify-around">
     <div class="instructor-list col row justify-between no-wrap">
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
     </div>
     <div class="instructor-list col row justify-between no-wrap">
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
     </div>
     <div class="instructor-list col row justify-between no-wrap">
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
-      <instructor></instructor>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
+      <instructor-item></instructor-item>
     </div>
   </div>
   <!-- pagination -->
@@ -63,12 +63,12 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
-import Instructor from '@/components/instructor/Instructor'
+import InstructorItem from '@/components/instructor/InstructorItem'
 
 export default {
   name: 'InstructorListView',
   components: {
-    Instructor,
+    InstructorItem,
   },
 
   setup() {
