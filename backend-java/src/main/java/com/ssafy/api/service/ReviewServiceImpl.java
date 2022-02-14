@@ -20,13 +20,6 @@ import java.util.*;
 
 @Service("reviewService")
 public class ReviewServiceImpl implements ReviewService {
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    CourseService courseService;
-
     @Autowired
     UserRepositorySupport userRepositorySupport;
 
@@ -36,6 +29,26 @@ public class ReviewServiceImpl implements ReviewService {
     @Autowired
     CourseRepository courseRepository;
 
+    /*
+        create
+    */
+
+    @Override
+    public Review createReview(User user, Course course, ReviewDto.ReviewInsertReq reviewInsertInfo){
+        Review review = Review.builder()
+                .reviewDate(reviewInsertInfo.getReviewDate())
+                .reviewContent(reviewInsertInfo.getReviewContent())
+                .reviewGrade(reviewInsertInfo.getReviewGrade())
+                .user(user)
+                .course(course)
+                .build();
+
+        return reviewRepository.save(review);
+    }
+
+    /*
+        read
+    */
 
     @Override
     public List<ReviewDto.ReviewListRes> getReviewListByEmail(String email){
@@ -53,7 +66,6 @@ public class ReviewServiceImpl implements ReviewService {
                 reviewRes.setReviewDate(review.getReviewDate());
                 reviewRes.setReviewGrade(review.getReviewGrade());
                 reviewRes.setReviewContent(review.getReviewContent());
-                reviewRes.setCourse(review.getCourse());
                 result.add(reviewRes);
             }
         }
@@ -61,47 +73,24 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewDto.ReviewListRes> getReviewListByCourseId(Long courseId){
-
-        Course course = courseRepository.getOne(courseId);
+    public List<ReviewDto.ReviewListRes> getReviewListByCourse(Course course) {
+        List<Review> list = reviewRepository.findAllByCourse(course);
 
         List<ReviewDto.ReviewListRes> result = new ArrayList<>();
-        List<Review> list = reviewRepository.findAll();
 
         for (Review review : list) {
-            if (review.getCourse() == course){
-                ReviewDto.ReviewListRes reviewRes = new ReviewDto.ReviewListRes();
-
-                reviewRes.setReviewId(review.getReviewId());
-                reviewRes.setReviewDate(review.getReviewDate());
-                reviewRes.setReviewGrade(review.getReviewGrade());
-                reviewRes.setReviewContent(review.getReviewContent());
-                reviewRes.setUser(review.getUser());
-                result.add(reviewRes);
-            }
+            ReviewDto.ReviewListRes reviewRes = ReviewDto.ReviewListRes.of(review);
+            result.add(reviewRes);
         }
         return result;
     }
 
-    @Override
-    public Review createReview(User user, Long courseId, ReviewDto.ReviewInsertReq reviewInsertInfo){
-
-        Course course = courseRepository.getOne(courseId);
-
-        Review review = Review.builder()
-                .reviewDate(reviewInsertInfo.getReviewDate())
-                .reviewContent(reviewInsertInfo.getReviewContent())
-                .reviewGrade(reviewInsertInfo.getReviewGrade())
-                .user(user)
-                .course(course)
-                .build();
-
-        return reviewRepository.save(review);
-    }
+    /*
+        update
+    */
 
     @Override
     public Review updateReview(Long reviewId, ReviewDto.ReviewInsertReq reviewInsertInfo){
-
         Review review =  reviewRepository.getOne(reviewId);
 
         Review newReview = Review.builder()
@@ -115,6 +104,18 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.save(newReview);
 
     }
+
+    @Override
+    public void updateReviewGrade(Course course) {
+        double reviewGrade = reviewRepository.countReviewAverage(course).get();
+        course.setCourseReviewGrade(reviewGrade);
+        courseRepository.save(course);
+        courseRepository.flush();
+    }
+
+    /*
+        delete
+    */
 
     @Override
     public void delete(Long reviewId) {

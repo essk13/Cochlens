@@ -1,8 +1,10 @@
 package com.ssafy.api.controller;
 
 import com.ssafy.api.dto.CourseDto;
+import com.ssafy.api.dto.LectureDto;
 import com.ssafy.api.dto.ReviewDto;
 import com.ssafy.api.service.CourseService;
+import com.ssafy.api.service.LectureService;
 import com.ssafy.api.service.ReviewService;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
@@ -28,6 +30,9 @@ public class CourseController {
 
     @Autowired
     CourseService courseService;
+
+    @Autowired
+    LectureService lectureService;
 
     @Autowired
     ReviewService reviewService;
@@ -99,10 +104,11 @@ public class CourseController {
     public ResponseEntity<? extends BaseResponseBody> createReview(@ApiIgnore Authentication authentication,
                                                                    @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
                                                                    @RequestBody @ApiParam(value="리뷰 생성 정보", required = true) ReviewDto.ReviewInsertReq reviewInsertInfo) {
-
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-        reviewService.createReview(userDetails.getUser(), courseId, reviewInsertInfo);
-        return ResponseEntity.noContent().build();
+        Course course = courseService.getCourse(courseId);
+        reviewService.createReview(userDetails.getUser(), course, reviewInsertInfo);
+        reviewService.updateReviewGrade(course);
+        return ResponseEntity.ok().build();
     }
 
     /*
@@ -110,7 +116,7 @@ public class CourseController {
     */
 
     @GetMapping
-    @ApiOperation(value = "강좌들 조회", notes = "생성된 강좌 list를 조회한다.")
+    @ApiOperation(value = "강좌 목록 조회", notes = "생성된 강좌 list를 조회한다.")
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 401, message = "인증 실패"),
@@ -134,24 +140,15 @@ public class CourseController {
             @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId){
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         String email = userDetails.getUsername();
-        CourseDto.CourseRes course = courseService.getCourseByCourseId(courseId, email);
-        return ResponseEntity.ok().body(course);
-    }
 
-    @GetMapping("/{courseId}/review")
-    @ApiOperation(value = "강좌 리뷰 조회", notes = "강좌 리뷰 리스트를 조회한다.")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 401, message = "인증 실패"),
-            @ApiResponse(code = 404, message = "사용자 없음"),
-            @ApiResponse(code = 500, message = "서버 오류")
-    })
-    public ResponseEntity<List<ReviewDto.ReviewListRes>> getCourseReview(@ApiParam(value="강좌 id 정보", required = true)
-                                                                         @PathVariable Long courseId) {
+        User user = userService.getUserByEmail(email);
+        Course course = courseService.getCourse(courseId);
+        List<LectureDto.LectureListRes> lectureList = lectureService.getLectureList(course);
+        List<ReviewDto.ReviewListRes> reviewList = reviewService.getReviewListByCourse(course);
+        boolean isWish = false;
+        boolean isJoin = false;
 
-
-        List<ReviewDto.ReviewListRes> list = reviewService.getReviewListByCourseId(courseId);
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(CourseDto.CourseRes.of(course, lectureList, reviewList, isJoin, isWish));
     }
 
     @GetMapping("/recent")

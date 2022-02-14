@@ -41,14 +41,24 @@ public class Course {
     String courseIntroVideo;
     @Column(name = "course_wish_count")
     int courseWishCount;
+    @Column(name = "course_review_count")
+    int courseReviewCount;
     @Column(name = "course_review_grade")
-    int courseReviewGrade;
+    double courseReviewGrade;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
 
     public void increaseWishCount() {
         courseWishCount++;
+    }
+
+    public void increaseReviewCount() {
+        courseReviewCount++;
+    }
+
+    public void calReviewGrade(int reviewGrade) {
+
     }
 
     @Builder

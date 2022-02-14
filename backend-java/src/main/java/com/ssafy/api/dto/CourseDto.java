@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.entity.Review;
-import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -78,7 +77,7 @@ public class CourseDto {
         @ApiModelProperty(name="wishCount", example="10")
         int wishCount;
 
-        public static CourseListRes of(Course course, int courseReviewCount, Double courseReviewRateAverage, int wishCount) {
+        public static CourseListRes of(Course course) {
             CourseListRes res = new CourseListRes();
 
             res.setCourseId(course.getCourseId());
@@ -92,9 +91,9 @@ public class CourseDto {
             res.setCourseOpenDate(course.getCourseOpenDate());
             res.setCourseCloseDate(course.getCourseCloseDate());
             res.setCourseCategory(course.getCourseCategory());
-            res.setCourseReviewCount(courseReviewCount);
-            res.setCourseReviewRateAverage(courseReviewRateAverage);
-            res.setWishCount(wishCount);
+            res.setCourseReviewCount(course.getCourseReviewCount());
+            res.setCourseReviewRateAverage(course.getCourseReviewGrade());
+            res.setWishCount(course.getCourseWishCount());
 
             return res;
         }
@@ -126,44 +125,54 @@ public class CourseDto {
         int courseFee;
         @ApiModelProperty(name="courseIntroVideo", example="intro video address")
         String courseIntroVideo;
+
+        @ApiModelProperty(name="courseWishCount", example="10")
+        int courseWishCount;
         @ApiModelProperty(name="courseReviewCount", example="10")
         int courseReviewCount;
         @ApiModelProperty(name="courseReviewRateAverage", example="4.88")
         Double courseReviewRateAverage;
-        @ApiModelProperty(name="wishCount", example="10")
-        int wishCount;
+
         @ApiModelProperty(name="joinCount", example="10")
         int joinCount;
         @ApiModelProperty(name="lectureList")
-        List<Lecture> lectureList;
+        List<LectureDto.LectureListRes> lectureList;
         @ApiModelProperty(name="reviewList")
-        List<Review> reviewList;
-//        @ApiModelProperty(name="lectureList")
-//        List<LectureDto.LectureRes> lectureList;
-//        @ApiModelProperty(name="reviewList")
-//        List<ReviewDto.ReviewRes> reviewList;
+        List<ReviewDto.ReviewListRes> reviewList;
         @ApiModelProperty(name="instructorName", example="ssafy")
         String instructorName;
-        @ApiModelProperty(name="isWish", example="false")
-        Boolean isWish;
+
         @ApiModelProperty(name="inJoin", example="false")
         Boolean isJoin;
+        @ApiModelProperty(name="isWish", example="false")
+        Boolean isWish;
 
-        public static CourseRes of(Course course) {
+        public static CourseRes of(Course course, List<LectureDto.LectureListRes> lectureList, List<ReviewDto.ReviewListRes> reviewList, boolean isJoin, boolean isWish) {
             CourseRes res = new CourseRes();
 
             res.setCourseId(course.getCourseId());
             res.setCourseName(course.getCourseName());
             res.setCourseDescription(course.getCourseDescription());
             res.setCourseOpenDate(course.getCourseOpenDate());
+            res.setCourseCloseDate(course.getCourseCloseDate());
             res.setCourseCycle(course.getCourseCycle());
             res.setCourseThumbnail(course.getCourseThumbnail());
             res.setCourseCategory(course.getCourseCategory());
             res.setCourseLimitPeople(course.getCourseLimitPeople());
             res.setCourseFee(course.getCourseFee());
             res.setCourseIntroVideo(course.getCourseIntroVideo());
+
+            res.setCourseWishCount(course.getCourseWishCount());
+            res.setCourseReviewCount(course.getCourseReviewCount());
+            res.setCourseReviewRateAverage(course.getCourseReviewGrade());
+
+            res.setLectureList(lectureList);
+            res.setReviewList(reviewList);
+
             res.setInstructorName(course.getUser().getUserName());
-            res.setCourseCloseDate(course.getCourseCloseDate());
+
+            res.setIsJoin(isJoin);
+            res.setIsWish(isWish);
 
             return res;
         }

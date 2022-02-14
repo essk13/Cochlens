@@ -89,46 +89,9 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseDto.CourseListRes> getCourseList() {
         List<CourseDto.CourseListRes> result = new ArrayList<>();
         List<Course> list = courseRepository.findAll();
-        List<Wishlist> wish = wishlistRepository.findAll();
-        List<Review> reviewData = reviewRepository.findAll();
 
         for (Course course : list) {
-//            찜목록 개수
-            int wishCount = 0;
-            for (Wishlist wishlist : wish) {
-                if ( course == wishlist.getCourse()) {
-                    wishCount += 1;
-                }
-            }
-//            리뷰 평점 및 개수
-            int reviewCount = 0;
-            int reviewGradeSum = 0;
-            for (Review review : reviewData) {
-                if ( course == review.getCourse()) {
-                    reviewCount += 1;
-                    reviewGradeSum += review.getReviewGrade();
-                }
-            }
-            Double reviewRateAverage = 0.0;
-            if (reviewCount != 0){
-//                소수점 둘째자리까지 표시
-                reviewRateAverage = Math.round(Double.valueOf(reviewGradeSum / reviewCount) * 100) / 100.0;
-            }
-            CourseDto.CourseListRes courseRes = new CourseDto.CourseListRes();
-            courseRes.setCourseId(course.getCourseId());
-            courseRes.setCourseName(course.getCourseName());
-            courseRes.setCourseDescription(course.getCourseDescription());
-            courseRes.setCourseThumbnail(course.getCourseThumbnail());
-            courseRes.setCourseCategory(course.getCourseCategory());
-            courseRes.setInstructorName(course.getUser().getUserName());
-            courseRes.setCourseCycle(course.getCourseCycle());
-            courseRes.setCourseFee(course.getCourseFee());
-            courseRes.setCourseOpenDate(course.getCourseOpenDate());
-            courseRes.setCourseCloseDate(course.getCourseCloseDate());
-            courseRes.setCourseReviewCount(reviewCount);
-            courseRes.setCourseReviewRateAverage(reviewRateAverage);
-            courseRes.setWishCount(wishCount);
-
+            CourseDto.CourseListRes courseRes = CourseDto.CourseListRes.of(course);
             result.add(courseRes);
         }
         return result;
@@ -141,98 +104,97 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseDto.CourseRes getCourseByCourseId(Long courseId, String email) {
-        Course course = courseRepository.getOne(courseId);
-        User user = userService.getUserByEmail(email);
-        List<Wishlist> wishlist = wishlistRepository.findAll();
-        List<RegisterCourse> registerCourseList = registerCourseRepository.findAll();
+//        Course course = courseRepository.getOne(courseId);
+//        User user = userService.getUserByEmail(email);
+//        List<Wishlist> wishlist = wishlistRepository.findAll();
+//        List<RegisterCourse> registerCourseList = registerCourseRepository.findAll();
+//
+////        찜 사람 수
+//        int wishCount = 0;
+////        본인 찜 유무
+//        boolean isWish = false;
+//        for (Wishlist wishData : wishlist) {
+//            if(wishData.getCourse() == course){
+//                wishCount += 1;
+//                if(wishData.getUser() == user){
+//                    isWish = true;
+//                }
+//            }
+//        }
+//
+////        수강 사람 수
+//        int joinCount = 0;
+////        본인 수강 유무
+//        boolean isJoin = false;
+//
+//        for (RegisterCourse registerData : registerCourseList) {
+//            if(registerData.getCourse() == course){
+//                joinCount += 1;
+//                if(registerData.getUser() == user){
+//                    isJoin = true;
+//                }
+//            }
+//        }
+//
+//        List<Lecture> lectureList = new ArrayList<>();
+//        List<Review> reviewList = new ArrayList<>();
+//
+//        List<Lecture> lectureListData = lectureRepository.findAll();
+//        List<Review> reviewListData = reviewRepository.findAll();
+//
+//        for (Lecture lectureData : lectureListData) {
+//            if(lectureData.getCourse() == course){
+//                lectureList.add(lectureData);
+//            }
+//        }
+//
+//        int courseReviewCount = 0;
+//        int courseReviewGradeSum = 0;
+//
+//
+//        Double courseReviewRateAverage = 0.0;
+//
+//        for (Review reviewData : reviewListData) {
+//            if(reviewData.getCourse() == course){
+//                reviewList.add(reviewData);
+//                courseReviewCount += 1;
+//                courseReviewGradeSum += reviewData.getReviewGrade();
+//            }
+//        }
+//
+//        if (courseReviewCount != 0){
+////                소수점 둘째자리까지 표시
+//            courseReviewRateAverage = Math.round(Double.valueOf(courseReviewGradeSum / courseReviewCount) * 100) / 100.0;
+//        }
+//
+//        CourseDto.CourseRes courseRes = new CourseDto.CourseRes();
+//
+//        courseRes.setCourseId(course.getCourseId());
+//        courseRes.setCourseName(course.getCourseName());
+//        courseRes.setCourseDescription(course.getCourseDescription());
+//        courseRes.setCourseThumbnail(course.getCourseThumbnail());
+//        courseRes.setCourseCategory(course.getCourseCategory());
+//        courseRes.setInstructorName(course.getUser().getUserName());
+//        courseRes.setCourseCycle(course.getCourseCycle());
+//        courseRes.setCourseFee(course.getCourseFee());
+//        courseRes.setCourseOpenDate(course.getCourseOpenDate());
+//        courseRes.setCourseCloseDate(course.getCourseCloseDate());
+//        courseRes.setCourseCategory(course.getCourseCategory());
+//        courseRes.setCourseReviewCount(courseReviewCount);
+//        courseRes.setCourseReviewRateAverage(courseReviewRateAverage);
+//        courseRes.setWishCount(wishCount);
+//        courseRes.setJoinCount(joinCount);
+//        courseRes.setLectureList(lectureList);
+//        courseRes.setReviewList(reviewList);
+//        courseRes.setInstructorName(course.getUser().getUserName());
+//        courseRes.setIsWish(isWish);
+//        courseRes.setIsJoin(isJoin);
+//
+//        System.out.println(course.getUser().getUserId());
+//        System.out.println(course.getUser().getUserName());
+//        System.out.println(course.getUser().getEmail());
 
-//        찜 사람 수
-        int wishCount = 0;
-//        본인 찜 유무
-        boolean isWish = false;
-        for (Wishlist wishData : wishlist) {
-            if(wishData.getCourse() == course){
-                wishCount += 1;
-                if(wishData.getUser() == user){
-                    isWish = true;
-                }
-            }
-        }
-
-//        수강 사람 수
-        int joinCount = 0;
-//        본인 수강 유무
-        boolean isJoin = false;
-
-        for (RegisterCourse registerData : registerCourseList) {
-            if(registerData.getCourse() == course){
-                joinCount += 1;
-                if(registerData.getUser() == user){
-                    isJoin = true;
-                }
-            }
-        }
-
-        List<Lecture> lectureList = new ArrayList<>();
-        List<Review> reviewList = new ArrayList<>();
-
-        List<Lecture> lectureListData = lectureRepository.findAll();
-        List<Review> reviewListData = reviewRepository.findAll();
-
-        for (Lecture lectureData : lectureListData) {
-            if(lectureData.getCourse() == course){
-                lectureList.add(lectureData);
-            }
-        }
-
-        int courseReviewCount = 0;
-        int courseReviewGradeSum = 0;
-
-
-        Double courseReviewRateAverage = 0.0;
-
-        for (Review reviewData : reviewListData) {
-            if(reviewData.getCourse() == course){
-                reviewList.add(reviewData);
-                courseReviewCount += 1;
-                courseReviewGradeSum += reviewData.getReviewGrade();
-            }
-        }
-
-        if (courseReviewCount != 0){
-//                소수점 둘째자리까지 표시
-            courseReviewRateAverage = Math.round(Double.valueOf(courseReviewGradeSum / courseReviewCount) * 100) / 100.0;
-        }
-
-        CourseDto.CourseRes courseRes = new CourseDto.CourseRes();
-
-        courseRes.setCourseId(course.getCourseId());
-        courseRes.setCourseName(course.getCourseName());
-        courseRes.setCourseDescription(course.getCourseDescription());
-        courseRes.setCourseThumbnail(course.getCourseThumbnail());
-        courseRes.setCourseCategory(course.getCourseCategory());
-        courseRes.setInstructorName(course.getUser().getUserName());
-        courseRes.setCourseCycle(course.getCourseCycle());
-        courseRes.setCourseFee(course.getCourseFee());
-        courseRes.setCourseOpenDate(course.getCourseOpenDate());
-        courseRes.setCourseCloseDate(course.getCourseCloseDate());
-        courseRes.setCourseCategory(course.getCourseCategory());
-        courseRes.setCourseReviewCount(courseReviewCount);
-        courseRes.setCourseReviewRateAverage(courseReviewRateAverage);
-        courseRes.setWishCount(wishCount);
-        courseRes.setJoinCount(joinCount);
-        courseRes.setLectureList(lectureList);
-        courseRes.setReviewList(reviewList);
-        courseRes.setInstructorName(course.getUser().getUserName());
-        courseRes.setIsWish(isWish);
-        courseRes.setIsJoin(isJoin);
-
-        System.out.println(course.getUser().getUserId());
-        System.out.println(course.getUser().getUserName());
-        System.out.println(course.getUser().getEmail());
-
-        return courseRes;
-
+        return null;
     }
 
     @Override

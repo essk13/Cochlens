@@ -2,7 +2,6 @@ package com.ssafy.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.db.entity.Course;
-import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
@@ -10,13 +9,32 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 
 
 public class ReviewDto {
+    /*
+        Request
+     */
+
+    @Getter
+    @Setter
+    @ApiModel("ReviewInsertReq")
+    public static class ReviewInsertReq {
+        @ApiModelProperty(name="reviewContent", example="reviewContent")
+        String reviewContent;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+        @ApiModelProperty(name="reviewDate", example="2022/02/10")
+        Date reviewDate;
+        @ApiModelProperty(name="reviewGrade", example="5")
+        int reviewGrade;
+    }
+
+    /*
+        Response
+     */
+
     @Getter
     @Setter
     @ApiModel("ReviewListRes")
@@ -30,35 +48,19 @@ public class ReviewDto {
         @ApiModelProperty(name="reviewGrade", example="5")
         int reviewGrade;
         @ApiModelProperty(name="user", example="user object")
-        User user;
-        @ApiModelProperty(name="course", example="course object")
-        Course course;
+        UserDto.UserReviewRes userReviewRes;
 
         public static ReviewListRes of(Review review) {
             ReviewListRes res = new ReviewListRes();
 
             res.setReviewId(review.getReviewId());
-            res.setCourse(review.getCourse());
-            res.setUser(review.getUser());
+            res.setUserReviewRes(UserDto.UserReviewRes.of(review.getUser()));
             res.setReviewDate(review.getReviewDate());
             res.setReviewContent(review.getReviewContent());
             res.setReviewGrade(review.getReviewGrade());
 
             return res;
         }
-    }
-
-    @Getter
-    @Setter
-    @ApiModel("ReviewInsertReq")
-    public static class ReviewInsertReq {
-        @ApiModelProperty(name="reviewContent", example="reviewContent")
-        String reviewContent;
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
-        @ApiModelProperty(name="reviewDate", example="2022/02/10")
-        Date reviewDate;
-        @ApiModelProperty(name="reviewGrade", example="5")
-        int reviewGrade;
     }
 
     @Getter

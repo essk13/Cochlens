@@ -1,10 +1,8 @@
 package com.ssafy.api.service;
 
-import com.ssafy.api.dto.CourseDto;
 import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
-import com.ssafy.db.repository.CourseRepository;
 import com.ssafy.db.repository.LectureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,13 +15,12 @@ public class LectureServiceImpl implements LectureService{
     @Autowired
     LectureRepository lectureRepository;
 
-    @Autowired
-    CourseRepository courseRepository;
+    /*
+        create
+    */
 
     @Override
-    public Lecture createLecture(Long courseId, LectureDto.LectureInsertReq lectureInsertInfo) {
-        Course course = courseRepository.getOne(courseId);
-
+    public Lecture createLecture(Course course, LectureDto.LectureInsertReq lectureInsertInfo) {
         Lecture lecture = Lecture.builder()
                 .lectureName(lectureInsertInfo.getLectureName())
                 .lectureRuntime(lectureInsertInfo.getLectureRuntime())
@@ -39,26 +36,19 @@ public class LectureServiceImpl implements LectureService{
         return lectureRepository.save(lecture);
     }
 
-    @Override
-    public List<LectureDto.LectureRes> getLectureList(String email){
+    /*
+        read
+    */
 
-        List<LectureDto.LectureRes> result = new ArrayList<>();
-        List<Lecture> list = lectureRepository.findAll();
+    @Override
+    public List<LectureDto.LectureListRes> getLectureList(Course course){
+        List<Lecture> list = lectureRepository.findAllByAndCourse(course);
+        List<LectureDto.LectureListRes> result = new ArrayList<>();
 
         for (Lecture lecture : list) {
-            LectureDto.LectureRes lectureRes = new LectureDto.LectureRes();
+            LectureDto.LectureListRes lectureListRes = LectureDto.LectureListRes.of(lecture);
 
-            lectureRes.setLectureId(lecture.getLectureId());
-            lectureRes.setLectureDate(lecture.getLectureDate());
-            lectureRes.setLectureName(lecture.getLectureName());
-            lectureRes.setLectureVod(lecture.getLectureVod());
-            lectureRes.setLectureState(lecture.getLectureState());
-            lectureRes.setLectureRuntime(lecture.getLectureRuntime());
-            lectureRes.setLectureOpenTime(lecture.getLectureOpenTime());
-            lectureRes.setLectureCloseTime(lecture.getLectureCloseTime());
-            lectureRes.setLectureThumbnail(lecture.getLectureThumbnail());
-            lectureRes.setCourse(lecture.getCourse());
-            result.add(lectureRes);
+            result.add(lectureListRes);
         }
 
         return result;
@@ -68,6 +58,10 @@ public class LectureServiceImpl implements LectureService{
     public Lecture getLectureInfo(Long lectureId) {
         return lectureRepository.getOne(lectureId);
     }
+
+    /*
+        update
+    */
 
     @Override
     public Lecture updateLecture(Long lectureId, LectureDto.LectureInsertReq lectureInsertInfo) {

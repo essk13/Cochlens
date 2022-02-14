@@ -18,6 +18,10 @@ import java.util.List;
 
 public class UserDto {
     /**
+     * Request
+     */
+
+    /**
      * 유저 로그인 API ([POST] /api/v1/auth/login) 요청에 필요한 리퀘스트 바디 정의.
      */
     @Getter
@@ -50,11 +54,15 @@ public class UserDto {
     }
 
     /**
+     * Response
+     */
+
+    /**
      * 유저 로그인 API ([POST] /api/v1/auth) 요청에 대한 응답값 정의.
      */
     @Getter
     @Setter
-    @ApiModel("UserLoginPostResponse")
+    @ApiModel("UserLoginPostRes")
     public static class UserLoginPostRes extends BaseResponseBody {
         @ApiModelProperty(name="JWT 인증 토큰", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN...")
         String accessToken;
@@ -73,7 +81,7 @@ public class UserDto {
      */
     @Getter
     @Setter
-    @ApiModel("UserResponse")
+    @ApiModel("UserRes")
     public static class UserRes{
         @Id
         @Column(name = "user_id")
@@ -136,12 +144,13 @@ public class UserDto {
             return res;
         }
     }
+
     /**
      * 회원 본인 정보 조회 API ([PUT] /api/v1/users/me) 요청에 대한 응답값 정의.
      */
     @Getter
     @Setter
-    @ApiModel("UserPutResponse")
+    @ApiModel("UserPutRes")
     public static class UserPutRes {
         @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
         String email;
@@ -179,8 +188,33 @@ public class UserDto {
             res.setIsSTT(user.isSTT());
             res.setIsFaceFocusing(user.isFaceFocusing());
             res.setRole(user.getRole());
+
             res.setProfileImage(user.getProfileImage());
             res.setThumbnailImage(user.getThumbnailImage());
+            return res;
+        }
+    }
+
+
+    @Getter
+    @Setter
+    @ApiModel("UserReviewRes")
+    public static class UserReviewRes {
+        @ApiModelProperty(name="User Name", example="ssafy")
+        String userName;
+        @ApiModelProperty(name="User Nickname", example="hotsix")
+        String userNickname;
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        String profileImage;
+
+
+        public static UserReviewRes of(User user) {
+            UserReviewRes res = new UserReviewRes();
+
+            res.setUserName(user.getUserName());
+            res.setUserNickname(user.getUserNickname());
+            res.setProfileImage(user.getProfileImage());
+
             return res;
         }
     }
