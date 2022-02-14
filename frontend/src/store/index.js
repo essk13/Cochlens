@@ -6,7 +6,7 @@ import courseStore from '@/store/modules/courseStore'
 import instructorStore from '@/store/modules/instructorStore'
 import profileStore from '@/store/modules/profileStore'
 
-const BASE_URL = 'http://localhost:8080/api/v1'
+const BASE_URL = 'https://localhost:8443/api/v1/'
 
 export default createStore({
   state: {
@@ -15,18 +15,18 @@ export default createStore({
   getters: {
   },
   mutations: {
-    SET_USER( state ) {
-      state.user = 'loginUser'
+    SET_USER( state, data ) {
+      state.user = data
     },
     DEL_USER( state ) {
       state.user = null
     }
   },
   actions: {
-    userLogin({ commit }, data) {
+    userLogin({ commit, dispatch }, data) {
       axios({
         method: 'post',
-        url: `${BASE_URL}/auth/login`,
+        url: `${BASE_URL}auth/login`,
         data: data
       })
         .then(res => {
@@ -34,26 +34,28 @@ export default createStore({
           alert('환영합니다.')
           const token = res.data.accessToken
           localStorage.setItem('JWT', token)
-          commit('SET_USER')
+          dispatch('getUserData')
         })
         .catch(err => {
-          localStorage.setItem('JWT', 'test')
           commit('SET_USER')
           console.log(err)
           alert('Err')
           // test
           localStorage.setItem('JWT', 'test')
-          commit('SET_USER')
+          commit('SET_USER', 'TEST_USER')
         })
     },
+
     userLogout({ commit }) {
+      localStorage.removeItem('JWT')
       commit('DEL_USER')
     },
+
     userSignup({ state }, data) {
       console.log(state, data)
       axios({
         method: 'post',
-        url: `${BASE_URL}/users`,
+        url: `${BASE_URL}users`,
         data: data
       })
         .then(res => {
@@ -65,8 +67,22 @@ export default createStore({
           alert('Err')
         })
     },
-    set_user({ commit }) {
-      commit('SET_USER')
+
+    getUserData({ commit }) {
+      axios({
+        method: 'get',
+        url: `${BASE_URL}users/me`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        }
+      })
+        .then(res => {
+          commit('SET_USER', res.data)
+        })
+        .catch(err => {
+          console.log(err)
+          alert('err')
+        })
     }
   },
   modules: {

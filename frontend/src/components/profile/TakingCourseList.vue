@@ -1,6 +1,6 @@
 <template>
   <p class="profile-menu-title">수강 중인 강좌</p>
-  <div class="row">
+  <div v-if="state.takingCourse" class="row">
     <div
       v-for="course in state.takingCourse"
       :key="course"
@@ -9,16 +9,19 @@
       </div>
     </div>
   </div>
+  <div v-else>수강 중인 강좌가 없습니다.</div>
 </template>
 <script>
 import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
 
 export default {
   name: 'TakingCourseList',
 
   setup () {
+    const store = useStore()
     const state = reactive({
-      takingCourse: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+      takingCourse: store.state.profileStore.takingList
     })
     return {
       state
