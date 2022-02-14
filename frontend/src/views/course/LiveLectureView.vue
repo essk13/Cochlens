@@ -71,6 +71,7 @@
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
+import { onMounted } from '@vue/runtime-core'
 // import model_json from '@/assets/my_model/model.json'
 // import metadata_json from '@/assets/my_model/metadata.json'
 
