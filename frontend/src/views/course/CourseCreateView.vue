@@ -4,7 +4,7 @@
     <div class="profile-roof-cover"></div>
     <div class="profile-img text-white"></div>
     <p class="course-detail-title">{{ state.title }}</p>
-    <p class="course-detail-instructor">강사 : 강태훈</p>
+    <p class="course-detail-instructor">강사 : {{ state.instructorName }}</p>
   </div>
 
   <div class="row course-detail-upper-area">
@@ -67,12 +67,18 @@
           Field hint
         </template>
       </q-file>
+
+      <div style="width: 100%; text-align: right;">
+        <q-btn @click="createCourse" bg-color="blue-1" label="개설" />
+      </div>
     </div>
     <div class="col-1"></div>
+
     <div class="col-3">
       <q-card class="reservation-card q-mb-xl">
         <q-card-section class="bg-purple">
-          <q-date v-model="date" />
+          <p>강좌 진행 기간</p>
+          <q-date v-model="state.date" range />
           <q-input outlined dense v-model="text" label="수강료" bg-color="white" class="q-mt-lg" />
           <q-input outlined dense v-model="text" label="제한 인원" bg-color="white" class="q-mt-lg" />
           <q-input outlined dense v-model="text" label="강의 주기" bg-color="white" class="q-mt-lg" />
@@ -82,18 +88,23 @@
   </div>
 </template>
 <script>
-import { reactive, ref } from "vue"
+import { reactive } from "vue"
+import { useStore } from 'vuex'
+
 export default {
   name: 'CourseCreate',
 
   setup () {
+    const store = useStore()
     const state = reactive({
-      title: '강쉡의 요리교실',
-      subject: '요리',
-      description: '강태훈 강사님의 신나는 요리교실!',
+      instructorName: store.state.user.userName,
+      title: '강좌 타이틀을 입력하세요.',
+      subject: '',
+      description: '',
+      date: {from: '', to: ''}
     })
     return {
-      state, model: ref(null), date: ref('2022/02/10')
+      state,
     }
   }
 }

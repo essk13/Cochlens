@@ -72,6 +72,7 @@ import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
 import { onMounted } from '@vue/runtime-core'
+import { useRoute } from 'vue-router'
 // import model_json from '@/assets/my_model/model.json'
 // import metadata_json from '@/assets/my_model/metadata.json'
 
@@ -82,7 +83,7 @@ export default {
 
   setup() {
     const store = useStore()
-    // const URL = "../../asstes/my_model/"
+    const route = useRoute()
     const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
     let webcam, model, maxPredictions
     const state = reactive({
@@ -99,7 +100,7 @@ export default {
     // Function
     function leaveRoom() {
       store.dispatch('courseStore/leaveLecture')
-      router.push({ name: 'course' })
+      router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
     }
 
     async function init() {

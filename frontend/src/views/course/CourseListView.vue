@@ -75,7 +75,6 @@ export default {
     CourseItem,
   },
   setup() {
-
     const state = reactive({
       searchText: '',
       searchDense: true,
@@ -83,7 +82,7 @@ export default {
     })
 
     return {
-      state,
+      state, 
     }
   }
 }

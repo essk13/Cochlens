@@ -1,6 +1,6 @@
 <template>
   <!-- 강좌 정보 -->
-  <div class="course-item column justify-end shadow-3">
+  <div @click="clickCourse" class="course-item column justify-end shadow-3">
     <!-- 강좌 설명 -->
     <div class="course-info row">
       <div class="col-8 q-pl-sm q-pt-xs">
@@ -17,6 +17,8 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
+import { useRouter } from 'vue-router'
+
 
 export default {
   name: 'CourseItem',
@@ -24,11 +26,17 @@ export default {
   },
 
   setup() {
+    const router = useRouter()
     const state = reactive({
+      id: '001'
     })
 
+    function clickCourse(){
+      router.push({ name: 'courseDetail', params: { courseId: state.id }})
+    }
+
     return {
-      state
+      state, clickCourse
     }
   }
 }
