@@ -5,12 +5,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.kurento.client.Continuation;
-import org.kurento.client.EventListener;
-import org.kurento.client.IceCandidate;
-import org.kurento.client.IceCandidateFoundEvent;
-import org.kurento.client.MediaPipeline;
-import org.kurento.client.WebRtcEndpoint;
+import org.kurento.client.*;
 import org.kurento.jsonrpc.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +21,26 @@ public class UserSession implements Closeable {
     private final String name;
     private final WebSocketSession session;
 
-    private final MediaPipeline pipeline;
+    private MediaPipeline pipeline;
+//    private final MediaPipeline pipeline;
 
     private final String roomName;
-    private final WebRtcEndpoint outgoingMedia;
+    private WebRtcEndpoint outgoingMedia;
+//    private final WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
+//    추가
+    private RecorderEndpoint recorderEndpoint;
 
+    public void setRecorderEndpoint(RecorderEndpoint recorderEndpoint) {
+        this.recorderEndpoint = recorderEndpoint;
+    }
+
+    public void setMediaPipeline(MediaPipeline mediaPipeline) {
+        this.pipeline = mediaPipeline;
+    }
+    public void setWebRtcEndpoint(WebRtcEndpoint webRtcEndpoint) {
+        this.outgoingMedia = webRtcEndpoint;
+    }
     public UserSession(final String name, String roomName, final WebSocketSession session,
                        MediaPipeline pipeline) {
 
