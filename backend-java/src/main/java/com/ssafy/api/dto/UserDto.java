@@ -45,6 +45,8 @@ public class UserDto {
         String nickname;
         @ApiModelProperty(name="유저 Password", example="your_password")
         String password;
+        @ApiModelProperty(name="유저 Role", example="INSTRUCTOR")
+        Role role;
     }
 
     /**

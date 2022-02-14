@@ -13,17 +13,16 @@ import java.util.Map;
  *	유저 관련 비즈니스 로직 처리를 위한 서비스 인터페이스 정의.
  */
 public interface UserService {
+	/* create */
 	User createUser(UserDto.UserRegisterPostReq userRegisterInfo);
+	/* read */
 	User getUserByEmail(String email);
-	//	User update(String email, UserDto.UserRegisterPutReq userRegisterPutReq);
-	User update(String email, UserDto.UserPutRes userPutRes);
-	void delete(String email);
-
 	List<UserDto.UserRes> getInstructorList();
-
-
 	List<WishlistDto.WishlistRes> getWishlist(String email);
-
 	List<UserDto.UserRes> getBestInstructorList();
 	UserDto.UserRes getInstructorInfo(Long userId);
+	/* update */
+	User update(String email, UserDto.UserPutRes userPutRes);
+	/* delete */
+	void delete(String email);
 }

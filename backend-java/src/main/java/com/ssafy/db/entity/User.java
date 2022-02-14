@@ -53,6 +53,7 @@ public class User {
     @Builder
     public User(String email, String password, String userName, String profileImage, Role role) {
         this.email = email;
+        this.password = password;
         this.userName = userName;
         this.profileImage = profileImage;
         this.role = role;

@@ -38,13 +38,11 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     WishlistRepository wishlistRepository;
 
-    @Autowired
-    private JPAQueryFactory jpaQueryFactory;
-
+    /*
+        create
+     */
     @Override
     public Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo) {
-
-
         Course course = Course.builder()
                 .courseName(courseInsertInfo.getCourseName())
                 .courseDescription(courseInsertInfo.getCourseDescription())
@@ -60,8 +58,32 @@ public class CourseServiceImpl implements CourseService {
                 .build();
 
         return courseRepository.save(course);
-
     }
+
+    @Override
+    public void registerCourse(User user, Course course) {
+        RegisterCourse registerCourse = RegisterCourse.builder()
+                .user(user)
+                .course(course)
+                .build();
+        registerCourseRepository.save(registerCourse);
+    }
+
+    @Override
+    public void registerWishlist(User user, Course course) {
+        Wishlist wishlist = Wishlist.builder()
+                .user(user)
+                .course(course)
+                .build();
+        course.increaseWishCount();
+
+        wishlistRepository.save(wishlist);
+        courseRepository.save(course);
+    }
+
+    /*
+        read
+     */
 
     @Override
     public List<CourseDto.CourseListRes> getCourseList() {
@@ -70,23 +92,17 @@ public class CourseServiceImpl implements CourseService {
         List<Wishlist> wish = wishlistRepository.findAll();
         List<Review> reviewData = reviewRepository.findAll();
 
-
         for (Course course : list) {
-
 //            찜목록 개수
             int wishCount = 0;
-
             for (Wishlist wishlist : wish) {
                 if ( course == wishlist.getCourse()) {
                     wishCount += 1;
                 }
             }
-
 //            리뷰 평점 및 개수
             int reviewCount = 0;
-
             int reviewGradeSum = 0;
-
             for (Review review : reviewData) {
                 if ( course == review.getCourse()) {
                     reviewCount += 1;
@@ -98,9 +114,7 @@ public class CourseServiceImpl implements CourseService {
 //                소수점 둘째자리까지 표시
                 reviewRateAverage = Math.round(Double.valueOf(reviewGradeSum / reviewCount) * 100) / 100.0;
             }
-
             CourseDto.CourseListRes courseRes = new CourseDto.CourseListRes();
-
             courseRes.setCourseId(course.getCourseId());
             courseRes.setCourseName(course.getCourseName());
             courseRes.setCourseDescription(course.getCourseDescription());
@@ -118,6 +132,11 @@ public class CourseServiceImpl implements CourseService {
             result.add(courseRes);
         }
         return result;
+    }
+
+    @Override
+    public Course getCourse(Long courseId) {
+        return courseRepository.findById(courseId).get();
     }
 
     @Override
@@ -216,104 +235,63 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
-
-
     @Override
-    public Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo){
-        Course course = courseRepository.getOne(courseId);
-        Course newCourse = Course.builder()
-                .courseId(course.getCourseId())
-                .courseName(courseInsertInfo.getCourseName())
-                .courseDescription(courseInsertInfo.getCourseDescription())
-                .courseOpenDate(courseInsertInfo.getCourseOpenDate())
-                .courseCloseDate(courseInsertInfo.getCourseCloseDate())
-                .courseCycle(courseInsertInfo.getCourseCycle())
-                .courseThumbnail(courseInsertInfo.getCourseThumbnail())
-                .courseCategory(courseInsertInfo.getCourseCategory())
-                .courseLimitPeople(courseInsertInfo.getCourseLimitPeople())
-                .courseFee(courseInsertInfo.getCourseFee())
-                .courseIntroVideo(courseInsertInfo.getCourseIntroVideo())
-                .user(course.getUser())
-                .build();
+    public List<CourseDto.CourseListRes> getSearchCourseList(String courseName){
+        List<Course> courseList = courseRepository.findAll();
+        List<Wishlist> wish = wishlistRepository.findAll();
+        List<Review> reviewData = reviewRepository.findAll();
 
+        List<CourseDto.CourseListRes> result = new ArrayList<>();
 
-        return courseRepository.save(newCourse);
-    }
+        for (Course courseData : courseList) {
+            if(courseData.getCourseName().contains(courseName)){
 
-    @Override
-    public void registerCourse(Long userId, Long courseId) {
-        User user = userRepository.getOne(userId);
-        Course course = courseRepository.getOne(courseId);
-        RegisterCourse registerCourse = RegisterCourse.builder()
-                .user(user)
-                .course(course)
-                .build();
-        registerCourseRepository.save(registerCourse);
+                //            찜목록 개수
+                int wishCount = 0;
 
-        //이 강좌 수강인원
-//        List<Map<String, Object>> result = new ArrayList<>();
-//        registerCourseRepository.findAll().forEach(registerCourseList -> {
-//            Map<String, Object> obj = new HashMap<>();
-//            Course courseCheck = registerCourseList.getCourse();
-//            if (courseCheck == course){
-//                obj.put("courseId", registerCourseList.getRegisterId());
-//                result.add(obj);
-//            }
-//        });
-//        Integer joinCount = result.size();
-    }
+                for (Wishlist wishlist : wish) {
+                    if ( courseData == wishlist.getCourse()) {
+                        wishCount += 1;
+                    }
+                }
 
-    @Override
-    public void deregisterCourse(Long userId, Long courseId) {
-        User user = userRepository.getOne(userId);
-        Course course = courseRepository.getOne(courseId);
+//            리뷰 평점 및 개수
+                int reviewCount = 0;
 
-        List<RegisterCourse> list = registerCourseRepository.findAll();
+                int reviewGradeSum = 0;
 
-        for (RegisterCourse registerCourse : list) {
-            if (user == registerCourse.getUser() && course == registerCourse.getCourse()){
-                registerCourseRepository.delete(registerCourse);
-                break;
+                for (Review review : reviewData) {
+                    if ( courseData == review.getCourse()) {
+                        reviewCount += 1;
+                        reviewGradeSum += review.getReviewGrade();
+                    }
+                }
+                Double reviewRateAverage = 0.0;
+                if (reviewCount != 0){
+//                소수점 둘째자리까지 표시
+                    reviewRateAverage = Math.round(Double.valueOf(reviewGradeSum / reviewCount) * 100) / 100.0;
+                }
+
+                CourseDto.CourseListRes courseRes = new CourseDto.CourseListRes();
+
+                courseRes.setCourseId(courseData.getCourseId());
+                courseRes.setCourseName(courseData.getCourseName());
+                courseRes.setCourseDescription(courseData.getCourseDescription());
+                courseRes.setCourseThumbnail(courseData.getCourseThumbnail());
+                courseRes.setCourseCategory(courseData.getCourseCategory());
+                courseRes.setInstructorName(courseData.getUser().getUserName());
+//                courseRes.setCourseCycle(courseData.getCourseCycle());
+                courseRes.setCourseFee(courseData.getCourseFee());
+                courseRes.setCourseOpenDate(courseData.getCourseOpenDate());
+                courseRes.setCourseCloseDate(courseData.getCourseCloseDate());
+                courseRes.setCourseReviewCount(reviewCount);
+                courseRes.setCourseReviewRateAverage(reviewRateAverage);
+                courseRes.setWishCount(wishCount);
+
+                result.add(courseRes);
             }
         }
-
-//        JPA썼음
-//        RegisterCourse registerCourse = jpaQueryFactory.select(qRegisterCourse).from(qRegisterCourse)
-//        .where(qRegisterCourse.user.eq(user)).where(qRegisterCourse.course.eq(course)).fetchOne();
-//        registerCourseRepository.delete(registerCourse);
-    }
-
-    @Override
-    public void registerWishlist(Long userId, Long courseId) {
-        User user = userRepository.getOne(userId);
-        Course course = courseRepository.getOne(courseId);
-
-        Wishlist wishlist = Wishlist.builder()
-                .user(user)
-                .course(course)
-                .build();
-
-        wishlistRepository.save(wishlist);
-    }
-
-    @Override
-    public void deregisterWishlist(Long userId, Long courseId) {
-        User user = userRepository.getOne(userId);
-        Course course = courseRepository.getOne(courseId);
-
-        List<Wishlist> list = wishlistRepository.findAll();
-
-        for (Wishlist wishlist : list) {
-            if (user == wishlist.getUser() && course == wishlist.getCourse()){
-                wishlistRepository.delete(wishlist);
-                break;
-            }
-        }
-
-//        JPA썼음
-//        Wishlist wishlist = jpaQueryFactory.select(qWishlist).from(qWishlist)
-//                .where(qWishlist.user.eq(user)).where(qWishlist.course.eq(course)).fetchOne();
-//        wishlistRepository.delete(wishlist);
+        return result;
     }
 
     @Override
@@ -448,63 +426,74 @@ public class CourseServiceImpl implements CourseService {
         return result;
     }
 
+    /*
+        update
+     */
+
     @Override
-    public List<CourseDto.CourseListRes> getSearchCourseList(String courseName){
-        List<Course> courseList = courseRepository.findAll();
-        List<Wishlist> wish = wishlistRepository.findAll();
-        List<Review> reviewData = reviewRepository.findAll();
+    public Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo){
+        Course course = courseRepository.getOne(courseId);
+        Course newCourse = Course.builder()
+                .courseId(course.getCourseId())
+                .courseName(courseInsertInfo.getCourseName())
+                .courseDescription(courseInsertInfo.getCourseDescription())
+                .courseOpenDate(courseInsertInfo.getCourseOpenDate())
+                .courseCloseDate(courseInsertInfo.getCourseCloseDate())
+                .courseCycle(courseInsertInfo.getCourseCycle())
+                .courseThumbnail(courseInsertInfo.getCourseThumbnail())
+                .courseCategory(courseInsertInfo.getCourseCategory())
+                .courseLimitPeople(courseInsertInfo.getCourseLimitPeople())
+                .courseFee(courseInsertInfo.getCourseFee())
+                .courseIntroVideo(courseInsertInfo.getCourseIntroVideo())
+                .user(course.getUser())
+                .build();
 
-        List<CourseDto.CourseListRes> result = new ArrayList<>();
 
-        for (Course courseData : courseList) {
-            if(courseData.getCourseName().contains(courseName)){
+        return courseRepository.save(newCourse);
+    }
 
-                //            찜목록 개수
-                int wishCount = 0;
+    /*
+        delete
+     */
 
-                for (Wishlist wishlist : wish) {
-                    if ( courseData == wishlist.getCourse()) {
-                        wishCount += 1;
-                    }
-                }
+    @Override
+    public void deregisterWishlist(Long userId, Long courseId) {
+        User user = userRepository.getOne(userId);
+        Course course = courseRepository.getOne(courseId);
 
-//            리뷰 평점 및 개수
-                int reviewCount = 0;
+        List<Wishlist> list = wishlistRepository.findAll();
 
-                int reviewGradeSum = 0;
-
-                for (Review review : reviewData) {
-                    if ( courseData == review.getCourse()) {
-                        reviewCount += 1;
-                        reviewGradeSum += review.getReviewGrade();
-                    }
-                }
-                Double reviewRateAverage = 0.0;
-                if (reviewCount != 0){
-//                소수점 둘째자리까지 표시
-                    reviewRateAverage = Math.round(Double.valueOf(reviewGradeSum / reviewCount) * 100) / 100.0;
-                }
-
-                CourseDto.CourseListRes courseRes = new CourseDto.CourseListRes();
-
-                courseRes.setCourseId(courseData.getCourseId());
-                courseRes.setCourseName(courseData.getCourseName());
-                courseRes.setCourseDescription(courseData.getCourseDescription());
-                courseRes.setCourseThumbnail(courseData.getCourseThumbnail());
-                courseRes.setCourseCategory(courseData.getCourseCategory());
-                courseRes.setInstructorName(courseData.getUser().getUserName());
-//                courseRes.setCourseCycle(courseData.getCourseCycle());
-                courseRes.setCourseFee(courseData.getCourseFee());
-                courseRes.setCourseOpenDate(courseData.getCourseOpenDate());
-                courseRes.setCourseCloseDate(courseData.getCourseCloseDate());
-                courseRes.setCourseReviewCount(reviewCount);
-                courseRes.setCourseReviewRateAverage(reviewRateAverage);
-                courseRes.setWishCount(wishCount);
-
-                result.add(courseRes);
+        for (Wishlist wishlist : list) {
+            if (user == wishlist.getUser() && course == wishlist.getCourse()){
+                wishlistRepository.delete(wishlist);
+                break;
             }
         }
-        return result;
+
+//        JPA썼음
+//        Wishlist wishlist = jpaQueryFactory.select(qWishlist).from(qWishlist)
+//                .where(qWishlist.user.eq(user)).where(qWishlist.course.eq(course)).fetchOne();
+//        wishlistRepository.delete(wishlist);
+    }
+
+    @Override
+    public void deregisterCourse(Long userId, Long courseId) {
+        User user = userRepository.getOne(userId);
+        Course course = courseRepository.getOne(courseId);
+
+        List<RegisterCourse> list = registerCourseRepository.findAll();
+
+        for (RegisterCourse registerCourse : list) {
+            if (user == registerCourse.getUser() && course == registerCourse.getCourse()){
+                registerCourseRepository.delete(registerCourse);
+                break;
+            }
+        }
+
+//        JPA썼음
+//        RegisterCourse registerCourse = jpaQueryFactory.select(qRegisterCourse).from(qRegisterCourse)
+//        .where(qRegisterCourse.user.eq(user)).where(qRegisterCourse.course.eq(course)).fetchOne();
+//        registerCourseRepository.delete(registerCourse);
     }
 
 }
