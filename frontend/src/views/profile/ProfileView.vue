@@ -8,13 +8,13 @@
 
   <div class="profile-component">
     <profile-main v-if="state.home"></profile-main>
-    <taking-course v-else-if="state.taking"></taking-course>
+    <taking-course-list v-else-if="state.taking"></taking-course-list>
     <wish-list v-else></wish-list>
   </div>
 </template>
 <script>
 import ProfileMain from "@/components/profile/ProfileMain"
-import TakingCourse from "@/components/profile/TakingCourse"
+import TakingCourseList from "@/components/profile/TakingCourseList"
 import WishList from "@/components/profile/WishList"
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
@@ -25,7 +25,7 @@ export default {
   name: 'ProfileView',
   components: {
     ProfileMain,
-    TakingCourse,
+    TakingCourseList,
     WishList,
   },
 

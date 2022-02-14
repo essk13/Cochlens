@@ -18,16 +18,34 @@
     </q-input>
   </div>
   <!-- 인기 강사 -->
-  <div class="top-instructor-block column">
+  <div class="top-instructor-block column shadow-2">
     <div class="col-auto text-bold q-pb-sm">인기강사 Top</div>
-    <div class="col top-instructor-list">
-      
+    <div class="col top-instructor-list row justify-between no-wrap">
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
     </div>
   </div>
   <!-- 강사 목록 -->
-  <div class="instructor-block">
-    <div class="instructor-list">
-
+  <div class="instructor-block column justify-around">
+    <div class="instructor-list col row justify-between no-wrap">
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
+    </div>
+    <div class="instructor-list col row justify-between no-wrap">
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
+    </div>
+    <div class="instructor-list col row justify-between no-wrap">
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
+      <instructor></instructor>
     </div>
   </div>
   <!-- pagination -->
@@ -45,10 +63,12 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
+import Instructor from '@/components/instructor/Instructor'
 
 export default {
   name: 'InstructorListView',
   components: {
+    Instructor,
   },
 
   setup() {
@@ -67,21 +87,21 @@ export default {
 
 <style scoped>
 .header {
-  height: 11vh;
+  height: 9vh;
 }
 
 .search-bar {
-  padding: 4vh 6vh;
+  padding: 2.5vh 10vh;
 }
 
 .top-instructor-block {
   background-color: rgb(187, 210, 255);
   height: 23vh;
-  padding: 3vh 6.5vh;
+  padding: 2vh 10vh 3vh 10vh;
 }
 
 .top-instructor-list {
-  background-color: lightgray;
+
 }
 
 .top-instructor {
@@ -89,16 +109,15 @@ export default {
 }
 
 .instructor-block {
-  height: 56vh;
-  padding: 3.5vh 6.5vh 0vh 6.5vh;
+  height: 60vh;
+  padding: 3.5vh 10vh 0vh 10vh;
 }
 
 .instructor-list {
-  background-color: lightgray;
   height: 100%;
 }
 
 .pagination-block {
-  height: 10vh;
+  height: 8vh;
 }
 </style>
