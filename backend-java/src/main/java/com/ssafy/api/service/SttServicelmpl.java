@@ -42,9 +42,7 @@ public class SttServicelmpl implements SttService{
                             .build();
             sttRepository.save(stt);
         }
-
         Stt stt = new Stt();
-
         return stt;
     };
 
