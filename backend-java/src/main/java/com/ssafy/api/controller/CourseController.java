@@ -41,6 +41,8 @@ public class CourseController {
                                                                     @RequestBody @ApiParam(value="강좌 생성 정보", required = true) CourseDto.CourseInsertReq courseInsertInfo) {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!" + userDetails);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@" + courseInsertInfo);
         courseService.createCourse(userDetails.getUser(), courseInsertInfo);
         return ResponseEntity.noContent().build();
     }
