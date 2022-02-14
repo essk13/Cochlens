@@ -1,5 +1,5 @@
 <template>
-  <div class="instructor-item">
+  <div @click="moveInstructorDetail" class="instructor-item">
     <div class="instructor-profile-img shadow-2">
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
     </div>
@@ -14,6 +14,7 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'InstructorItem',
@@ -21,11 +22,18 @@ export default {
   },
 
   setup() {
+    const router = useRouter()
     const state = reactive({
+      id: '001'
     })
 
+    function moveInstructorDetail() {
+      router.push({ name: 'instructorDetail', params: { instructorId: state.id }})
+    }
+
     return {
-      state
+      state,
+      moveInstructorDetail
     }
   }
 }

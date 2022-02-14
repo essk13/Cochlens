@@ -83,7 +83,7 @@ export default createStore({
           console.log(err)
           alert('err')
         })
-    }
+    },
   },
   modules: {
     courseStore: courseStore,

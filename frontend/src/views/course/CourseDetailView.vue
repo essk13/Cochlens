@@ -99,7 +99,7 @@
 <script>
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
-import router from '@/router'
+import { useRoute, useRouter } from 'vue-router'
 import CourseReview from '@/components/course/CourseReview'
 
 export default {
@@ -109,6 +109,8 @@ export default {
   },
   setup() {
     const store = useStore()
+    const router = useRouter()
+    const route = useRoute()
     const url = 'wss://' + location.host + '/groupcall'
     store.dispatch('courseStore/setWs', url)
 
@@ -119,7 +121,7 @@ export default {
 
     // Function
     function moveCourseReview() {
-      router.push({ name: 'courseReview' })
+      router.push({ name: 'courseReviewList', params: { courseId: route.params.courseId } })
     }
     
     function joinLeacture() {
@@ -129,7 +131,7 @@ export default {
         room : 'testroom',
       }
       store.dispatch('courseStore/register', message)
-      router.push({ name: 'live' })
+      router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
     }
 
     return {

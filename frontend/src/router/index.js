@@ -49,18 +49,18 @@ const routes = [
   },
 
   // 강좌
-  { // 강좌 상세 페이지
+  { // 강좌 목록
     path: '/course',
-    name: 'course',
-    component: CourseDetailView
-  },
-  { // 강좌 조회
-    path: '/courselist',
-    name: 'courselist',
+    name: 'courseList',
     component: CourseListView
   },
+  { // 강좌 상세 페이지
+    path: '/course/:courseId',
+    name: 'courseDetail',
+    component: CourseDetailView
+  },
   { // 강좌 리뷰
-    path: '/course/review',
+    path: '/course/:courseId/review',
     name: 'courseReviewList',
     component: CourseReviewListView
   },
@@ -70,36 +70,35 @@ const routes = [
     component: CourseCreateView
   },
   { // 라이브 강의실
-    path: '/live',
-    name: 'live',
+    path: '/course/:courseId/:lectureId',
+    name: 'liveLecture',
     component: LiveLectureView
-
   },
 
   // 강사
   { // 강사 조회(검색)
-    path: '/instructorlist',
-    name: 'instructorlist',
+    path: '/instructor',
+    name: 'instructorList',
     component: InstructorListView
   },
   { // 강사 프로필 페이지
-    path: '/instructor',
-    name: 'instructor',
+    path: '/instructor/:instructorId',
+    name: 'instructorDetail',
     component: InstructorDetailView
   },
   { // 강사 라이브 강좌 목록 페이지
-    path: '/instructorlive',
-    name: 'instructorlive',
+    path: '/instructor/:instructorId/live',
+    name: 'instructorLiveList',
     component: InstructorLiveListView
   },
   { // 강사 전체 강좌 목록 페이지
-    path: '/instructorcourse',
-    name: 'instructorcourse',
+    path: '/instructor/:instructorId/course',
+    name: 'instructorCourseList',
     component: InstructorCourseListView
   },
   { // 강사 리뷰 목록 페이지
-    path: '/instructorreview',
-    name: 'instructorreview',
+    path: '/instructor/:instructorId/review',
+    name: 'instructorReviewList',
     component: InstructorReviewListView
   },
 
