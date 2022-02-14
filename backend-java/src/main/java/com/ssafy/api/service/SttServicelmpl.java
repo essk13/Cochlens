@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.request.SttDto;
 import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.entity.Stt;
+import com.ssafy.db.repository.LectureRepository;
 import com.ssafy.db.repository.SttRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,18 @@ public class SttServicelmpl implements SttService{
     @Autowired
     SttRepository sttRepository;
 
+    @Autowired
+    LectureRepository lectureRepository;
 
     @Override
     public Stt createStt(Long lectureId, List<SttDto.SttInsertReq> sttInsert){
-        Lecture temp = new Lecture();
+        Lecture insertLecture = new Lecture();
+        List<Lecture> lectureList = lectureRepository.findAll();
+        for(Lecture lecture : lectureList) {
+            if (lectureId == lecture.getLectureId()) {
+                insertLecture = lecture;
+            }
+        }
         for(SttDto.SttInsertReq insertStt : sttInsert) {
             Stt stt = Stt.builder()
                             .sttOneId(insertStt.getId())
@@ -29,6 +38,7 @@ public class SttServicelmpl implements SttService{
                             .sttOffset(insertStt.getOffset())
                             .sttDuration(insertStt.getDuration())
                             .sttDisplayText(insertStt.getDisplayText())
+                            .lecture(insertLecture)
                             .build();
             sttRepository.save(stt);
         }
