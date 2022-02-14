@@ -1,5 +1,6 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -34,11 +35,30 @@ public class Course {
     String courseCategory;
     @Column(name = "course_limit_people", nullable = false)
     int courseLimitPeople;
-    @Column(name = "couse_fee", nullable = false)
+    @Column(name = "course_fee", nullable = false)
     int courseFee;
     @Column(name = "course_intro_video")
     String courseIntroVideo;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
+
+    @Builder
+    public Course(Long courseId, String courseName, String courseDescription, Date courseOpenDate, Date courseCloseDate,
+                  String courseCategory, int courseCycle, String courseThumbnail, String courseIntroVideo,
+                  int courseLimitPeople, int courseFee, User user){
+
+        this.courseId = courseId;
+        this.courseName = courseName;
+        this.courseCycle = courseCycle;
+        this.courseThumbnail = courseThumbnail;
+        this.courseIntroVideo = courseIntroVideo;
+        this.courseDescription = courseDescription;
+        this.courseCategory = courseCategory;
+        this.courseLimitPeople = courseLimitPeople;
+        this.courseFee = courseFee;
+        this.courseOpenDate = courseOpenDate;
+        this.courseCloseDate = courseCloseDate;
+        this.user = user;
+    }
 }

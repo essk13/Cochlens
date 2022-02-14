@@ -1,5 +1,6 @@
 package com.ssafy.db.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -29,4 +30,15 @@ public class Review {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     Course course;
+
+    @Builder
+    public Review(Long reviewId, Date reviewDate, String reviewContent, int reviewGrade, User user, Course course){
+
+        this.reviewId = reviewId;
+        this.reviewDate = reviewDate;
+        this.reviewContent = reviewContent;
+        this.reviewGrade = reviewGrade;
+        this.user = user;
+        this.course = course;
+    }
 }

@@ -38,8 +38,8 @@ public class User {
     boolean isSubtitle;
     @Column(name = "is_command")
     boolean isCommand;
-    @Column(name = "is_tts")
-    boolean isTTS;
+    @Column(name = "is_stt")
+    boolean isSTT;
     @Column(name = "is_face_focusing")
     boolean isFaceFocusing;
     @Enumerated(EnumType.STRING)
@@ -47,11 +47,13 @@ public class User {
     Role role;
     @Column(name = "profile_image")
     String profileImage;
+    @Column(name = "thumbnail_image")
+    String thumbnailImage;
 
     @Builder
-    public User(String userName, String email, String profileImage, Role role) {
-        this.userName = userName;
+    public User(String email, String password, String userName, String profileImage, Role role) {
         this.email = email;
+        this.userName = userName;
         this.profileImage = profileImage;
         this.role = role;
     }

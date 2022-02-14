@@ -1,4 +1,5 @@
 package com.ssafy.db.entity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,10 @@ public class Wishlist {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "course_id")
     Course course;
+
+    @Builder
+    public Wishlist(User user, Course course) {
+        this.user = user;
+        this.course = course;
+    }
 }
