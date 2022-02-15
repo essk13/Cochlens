@@ -20,10 +20,10 @@ public class Review {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "review_date", nullable = false)
     Date reviewDate;
+    @Column(name = "review_rate", nullable = false)
+    int reviewRate;
     @Column(name = "review_content", nullable = false)
     String reviewContent;
-    @Column(name = "review_grade", nullable = false)
-    int reviewGrade;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
@@ -32,12 +32,12 @@ public class Review {
     Course course;
 
     @Builder
-    public Review(Long reviewId, Date reviewDate, String reviewContent, int reviewGrade, User user, Course course){
+    public Review(Long reviewId, Date reviewDate, String reviewContent, int reviewRate, User user, Course course){
 
         this.reviewId = reviewId;
         this.reviewDate = reviewDate;
         this.reviewContent = reviewContent;
-        this.reviewGrade = reviewGrade;
+        this.reviewRate = reviewRate;
         this.user = user;
         this.course = course;
     }

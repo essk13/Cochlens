@@ -32,23 +32,22 @@ public class User {
     String userName;
     @Column(name = "user_nickname", nullable = false)
     String userNickname;
-    @Column(name = "user_description")
-    String userDescription;
-    @Column(name = "is_subtitle")
-    boolean isSubtitle;
-    @Column(name = "is_command")
-    boolean isCommand;
-    @Column(name = "is_stt")
-    boolean isSTT;
-    @Column(name = "is_face_focusing")
-    boolean isFaceFocusing;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    Role role;
     @Column(name = "profile_image")
     String profileImage;
     @Column(name = "thumbnail_image")
     String thumbnailImage;
+    @Column(name = "user_description")
+    String userDescription;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    Role role;
+
+    @Column(name = "is_subtitle")
+    boolean isSubtitle;
+    @Column(name = "is_command")
+    boolean isCommand;
+    @Column(name = "is_face_focusing")
+    boolean isFaceFocusing;
 
     @Builder
     public User(String email, String password, String userName, String profileImage, Role role) {

@@ -9,12 +9,32 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.List;
 
 public class UserDto {
     /**
      * Request
      */
+
+    /**
+     * 유저 회원가입 API ([POST] /api/v1/users) 요청에 필요한 리퀘스트 바디 정의.
+     */
+    @Getter
+    @Setter
+    @ApiModel("UserRegisterPostRequest")
+    public static class UserRegisterPostReq {
+        @ApiModelProperty(name="유저 email", example="ssafy@ssafy.com")
+        String email;
+        @ApiModelProperty(name="유저 Password", example="your_password")
+        String password;
+        @ApiModelProperty(name="이름", example="ssafy")
+        String userName;
+        @ApiModelProperty(name="닉네임", example="hotsix")
+        String userNickname;
+        @ApiModelProperty(name="유저 Role", example="INSTRUCTOR")
+        Role role;
+    }
 
     /**
      * 유저 로그인 API ([POST] /api/v1/auth/login) 요청에 필요한 리퀘스트 바디 정의.
@@ -29,23 +49,55 @@ public class UserDto {
         String password;
     }
 
-    /**
-     * 유저 회원가입 API ([POST] /api/v1/users) 요청에 필요한 리퀘스트 바디 정의.
-     */
     @Getter
     @Setter
-    @ApiModel("UserRegisterPostRequest")
-    public static class UserRegisterPostReq {
-        @ApiModelProperty(name="유저 email", example="ssafy@ssafy.com")
+    @ApiModel("UserPutRes")
+    public static class UserPutReq {
+        @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
         String email;
-        @ApiModelProperty(name="이름", example="ssafy")
-        String name;
-        @ApiModelProperty(name="닉네임", example="hotsix")
-        String nickname;
-        @ApiModelProperty(name="유저 Password", example="your_password")
-        String password;
-        @ApiModelProperty(name="유저 Role", example="INSTRUCTOR")
-        Role role;
+        @ApiModelProperty(name="User Name", example="ssafy")
+        String userName;
+        @ApiModelProperty(name="User Nickname", example="hotsix")
+        String userNickname;
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        String profileImage;
+        @ApiModelProperty(name="ThumbnailImage", example="notexisted")
+        String thumbnailImage;
+        @ApiModelProperty(name="User Description", example="notexisted")
+        String userDescription;
+
+        public static UserPutReq of(User user) {
+            UserPutReq res = new UserPutReq();
+            res.setEmail(user.getEmail());
+            res.setUserName(user.getUserName());
+            res.setUserNickname(user.getUserNickname());
+            res.setProfileImage(user.getProfileImage());
+            res.setThumbnailImage(user.getThumbnailImage());
+            res.setUserDescription(user.getUserDescription());
+
+            return res;
+        }
+    }
+
+    @Getter
+    @Setter
+    @ApiModel("UserAccessPutReq")
+    public static class UserAccessPutReq {
+        @ApiModelProperty(name="IsSubtitle", example="false")
+        Boolean isSubtitle;
+        @ApiModelProperty(name="IsCommand", example="false")
+        Boolean isCommand;
+        @ApiModelProperty(name="IsFaceFocusing", example="false")
+        Boolean isFaceFocusing;
+
+        public static UserAccessPutReq of(User user) {
+            UserAccessPutReq res = new UserAccessPutReq();
+            res.setIsSubtitle(user.isSubtitle());
+            res.setIsCommand(user.isCommand());
+            res.setIsFaceFocusing(user.isFaceFocusing());
+
+            return res;
+        }
     }
 
     /**
@@ -86,22 +138,16 @@ public class UserDto {
         String userName;
         @ApiModelProperty(name="User Nickname", example="hotsix")
         String userNickname;
-        @ApiModelProperty(name="User Description", example="notexisted")
-        String userDescription;
+        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        String profileImage;
         @ApiModelProperty(name="IsSubtitle", example="false")
         Boolean isSubtitle;
         @ApiModelProperty(name="IsCommand", example="false")
         Boolean isCommand;
-        @ApiModelProperty(name="IsSTT", example="false")
-        Boolean isSTT;
         @ApiModelProperty(name="IsFaceFocusing", example="false")
         Boolean isFaceFocusing;
         @ApiModelProperty(name="Role", example="User")
         Role role;
-        @ApiModelProperty(name="ProfileImage", example="notexisted")
-        String profileImage;
-        @ApiModelProperty(name="ThumbnailImage", example="notexisted")
-        String thumbnailImage;
 
         public static UserRes of(User user) {
             UserRes res = new UserRes();
@@ -109,14 +155,35 @@ public class UserDto {
             res.setEmail(user.getEmail());
             res.setUserName(user.getUserName());
             res.setUserNickname(user.getUserNickname());
-            res.setUserDescription(user.getUserDescription());
+            res.setProfileImage(user.getProfileImage());
             res.setIsSubtitle(user.isSubtitle());
             res.setIsCommand(user.isCommand());
-            res.setIsSTT(user.isSTT());
             res.setIsFaceFocusing(user.isFaceFocusing());
             res.setRole(user.getRole());
-            res.setProfileImage(user.getProfileImage());
-            res.setThumbnailImage(user.getThumbnailImage());
+
+            return res;
+        }
+    }
+
+    @Getter
+    @Setter
+    @ApiModel("UserProfileRes")
+    public static class UserProfileRes {
+        @ApiModelProperty(name="Thumbnail Image")
+        String thumbnailImage;
+        @ApiModelProperty(name="register course list")
+        List<CourseDto.CourseListRes> registerCourseList;
+        @ApiModelProperty(name="wish course list")
+        List<CourseDto.CourseListRes> wishCourseList;
+
+        public static UserProfileRes of(
+                String thumbnailImage,
+                List<CourseDto.CourseListRes> registerCourseList,
+                List<CourseDto.CourseListRes> wishCourseList) {
+            UserProfileRes res = new UserProfileRes();
+            res.setThumbnailImage(thumbnailImage);
+            res.setRegisterCourseList(registerCourseList);
+            res.setWishCourseList(wishCourseList);
 
             return res;
         }
@@ -220,53 +287,6 @@ public class UserDto {
         }
     }
 
-    @Getter
-    @Setter
-    @ApiModel("UserPutRes")
-    public static class UserPutRes {
-        @ApiModelProperty(name="User Email", example="ssafy@ssafy.com")
-        String email;
-        @ApiModelProperty(name="User Name", example="ssafy")
-        String userName;
-        @ApiModelProperty(name="User Nickname", example="hotsix")
-        String userNickname;
-        @ApiModelProperty(name="User Description", example="notexisted")
-        String userDescription;
-        @ApiModelProperty(name="IsSubtitle", example="false")
-        Boolean isSubtitle;
-        @ApiModelProperty(name="IsCommand", example="false")
-        Boolean isCommand;
-        @ApiModelProperty(name="IsSTT", example="false")
-        Boolean isSTT;
-        @ApiModelProperty(name="IsFaceFocusing", example="false")
-        Boolean isFaceFocusing;
-        @ApiModelProperty(name="Role", example="User")
-        Role role;
-        @ApiModelProperty(name="ProfileImage", example="notexisted")
-        String profileImage;
-        @ApiModelProperty(name="ThumbnailImage", example="notexisted")
-        String thumbnailImage;
-        @ApiModelProperty(name = "유저 Password", example = "your_password")
-        String password;
-
-        public static UserPutRes of(User user) {
-            UserPutRes res = new UserPutRes();
-            res.setEmail(user.getEmail());
-            res.setUserName(user.getUserName());
-            res.setUserNickname(user.getUserNickname());
-            res.setUserDescription(user.getUserDescription());
-            res.setIsSubtitle(user.isSubtitle());
-            res.setIsCommand(user.isCommand());
-            res.setIsSTT(user.isSTT());
-            res.setIsFaceFocusing(user.isFaceFocusing());
-            res.setRole(user.getRole());
-
-            res.setProfileImage(user.getProfileImage());
-            res.setThumbnailImage(user.getThumbnailImage());
-            return res;
-        }
-    }
-
 
     @Getter
     @Setter
@@ -274,16 +294,18 @@ public class UserDto {
     @AllArgsConstructor
     @ApiModel("UserReviewRes")
     public static class UserReviewRes {
-        @ApiModelProperty(name="User Name", example="ssafy")
+        @ApiModelProperty(name="User Id")
+        Long userId;
+        @ApiModelProperty(name="User Name")
         String userName;
-        @ApiModelProperty(name="User Nickname", example="hotsix")
+        @ApiModelProperty(name="User Nickname")
         String userNickname;
-        @ApiModelProperty(name="ProfileImage", example="notexisted")
+        @ApiModelProperty(name="ProfileImage")
         String profileImage;
 
         public static UserReviewRes of(User user) {
             UserReviewRes res = new UserReviewRes();
-
+            res.setUserId(user.getUserId());
             res.setUserName(user.getUserName());
             res.setUserNickname(user.getUserNickname());
             res.setProfileImage(user.getProfileImage());

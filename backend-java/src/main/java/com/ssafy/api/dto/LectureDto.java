@@ -11,6 +11,11 @@ import lombok.Setter;
 import java.util.Date;
 
 public class LectureDto {
+
+    /**
+     * Request
+     */
+
     @Getter
     @Setter
     @ApiModel("LectureInsertReq")
@@ -36,6 +41,10 @@ public class LectureDto {
         @ApiModelProperty(name="lectureCloseTime", example="12:10")
         Date lectureCloseTime;
     }
+
+    /**
+     * Response
+     */
 
     @Getter
     @Setter

@@ -1,15 +1,13 @@
 package com.ssafy.db.repository;
 
-import com.querydsl.core.Query;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.dto.UserDto;
-import com.ssafy.db.entity.QCourse;
 import com.ssafy.db.entity.QUser;
-import com.ssafy.db.entity.Role;
 import com.ssafy.db.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,26 +33,28 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     }
 
     @Override
-    public List<UserDto.UserInstructorRes> findInstructorList() {
+    public List<UserDto.UserInstructorRes> findInstructorList(Pageable pageable) {
         return jpaQueryFactory.select(Projections.constructor(UserDto.UserInstructorRes.class,
                         user.userId, user.email, user.userName, user.userNickname, user.profileImage,
                         course.courseId.count().as("courseCount"),
                         course.courseReviewCount.sum().as("courseReviewCount"),
-                        MathExpressions.round(course.courseReviewGrade.avg(), 1).as("courseReviewRateAverage")))
+                        MathExpressions.round(course.courseReviewRateAverage.avg(), 1).as("courseReviewRateAverage")))
                 .from(user)
                 .innerJoin(course)
                 .on(user.eq(course.user))
                 .groupBy(course.user)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
     }
 
     @Override
-    public List<UserDto.UserInstructorRes> findByBestInstructorList() {
+    public List<UserDto.UserInstructorRes> findInstructorListByBest() {
         return jpaQueryFactory.select(Projections.constructor(UserDto.UserInstructorRes.class,
                         user.userId, user.email, user.userName, user.userNickname, user.profileImage,
                         course.courseId.count().as("courseCount"),
                         course.courseReviewCount.sum().as("courseReviewCount"),
-                        MathExpressions.round(course.courseReviewGrade.avg(), 1).as("courseReviewRateAverage")))
+                        MathExpressions.round(course.courseReviewRateAverage.avg(), 1).as("courseReviewRateAverage")))
                 .from(user)
                 .innerJoin(course)
                 .on(user.eq(course.user))
@@ -63,4 +63,24 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .limit(5)
                 .fetch();
     }
+
+    @Override
+    public List<UserDto.UserInstructorRes> findInstructorListByUserNickname(String instructorName, Pageable pageable) {
+        return jpaQueryFactory.select(Projections.constructor(UserDto.UserInstructorRes.class,
+                        user.userId, user.email, user.userName, user.userNickname, user.profileImage,
+                        course.courseId.count().as("courseCount"),
+                        course.courseReviewCount.sum().as("courseReviewCount"),
+                        MathExpressions.round(course.courseReviewRateAverage.avg(), 1).as("courseReviewRateAverage")))
+                .from(user)
+                .innerJoin(course)
+                .on(user.eq(course.user))
+                .where(user.userNickname.contains(instructorName))
+                .groupBy(course.user)
+                .orderBy(course.courseId.count().desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .fetch();
+    }
+
+
 }
