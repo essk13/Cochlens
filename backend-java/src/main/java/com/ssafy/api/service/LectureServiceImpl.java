@@ -4,7 +4,6 @@ import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.repository.LectureRepository;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;

@@ -27,9 +27,6 @@ public class UserServiceImpl implements UserService {
 	CourseRepository courseRepository;
 
 	@Autowired
-	RegisterCourseRepository registerCourseRepository;
-
-	@Autowired
 	WishlistRepository wishlistRepository;
 
 	@Autowired

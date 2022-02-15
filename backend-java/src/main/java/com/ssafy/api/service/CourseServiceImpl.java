@@ -13,19 +13,10 @@ import java.util.*;
 public class CourseServiceImpl implements CourseService {
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
     CourseRepository courseRepository;
 
     @Autowired
-    LectureRepository lectureRepository;
-
-    @Autowired
     RegisterCourseRepository registerCourseRepository;
-
-    @Autowired
-    ReviewRepository reviewRepository;
 
     @Autowired
     WishlistRepository wishlistRepository;
