@@ -11,16 +11,23 @@ const profileStore = {
   getters: {
   },
   mutations: {
+    UPDATE_USER({ rootState }, data) {
+      rootState.user.userName = data.userName
+      rootState.user.userNickname = data.userNickname
+      rootState.user.profileImage = data.profileImage
+      rootState.user.thumbnailImage = data.thumbnailImage
+      rootState.user.userDescription = data.userDescription
+    },
     SET_WISHLIST({ state }, wishList) {
       state.wishList = wishList
     },
-
     SET_TAKINGLIST({ state }, takingList) {
       state.takingList = takingList
-    }
+    },
   },
 
   actions: {
+    // 찜 목록 조회
     getWishList({ commit }) {
       axios({
         method: 'get',
@@ -37,7 +44,7 @@ const profileStore = {
           console.log(err)
         })
     },
-
+    // 수강 목록 조회
     getTakingList({ commit }) {
       axios({
         method: 'get',
@@ -55,28 +62,49 @@ const profileStore = {
         })
     },
 
-    updateUser({ rootState }) {
-      const user = rootState.user
+    // 회원정보 수정
+    updateUser({ commit }, data) {
       axios({
         method: 'put',
         url: `${BASE_URL}users/me`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
+        data: data
+      })
+        .then((res) => {
+          console.log(res)
+          commit('UPDATE_USER', res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 회원 탈퇴
+    removeId() {
+      axios({
+        method: 'delete',
+        url: `${BASE_URL}users/me`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        }
+      })
+    },
+
+    // 접근성 설정 변경
+    changeOption({ rootState }) {
+      const user = rootState.user
+      axios({
+        method: 'put',
+        url: '',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
         data: {
-          email: user.email,
+          isSubtitle: user.isSubtitle,
           isCommand: user.isCommand,
           isFaceFocusing: user.isFaceFocusing,
-          isSTT: user.isSTT,
-          isSubtitle: user.isSubtitle,
-          // 임시
-          password: "asdfasdfasdf",
-          profileImage: user.profileImage,
-          role: user.role,
-          thumbnailImage: user.thumbnailImage,
-          userDescription: user.userDescription,
-          userName: user.userName,
-          userNickname: user.userNickname
         }
       })
         .then((res) => {
@@ -88,20 +116,16 @@ const profileStore = {
     },
 
     changeSubtitle({ rootState, dispatch }) {
-      console.log('change')
       rootState.user.isSubtitle = !rootState.user.isSubtitle
-      console.log(rootState.user.isSubtitle)
-      dispatch('updateUser')
+      dispatch('changeOption')
     },
-
     changeCommand({ rootState, dispatch }) {
       rootState.user.isCommand = !rootState.user.isCommand
-      dispatch('updateUser')
+      dispatch('changeOption')
     },
-
     changeFocusing({ rootState, dispatch }) {
       rootState.user.isFaceFocusing = !rootState.user.isFaceFocusing
-      dispatch('updateUser')
+      dispatch('changeOption')
     },
   },
 }

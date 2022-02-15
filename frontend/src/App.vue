@@ -98,6 +98,7 @@ export default {
           state.mainNav = true
         } else {
           state.mainNav = false
+          router.push({ name: 'login' })
         }
       }
     )
@@ -165,7 +166,10 @@ export default {
       router.push({ name: 'home' })
     }
 
+
     function clickProfile() {
+      store.dispatch('profileStore/getWishList')
+      store.dispatch('profileStore/getTakingList')
       state.subNav = true
       router.push({ name: 'profile' })
       state.subNavItems = [
@@ -186,7 +190,10 @@ export default {
       store.state.profileStore.component = 'wish'
     }
 
+
     function clickCourse() {
+      store.dispatch('courseStore/getBestCourseList')
+      store.dispatch('courseStore/getCourseList')
       state.subNav = true
       router.push({ name: 'courseList' })
       state.subNavItems = [
@@ -205,6 +212,7 @@ export default {
     function moveCourseCreate() {
       router.push({ name: 'courseCreate' })
     }
+
 
     function clickInstructor() {
       state.subNav = true

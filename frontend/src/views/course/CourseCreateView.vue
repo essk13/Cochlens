@@ -111,21 +111,24 @@ export default {
     })
 
     // Function
+    // 강좌 생성
     function clickCreate() {
       store.dispatch('courseStore/createCourse', {
-        courseCategory: state.category,
-        courseCloseDate: state.date.from,
-        courseCycle: state.cycle,
-        courseDescription: state.description,
-        courseFee: state.fee,
-        courseIntroVideo: null,
-        courseLimitPeople: state.limit,
         courseName: state.title,
+        courseDescription: state.description,
+        courseCategory: state.category,
+        courseThumbnail: state.thumbnail,
+        courseIntroVideo: null,
         courseOpenDate: state.date.to,
-        courseThumbnail: state.thumbnail
+        courseCloseDate: state.date.from,
+        courseFee: state.fee,
+        courseCycle: state.cycle,
+        courseLimitPeople: state.limit,
       })
-      router.push({ name: 'courseList' })
+      store.dispatch('courseStore/getCourseList')
+      setTimeout(()=> { router.push({ name: 'courseList' }) }, 300)
     }
+
     return {
       state,
       clickCreate

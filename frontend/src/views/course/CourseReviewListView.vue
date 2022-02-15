@@ -11,26 +11,11 @@
   <div class="course-detail-upper-area q-mx-xl q-pb-xl">
     <div class="course-review-title">강좌 리뷰</div>
     <q-list bordered class="course-review-list rounded-borders">
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
+      <course-review
+        v-for="(reviewItem, index) in state.reviewList"
+        :key="index"
+        :course-review="reviewItem"
+      ></course-review>
     </q-list>
   </div>
 </template>
@@ -38,6 +23,7 @@
 <script>
 import { reactive } from '@vue/reactivity'
 import CourseReview from '@/components/course/CourseReview'
+import { useStore } from 'vuex'
 
 export default {
   name: 'CourseReviewListView',
@@ -46,7 +32,9 @@ export default {
   },
 
   setup() {
+    const store = useStore()
     const state = reactive({
+      reviewList: store.state.courseStore.courseData.reviewList,
     })
 
     return {

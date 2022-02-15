@@ -53,14 +53,14 @@
     <div class="col-6 q-pr-md">
       <div class="row">
         <p class="profile-menu-title q-mr-sm">수강 중인 강좌</p>
-        <a href="">더보기</a>
+        <a @click="moveTakingCourse">더보기></a>
       </div>
       <div v-if="state.takingList" class="profile-home-row-menu">
         <taking-course-vue
           class="q-mb-md"
           v-for="(takingItem, index) in state.takingList"
           :key="index"
-          :wish-item="takingItem"
+          :taking-course-item="takingItem"
         >
         </taking-course-vue>
       </div>
@@ -72,14 +72,14 @@
     <div class="col-6 q-pl-md">
       <div class="row">
         <p class="profile-menu-title q-mr-sm">내가 찜한 강좌</p>
-        <a href="">더보기</a>
+        <a @click="moveWishList">더보기></a>
       </div>
       <div v-if="state.wishList" class="profile-home-row-menu">
         <taking-course-vue
           class="q-mb-md"
           v-for="(wishItem, index) in state.wishList"
           :key="index"
-          :wish-item="wishItem"
+          :taking-course-item="wishItem"
         >
         </taking-course-vue>
       </div>
@@ -110,17 +110,23 @@ export default {
     })
 
     // Function
+    // 접근성 설정 변경
     function clickSubtitle() {
-      console.log('sub')
       store.dispatch('profileStore/changeSubtitle')
     }
     function clickCommand() {
-      console.log('com')
       store.dispatch('profileStore/changeCommand')
     }
     function clickFocusing() {
-      console.log('face')
       store.dispatch('profileStore/changeFocusing')
+    }
+
+    // 컴포넌트 변경
+    function moveTakingCourse() {
+      store.state.profileStore.component = 'taking'
+    }
+    function moveWishList() {
+      store.state.profileStore.component = 'wish'
     }
 
     return {
@@ -128,6 +134,8 @@ export default {
       clickSubtitle,
       clickCommand,
       clickFocusing,
+      moveTakingCourse,
+      moveWishList,
     }
   }
 }
