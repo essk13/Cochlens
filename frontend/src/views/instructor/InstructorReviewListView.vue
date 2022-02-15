@@ -11,7 +11,7 @@
       <!-- <course-review
         v-for="courseReview in state.instructorReviewList"
         :key="courseReview.reviewId"
-        :courseReview="courseReview"
+        :course-review="courseReview"
       >
       </course-review> -->
       <course-review></course-review>
