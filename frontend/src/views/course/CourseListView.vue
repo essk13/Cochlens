@@ -22,35 +22,35 @@
   <div class="top-course-block column shadow-2">
     <div class="col-auto text-bold q-pb-sm">인기강좌 Top</div>
     <div class="col top-course-list row justify-between no-wrap">
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
+      <course-item
+        v-for="course in state.bestCourseList"
+        :key="course.courseId"
+        :course-item="course"
+      ></course-item>
     </div>
   </div>
   <!-- 강좌 목록 -->
   <div class="course-block column justify-around">
     <div class="course-list col row justify-between no-wrap">
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
+      <course-item
+        v-for="course in state.courseList.slice(0, 5)"
+        :key="course.courseId"
+        :course-item="course"
+      ></course-item>
     </div>
     <div class="course-list col row justify-between no-wrap">
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
+      <course-item
+        v-for="course in state.courseList.slice(5, 10)"
+        :key="course.courseId"
+        :course-item="course"
+      ></course-item>
     </div>
     <div class="course-list col row justify-between no-wrap">
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
+      <course-item
+        v-for="course in state.courseList.slice(10, 15)"
+        :key="course.courseId"
+        :course-item="course"
+      ></course-item>
     </div>
   </div>
   <!-- pagination -->
@@ -87,9 +87,6 @@ export default {
       bestCourseList : store.state.courseStore.bestCourseList,
     })
 
-    store.dispatch('courseStore/getBestCourseList')
-    store.dispatch('courseStore/getCourseList')
-
     // Watch
     watchEffect(() => {
       state.courseList = store.state.courseStore.courseList
@@ -98,8 +95,9 @@ export default {
       state.bestCourseList = store.state.courseStore.courseList
     })
 
+    // Function
+    // 강좌 검색
     function searchCourse() {
-      console.log(state.searchText)
       store.dispatch('courseStore/searchCourse', state.searchText)
     }
 
