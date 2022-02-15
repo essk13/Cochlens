@@ -3,6 +3,7 @@ package com.ssafy.api.controller;
 import com.ssafy.api.dto.ReviewDto;
 import com.ssafy.api.service.ReviewService;
 
+import com.ssafy.common.model.response.BaseResponseBody;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -42,8 +43,8 @@ public class ReviewController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<ReviewDto.ReviewRes> updateReview(@ApiParam(value="리뷰 id 정보", required = true) @PathVariable Long reviewId,
-                                                            @ApiParam(value="리뷰 수정 정보", required = true) @RequestBody ReviewDto.ReviewInsertReq reviewInsertInfo) {
+    public ResponseEntity<? extends BaseResponseBody> updateReview(@ApiParam(value="리뷰 id 정보", required = true) @PathVariable Long reviewId,
+                                                                   @ApiParam(value="리뷰 수정 정보", required = true) @RequestBody ReviewDto.ReviewInsertReq reviewInsertInfo) {
 
         reviewService.updateReview(reviewId, reviewInsertInfo);
         return ResponseEntity.ok().build();
@@ -53,9 +54,9 @@ public class ReviewController {
      * delete
     */
 
-    public ResponseEntity<?> delete(@ApiParam(value="리뷰 id 정보", required = true) @PathVariable Long reviewId) {
+    public ResponseEntity<? extends BaseResponseBody> delete(@ApiParam(value="리뷰 id 정보", required = true) @PathVariable Long reviewId) {
 
-        reviewService.delete(reviewId);
+        reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
     }
 

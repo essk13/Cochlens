@@ -88,7 +88,8 @@ public class LectureController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<? extends BaseResponseBody> openLecture() {
+    public ResponseEntity<? extends BaseResponseBody> openLecture(@ApiParam(value="강의 id 정보", required = true) @PathVariable Long lectureId) {
+        lectureService.openLecture(lectureId);
         return ResponseEntity.ok().build();
     }
 
@@ -100,17 +101,12 @@ public class LectureController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<? extends BaseResponseBody> closeLecture() {
+    public ResponseEntity<? extends BaseResponseBody> closeLecture(@ApiParam(value="강의 id 정보", required = true) @PathVariable Long lectureId) {
+        lectureService.closeLecture(lectureId);
         return ResponseEntity.ok().build();
     }
 
     /**
      * delete
     */
-
-//    @DeleteMapping("/{lectureId}")
-//    public void delete(@PathVariable Long lectureId){
-//        lectureRepository.deleteById(lectureId);
-//    }
-
 }

@@ -19,7 +19,20 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
     private JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CourseDto.CourseListRes> findByRegisterCourse(User user) {
+    public List<CourseDto.CourseListRes> findCourseListByBest() {
+        return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
+                        course.courseId, course.courseName, course.courseDescription, course.courseThumbnail,
+                        course.courseCategory, course.courseOpenDate, course.courseCloseDate,
+                        course.courseFee, course.user.userName.as("instructorName"),
+                        course.courseReviewCount, course.courseReviewGrade.as("courseReviewRateAverage"), course.courseWishCount))
+                .from(course)
+                .orderBy(course.courseWishCount.desc())
+                .limit(5)
+                .fetch();
+    }
+
+    @Override
+    public List<CourseDto.CourseListRes> findCourseListByRecent(User user) {
         return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
                         registerCourse.course.courseId, registerCourse.course.courseName, registerCourse.course.courseDescription,
                         registerCourse.course.courseThumbnail, registerCourse.course.courseCategory,
@@ -32,15 +45,14 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
     }
 
     @Override
-    public List<CourseDto.CourseListRes> findByBestCourse() {
+    public List<CourseDto.CourseListRes> findCourseListByCourseName(String courseName) {
         return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
                         course.courseId, course.courseName, course.courseDescription, course.courseThumbnail,
                         course.courseCategory, course.courseOpenDate, course.courseCloseDate,
                         course.courseFee, course.user.userName.as("instructorName"),
                         course.courseReviewCount, course.courseReviewGrade.as("courseReviewRateAverage"), course.courseWishCount))
                 .from(course)
-                .orderBy(course.courseWishCount.desc())
-                .limit(5)
+                .where(course.courseName.contains(courseName))
                 .fetch();
     }
 

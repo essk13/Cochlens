@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CourseCustomRepository {
-    public List<CourseDto.CourseListRes> findByRegisterCourse(User user);
-    public List<CourseDto.CourseListRes> findByBestCourse();
+    public List<CourseDto.CourseListRes> findCourseListByBest();
+    public List<CourseDto.CourseListRes> findCourseListByRecent(User user);
+    public List<CourseDto.CourseListRes> findCourseListByCourseName(String courseName);
     public Optional<CourseDto.CourseInstructorVO> findInstructorRate(User user);
     public List<CourseDto.CourseListRes> findAllByLiveList(User user);
     public List<CourseDto.CourseListRes> findAllByVodList(User user);

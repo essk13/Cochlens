@@ -4,6 +4,7 @@ import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.repository.LectureRepository;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ public class LectureServiceImpl implements LectureService{
     @Autowired
     LectureRepository lectureRepository;
 
-    /*
-        create
+    /**
+     * create
     */
 
     @Override
@@ -36,8 +37,8 @@ public class LectureServiceImpl implements LectureService{
         return lectureRepository.save(lecture);
     }
 
-    /*
-        read
+    /**
+     * read
     */
 
     @Override
@@ -56,16 +57,16 @@ public class LectureServiceImpl implements LectureService{
 
     @Override
     public Lecture getLectureInfo(Long lectureId) {
-        return lectureRepository.getOne(lectureId);
+        return lectureRepository.findById(lectureId).get();
     }
 
-    /*
-        update
+    /**
+     * update
     */
 
     @Override
     public Lecture updateLecture(Long lectureId, LectureDto.LectureInsertReq lectureInsertInfo) {
-        Lecture lecture = lectureRepository.getOne(lectureId);
+        Lecture lecture = lectureRepository.findById(lectureId).get();
 
         Lecture newLecture = Lecture.builder()
                 .lectureId(lecture.getLectureId())
@@ -83,17 +84,17 @@ public class LectureServiceImpl implements LectureService{
         return lectureRepository.save(newLecture);
     }
 
-//    @Override
-//    public List<Map<String, Object>> getLectureByCourseId(Long courseId) {
-//        Course course = courseService.getCourseByCourseId(courseId);
-//        List<Map<String, Object>> result = new ArrayList<>();
-//        lectureRepository.findAll().forEach(lectureList -> {
-//            Map<String, Object> obj = new HashMap<>();
-//            if (lectureList.getCourse() == course){
-//                obj.put("lectureId", lectureList.getLectureId());
-//                result.add(obj);
-//            }
-//        });
-//        return result;
-//    }
+    @Override
+    public void openLecture(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId).get();
+        lecture.setLectureState("open");
+        lectureRepository.save(lecture);
+    }
+
+    @Override
+    public void closeLecture(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId).get();
+        lecture.setLectureState("close");
+        lectureRepository.save(lecture);
+    }
 }

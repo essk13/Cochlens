@@ -14,6 +14,8 @@ public interface LectureService {
     Lecture getLectureInfo(Long courseId);
     /* update */
     Lecture updateLecture(Long lectureId, LectureDto.LectureInsertReq lectureInsertInfo);
+    void openLecture(Long lectureId);
+    void closeLecture(Long lectureId);
     /* delete */
 //    List<Map<String, Object>> getLectureByCourseId(Long courseId);
 }

@@ -111,71 +111,17 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseDto.CourseListRes> getBestCourseList() {
-        return courseRepository.findByBestCourse();
+        return courseRepository.findCourseListByBest();
     }
 
     @Override
     public List<CourseDto.CourseListRes> getRecentCourseList(User user) {
-        return courseRepository.findByRegisterCourse(user);
+        return courseRepository.findCourseListByRecent(user);
     }
 
     @Override
     public List<CourseDto.CourseListRes> getSearchCourseList(String courseName){
-        List<Course> courseList = courseRepository.findAll();
-        List<Wishlist> wish = wishlistRepository.findAll();
-        List<Review> reviewData = reviewRepository.findAll();
-
-        List<CourseDto.CourseListRes> result = new ArrayList<>();
-
-        for (Course courseData : courseList) {
-            if(courseData.getCourseName().contains(courseName)){
-
-                //            찜목록 개수
-                int wishCount = 0;
-
-                for (Wishlist wishlist : wish) {
-                    if ( courseData == wishlist.getCourse()) {
-                        wishCount += 1;
-                    }
-                }
-
-//            리뷰 평점 및 개수
-                int reviewCount = 0;
-
-                int reviewGradeSum = 0;
-
-                for (Review review : reviewData) {
-                    if ( courseData == review.getCourse()) {
-                        reviewCount += 1;
-                        reviewGradeSum += review.getReviewGrade();
-                    }
-                }
-                Double reviewRateAverage = 0.0;
-                if (reviewCount != 0){
-//                소수점 둘째자리까지 표시
-                    reviewRateAverage = Math.round(Double.valueOf(reviewGradeSum / reviewCount) * 100) / 100.0;
-                }
-
-                CourseDto.CourseListRes courseRes = new CourseDto.CourseListRes();
-
-                courseRes.setCourseId(courseData.getCourseId());
-                courseRes.setCourseName(courseData.getCourseName());
-                courseRes.setCourseDescription(courseData.getCourseDescription());
-                courseRes.setCourseThumbnail(courseData.getCourseThumbnail());
-                courseRes.setCourseCategory(courseData.getCourseCategory());
-                courseRes.setInstructorName(courseData.getUser().getUserName());
-//                courseRes.setCourseCycle(courseData.getCourseCycle());
-                courseRes.setCourseFee(courseData.getCourseFee());
-                courseRes.setCourseOpenDate(courseData.getCourseOpenDate());
-                courseRes.setCourseCloseDate(courseData.getCourseCloseDate());
-                courseRes.setCourseReviewCount(reviewCount);
-                courseRes.setCourseReviewRateAverage(reviewRateAverage);
-                courseRes.setCourseWishCount(wishCount);
-
-                result.add(courseRes);
-            }
-        }
-        return result;
+        return courseRepository.findCourseListByCourseName(courseName);
     }
 
     /**

@@ -20,5 +20,5 @@ public interface ReviewService {
     Review updateReview(Long reviewId, ReviewDto.ReviewInsertReq reviewInsertInfo);
     void updateReviewGrade(Course course);
     /* delete */
-    void delete(Long reviewId);
+    void deleteReview(Long reviewId);
 }

@@ -5,7 +5,6 @@ import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.User;
 import com.ssafy.db.repository.ReviewRepository;
 import com.ssafy.db.repository.CourseRepository;
-import com.ssafy.db.repository.UserCustomRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ssafy.db.entity.Course;
@@ -16,16 +15,13 @@ import java.util.*;
 @Service("reviewService")
 public class ReviewServiceImpl implements ReviewService {
     @Autowired
-    UserCustomRepositoryImpl userRepositorySupport;
-
-    @Autowired
     ReviewRepository reviewRepository;
 
     @Autowired
     CourseRepository courseRepository;
 
-    /*
-        create
+    /**
+     * create
     */
 
     @Override
@@ -41,8 +37,8 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.save(review);
     }
 
-    /*
-        read
+    /**
+     * read
     */
 
     @Override
@@ -65,13 +61,13 @@ public class ReviewServiceImpl implements ReviewService {
         return result;
     }
 
-    /*
-        update
+    /**
+     * update
     */
 
     @Override
     public Review updateReview(Long reviewId, ReviewDto.ReviewInsertReq reviewInsertInfo){
-        Review review =  reviewRepository.getOne(reviewId);
+        Review review =  reviewRepository.findById(reviewId).get();
 
         Review newReview = Review.builder()
                 .reviewDate(reviewInsertInfo.getReviewDate())
@@ -93,14 +89,13 @@ public class ReviewServiceImpl implements ReviewService {
         courseRepository.flush();
     }
 
-    /*
-        delete
+    /**
+     * delete
     */
 
     @Override
-    public void delete(Long reviewId) {
-        Review review = reviewRepository.getOne(reviewId);
-
+    public void deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).get();
         reviewRepository.delete(review);
     }
 }
