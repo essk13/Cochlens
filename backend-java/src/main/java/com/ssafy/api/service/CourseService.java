@@ -8,17 +8,25 @@ import java.util.List;
 import java.util.Map;
 
 public interface CourseService {
+    /* create */
     Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo);
+    void registerCourse(User user, Course course);
+    void registerWishlist(User user, Course course);
+    /* read */
+    Course getCourse(Long courseId);
     List<CourseDto.CourseListRes> getCourseList();
-    CourseDto.CourseRes getCourseByCourseId(Long courseId, String email);
-    Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
-    void registerCourse(Long userId, Long courseId);
-    void deregisterCourse(Long userId, Long courseId);
-    void registerWishlist(Long userId, Long courseId);
-    void deregisterWishlist(Long userId, Long courseId);
-    List<CourseDto.CourseListRes> getBestCourseList();
+    CourseDto.CourseInstructorVO getInstructorRate(User user);
 
-    List<CourseDto.CourseListRes> getRecentCourseList(Long userId);
+    List<CourseDto.CourseListRes> getCourseLiveList(User user);
+    List<CourseDto.CourseListRes> getCourseVodList(User user);
+
+    List<CourseDto.CourseListRes> getBestCourseList();
+    List<CourseDto.CourseListRes> getRecentCourseList(User user);
     List<CourseDto.CourseListRes> getSearchCourseList(String courseName);
+    /* update */
+    Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
+    /* delete */
+    void deregisterCourse(User user, Course course);
+    void deregisterWishlist(User user, Course course);
 
 }

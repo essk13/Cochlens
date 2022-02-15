@@ -11,9 +11,14 @@ import java.util.List;
 import java.util.Map;
 
 public interface ReviewService {
-    Review createReview(User user, Long courseId, ReviewDto.ReviewInsertReq reviewInsertInfo);
+    /* create */
+    Review createReview(User user, Course course, ReviewDto.ReviewInsertReq reviewInsertInfo);
+    /* read */
+    List<ReviewDto.ReviewListRes> getReviewListByCourse(Course course);
+    List<ReviewDto.ReviewListRes> getReviewListByUser(User user);
+    /* update */
     Review updateReview(Long reviewId, ReviewDto.ReviewInsertReq reviewInsertInfo);
-    List<ReviewDto.ReviewListRes> getReviewListByCourseId(Long courseId);
-    List<ReviewDto.ReviewListRes> getReviewListByEmail(String email);
-    void delete(Long reviewId);
+    void updateReviewGrade(Course course);
+    /* delete */
+    void deleteReview(Long reviewId);
 }
