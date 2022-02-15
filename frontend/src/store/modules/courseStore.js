@@ -300,6 +300,7 @@ const courseStore = {
     getCourseDetail({ commit }) {
       axios({
         method: 'get',
+        // 임시(추 후 Parameters 수정)
         url: `${BASE_URL}course/2`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
@@ -314,10 +315,11 @@ const courseStore = {
         })
     },
 
-    // 강좌 신청
+    // 강좌 수강 신청
     registerCourse() { 
       axios({
         method: 'post',
+        // 임시(추 후 Parameter 수정)
         url: `${BASE_URL}course/2/register`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
@@ -331,10 +333,11 @@ const courseStore = {
         })
     },
 
-    // 강좌 신청 취소
+    // 강좌 수강 신청 취소
     deregisterCourse() {
       axios({
         method: 'delete',
+        // 임시(추 후 Parameter 수정)
         url: `${BASE_URL}course/2/deregister`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
@@ -352,6 +355,7 @@ const courseStore = {
     wishCourse() {
       axios({
         method: 'post',
+        // 임시(추 후 Parameter 수정)
         url: `${BASE_URL}course/2/wish`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
@@ -369,6 +373,7 @@ const courseStore = {
     unwishCourse() {
       axios({
         method: 'delete',
+        // 임시(추 후 Parameter 수정)
         url: `${BASE_URL}course/2/wish`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
