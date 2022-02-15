@@ -20,7 +20,7 @@
       <p>강좌 분야</p>
       <q-input
         outlined
-        v-model="state.subject"
+        v-model="state.category"
         dense
         label="강좌 분야"
         class="q-mb-lg"
@@ -36,7 +36,7 @@
       />
 
       <p>강좌 썸네일</p>
-      <q-file outlined dense bottom-slots v-model="model" label="강좌 썸네일" counter max-files="12" class="q-mb-lg">
+      <q-file outlined dense bottom-slots v-model="state.thumbnail" label="강좌 썸네일" counter max-files="12" class="q-mb-lg">
         <template v-slot:after>
           <q-icon name="attach_file" />
         </template>
@@ -69,7 +69,7 @@
       </q-file>
 
       <div style="width: 100%; text-align: right;">
-        <q-btn @click="createCourse" bg-color="blue-1" label="개설" />
+        <q-btn @click="clickCreate" bg-color="blue-1" label="개설" />
       </div>
     </div>
     <div class="col-1"></div>
@@ -79,9 +79,9 @@
         <q-card-section class="bg-purple">
           <p>강좌 진행 기간</p>
           <q-date v-model="state.date" range />
-          <q-input outlined dense v-model="text" label="수강료" bg-color="white" class="q-mt-lg" />
-          <q-input outlined dense v-model="text" label="제한 인원" bg-color="white" class="q-mt-lg" />
-          <q-input outlined dense v-model="text" label="강의 주기" bg-color="white" class="q-mt-lg" />
+          <q-input outlined dense v-model="state.fee" label="수강료" bg-color="white" class="q-mt-lg" />
+          <q-input outlined dense v-model="state.limit" label="제한 인원" bg-color="white" class="q-mt-lg" />
+          <q-input outlined dense v-model="state.cycle" label="강의 주기" bg-color="white" class="q-mt-lg" />
         </q-card-section>
       </q-card>
     </div>
@@ -90,21 +90,45 @@
 <script>
 import { reactive } from "vue"
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'CourseCreate',
 
   setup () {
     const store = useStore()
+    const router = useRouter()
     const state = reactive({
       instructorName: store.state.user.userName,
       title: '강좌 타이틀을 입력하세요.',
-      subject: '',
+      category: '',
       description: '',
-      date: {from: '', to: ''}
+      date: {from: '', to: ''},
+      limit: 30,
+      fee: 10000,
+      cycle: 7,
+      thumbnail: null,
     })
+
+    // Function
+    function clickCreate() {
+      store.dispatch('courseStore/createCourse', {
+        courseCategory: state.category,
+        courseCloseDate: state.date.from,
+        courseCycle: state.cycle,
+        courseDescription: state.description,
+        courseFee: state.fee,
+        courseIntroVideo: null,
+        courseLimitPeople: state.limit,
+        courseName: state.title,
+        courseOpenDate: state.date.to,
+        courseThumbnail: state.thumbnail
+      })
+      router.push({ name: 'courseList' })
+    }
     return {
       state,
+      clickCreate
     }
   }
 }
