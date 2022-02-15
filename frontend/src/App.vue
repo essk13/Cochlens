@@ -98,6 +98,7 @@ export default {
           state.mainNav = true
         } else {
           state.mainNav = false
+          router.push({ name: 'login' })
         }
       }
     )

@@ -75,6 +75,7 @@ export default {
     // 회원 탈퇴
     function removeId() {
       store.dispatch('removeId')
+      store.dispatch('userLogout')
     }
 
     return {
