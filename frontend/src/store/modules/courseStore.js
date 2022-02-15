@@ -1,5 +1,8 @@
 import Participant from './js/participant.js'
 import kurentoUtils from 'kurento-utils'
+import axios from 'axios'
+
+const BASE_URL = 'https://localhost:8443/api/v1/'
 
 const courseStore = {
   namespaced: true,
@@ -8,6 +11,9 @@ const courseStore = {
     participants: {},
     name: '',
     room: '',
+    courseList: [],
+    bestCourseList: [],
+    courseData: null,
   },
 
   getters: {
@@ -32,6 +38,18 @@ const courseStore = {
 
     DISPOSE_PARTICIPANT(state, name) {
       delete state.participants[name]
+    },
+    
+    SET_COURSE_LIST(state, list) {
+      state.courseList = list
+    },
+
+    SET_BEST_COURSE_LIST(state, list) {
+      state.bestCourseList = list
+    },
+
+    SET_COURSE_DATA(state, data) {
+      state.courseData = data
     }
   },
 
@@ -203,6 +221,166 @@ const courseStore = {
     disposeParticipant({ commit }, participantName) {
       commit('DISPOSE_PARTICIPANT', participantName);
     },
+
+
+    // 강좌 생성
+    createCourse({ commit }, data) {
+      axios({
+        method: 'post',
+        url: `${BASE_URL}course`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+        data: data,
+      })
+        .then((res) => {
+          console.log(res)
+          commit('')
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 목록 조회
+    getCourseList({ commit }) {
+      axios({
+        method: 'get',
+        url: `${BASE_URL}course`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res.data)
+          commit('SET_COURSE_LIST', res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 베스트 강좌 조회
+    getBestCourseList({ commit }) {
+      axios({
+        method: 'get',
+        url: `${BASE_URL}course/best`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res.data)
+          commit('SET_BEST_COURSE_LIST', res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 검색
+    searchCourse({ commit }, text) {
+      axios({
+        method: 'get',
+        url: `${BASE_URL}course/search?courseName=${text}`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res.data)
+          commit('SET_COURSE_LIST', res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 상세 정보
+    getCourseDetail({ commit }) {
+      axios({
+        method: 'get',
+        url: `${BASE_URL}course/2`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res)
+          commit('SET_COURSE_DATA', res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 신청
+    registerCourse() { 
+      axios({
+        method: 'post',
+        url: `${BASE_URL}course/2/register`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 신청 취소
+    deregisterCourse() {
+      axios({
+        method: 'delete',
+        url: `${BASE_URL}course/2/deregister`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 찜
+    wishCourse() {
+      axios({
+        method: 'post',
+        url: `${BASE_URL}course/2/wish`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강좌 찜 취소
+    unwishCourse() {
+      axios({
+        method: 'delete',
+        url: `${BASE_URL}course/2/wish`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+      })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
   },
 }
 

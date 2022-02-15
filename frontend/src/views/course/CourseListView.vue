@@ -4,12 +4,13 @@
     <q-input
       outlined
       bottom-slots
-      v-model="text"
+      v-model="state.searchText"
       label="찾으시는 강좌를 입력하세요."
       counter
       maxlength="30"
       :dense="state.searchDense"
       class="search-bar"
+      @keyup.enter="searchCourse"
     >
       <template v-slot:append>
         <q-icon v-if="state.searchText !== ''" name="close" @click="state.searchText = ''" class="cursor-pointer" />
@@ -21,35 +22,35 @@
   <div class="top-course-block column shadow-2">
     <div class="col-auto text-bold q-pb-sm">인기강좌 Top</div>
     <div class="col top-course-list row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
   </div>
   <!-- 강좌 목록 -->
   <div class="course-block column justify-around">
     <div class="course-list col row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
     <div class="course-list col row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
     <div class="course-list col row justify-between no-wrap">
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
-      <course class="course"></course>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
   </div>
   <!-- pagination -->
@@ -67,23 +68,44 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
-import Course from '@/components/course/Course'
+import CourseItem from '@/components/course/CourseItem'
+import { useStore } from 'vuex'
+import { watchEffect } from '@vue/runtime-core'
 
 export default {
   name: 'CourseListView',
   components: {
-    Course,
+    CourseItem,
   },
   setup() {
-
+    const store = useStore()
     const state = reactive({
       searchText: '',
       searchDense: true,
       paginationCurrent: 1,
+      courseList: store.state.courseStore.courseList,
+      bestCourseList : store.state.courseStore.bestCourseList,
     })
+
+    store.dispatch('courseStore/getBestCourseList')
+    store.dispatch('courseStore/getCourseList')
+
+    // Watch
+    watchEffect(() => {
+      state.courseList = store.state.courseStore.courseList
+    })
+    watchEffect(() => {
+      state.bestCourseList = store.state.courseStore.courseList
+    })
+
+    function searchCourse() {
+      console.log(state.searchText)
+      store.dispatch('courseStore/searchCourse', state.searchText)
+    }
 
     return {
       state,
+      searchCourse,
     }
   }
 }
@@ -104,10 +126,6 @@ export default {
   padding: 2vh 10vh 3vh 10vh;
 }
 
-.top-course-list {
-
-}
-
 .course-block {
   height: 60vh;
   padding: 3.5vh 10vh 0vh 10vh;
@@ -122,7 +140,7 @@ export default {
 }
 
 ::v-deep {
-  .course {
+  .course-item {
     background-size: 100% auto;
     width: 24vh;
     height: 16vh;

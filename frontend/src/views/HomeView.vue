@@ -24,7 +24,7 @@
         <div class="home-contents-block column">
           <div class="contents-header col-auto">
             <span class="contents-title">나의 수강 강좌</span>
-            <span class="contents-more">더보기></span>
+            <span class="contents-more" @click="moveToTakingCourse">더보기></span>
           </div>
           <!-- 강좌 목록 -->
           <div class="my-course-list col column justify-between no-wrap">
@@ -41,7 +41,6 @@
           <div class="home-contents-block column">
             <div class="contents-header col-auto">
               <span class="contents-title">인기 강사</span>
-              <span class="contents-more">더보기></span>
             </div>
 
               <!-- 인기 강사 목록 -->
@@ -59,14 +58,13 @@
           <div class="home-contents-block column">
             <div class="contents-header col-auto">
               <span class="contents-title">인기 강좌</span>
-              <span class="contents-more">더보기></span>
             </div>
             <!-- 인기 강좌 목록 -->
             <div class="contents-body best-course-list col row justify-between shadow-2 no-wrap">
-              <course class="course"></course>
-              <course class="course"></course>
-              <course class="course"></course>
-              <course class="course"></course>
+              <course-item></course-item>
+              <course-item></course-item>
+              <course-item></course-item>
+              <course-item></course-item>
             </div>
           </div>
         </div>
@@ -78,7 +76,7 @@
 <script>
 import TakingCourse from '@/components/profile/TakingCourse.vue'
 import BestInstructor from '@/components/instructor/BestInstructor.vue'
-import Course from '@/components/course/Course.vue'
+import CourseItem from '@/components/course/CourseItem.vue'
 import router from "@/router"
 import { reactive } from '@vue/reactivity'
 
@@ -87,7 +85,7 @@ export default {
   components: {
     TakingCourse,
     BestInstructor,
-    Course,
+    CourseItem,
   },
 
   setup() {
@@ -99,11 +97,16 @@ export default {
     }
 
     const state = reactive({
-      slide: 1
+      slide: 1,
     })
+
+    function moveToTakingCourse() {
+      router.push({ name: 'profile' })
+    }
 
     return {
       state,
+      moveToTakingCourse,
     }
   }
 }
@@ -131,7 +134,6 @@ export default {
 }
 
 .contents-body {
-  background-color: lightgray;
   height: 100%;
   border-radius: 0.3vw;
 }
@@ -145,6 +147,7 @@ export default {
   font-size: 1.2vh;
   color: blue;
   margin-left: 0.4vw;
+  cursor: pointer;
 }
 
 /* .my-course-list {
@@ -152,10 +155,12 @@ export default {
 } */
 
 .best-instructor-list {
+  background-color: lightblue;
   padding: 4vh;
 }
 
 .best-course-list {
+  background-color: rgb(187, 210, 255);
   padding: 4vh 4.5vh;
 }
 
@@ -165,7 +170,7 @@ export default {
   height: 11vh;
   }
 
-  .course {
+  .course-item {
     width: 21.5vh;
     height: 100%;
     background-size: auto 100%;

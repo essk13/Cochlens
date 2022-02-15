@@ -55,13 +55,14 @@ import logo from '@/assets/logo-none-title.svg'
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import { computed } from '@vue/runtime-core'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { watch } from 'vue'
 
 export default {
   setup() {
     const store = useStore()
     const router = useRouter()
+    const route = useRoute()
 
     const state = reactive({
       logo,
@@ -69,7 +70,7 @@ export default {
       mainNavItem: [
         { title: 'Cochlens', icon: 'dashboard', method: clickHome },
         { title: '내 정보', icon: 'account_circle', method: clickProfile },
-        { title: '강좌 조회', icon: 'cast', method: clickClass },
+        { title: '강좌 조회', icon: 'cast', method: clickCourse },
         { title: '강사 조회', icon: 'co_present', method: clickInstructor },
         { title: '설정', icon: 'settings', method: clickSetting },
         { title: '로그아웃', icon: 'close', method: clickLogout },
@@ -81,26 +82,19 @@ export default {
 
     // Created
     if (localStorage.getItem('JWT')) {
-      store.dispatch('set_user')
+      console.log(localStorage.getItem('JWT'))
+      store.dispatch('getUserData')
     } else {
-      router.push({ name: 'login' })
-    }
-
-    const user = computed(() => store.state.user)
-    console.log(user.value)
-    if (user.value == null) {
       state.mainNav = false
       router.push({ name: 'login' })
-    } else {
-      state.mainNav = true
     }
 
     // Watch
     watch(
       computed(() => store.state.user),
       (newUser, oldUser) => {
-        console.log('new', newUser, 'old', oldUser)
-        if (newUser != null) {
+        console.log('new' + newUser, 'old' + oldUser)
+        if (newUser) {
           state.mainNav = true
         } else {
           state.mainNav = false
@@ -131,6 +125,31 @@ export default {
           target.classList.add("main-open")
         } else {
           target.classList.remove("main-open")
+        }
+      }
+    )
+
+    watch(
+      computed(() => route.params),
+      (newParams, oldParams) => {
+        console.log(newParams, oldParams)
+        if (newParams.courseId) {
+          state.subNavItems = [
+            { title: '강좌 목록', icon: '', method: clickCourse },
+            { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
+            { title: '강좌 리뷰', icon: '', method: moveCourseReview },
+            { title: '강좌 개설', icon: '', method: moveCourseCreate },
+            { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+          ]
+        } else if (newParams.instructorId) {
+          state.subNavItems = [
+            { title: '강사 목록', icon: '', method: clickInstructor},
+            { title: '강사 프로필', icon: '', method: clickInstructorDetail},
+            { title: '강사 라이브 강좌', icon: '', method: clickInstructorLive},
+            { title: '강사 전체 강좌', icon: '', method: clickInstructorCourse},
+            { title: '강사 리뷰', icon: '', method: clickInstructorReview},
+            { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+          ]
         }
       }
     )
@@ -167,26 +186,21 @@ export default {
       store.state.profileStore.component = 'wish'
     }
 
-    function clickClass() {
+    function clickCourse() {
       state.subNav = true
-      router.push({ name: 'courselist' })
+      router.push({ name: 'courseList' })
       state.subNavItems = [
-        { title: '강좌 목록', icon: '', method: moveCourseList },
-        { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
-        { title: '강좌 리뷰', icon: '', method: moveCourseReview },
+        { title: '강좌 목록', icon: '', method: clickCourse },
         { title: '강좌 개설', icon: '', method: moveCourseCreate },
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
     }
 
-    function moveCourseList() {
-      router.push({ name: 'courselist' })
-    }
     function moveCourseDetail() {
-      router.push({ name: 'course' })
+      router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
     }
     function moveCourseReview() {
-      router.push({ name: 'courseReview' })
+      router.push({ name: 'courseReviewList', params: { courseId: route.params.courseId } })
     }
     function moveCourseCreate() {
       router.push({ name: 'courseCreate' })
@@ -194,29 +208,25 @@ export default {
 
     function clickInstructor() {
       state.subNav = true
-      router.push({ name: 'instructorlist' })
+      router.push({ name: 'instructorList' })
       state.subNavItems = [
-        { title: '강사 목록', icon: '', method: clickInstructorList},
-        { title: '강사 프로필', icon: '', method: clickInstructorDetail},
-        { title: '강사 라이브 강좌', icon: '', method: clickInstructorLive},
-        { title: '강사 전체 강좌', icon: '', method: clickInstructorCourse},
-        { title: '강사 리뷰', icon: '', method: ''},
+        { title: '강사 목록', icon: '', method: clickInstructor},
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
     }
-
-    function clickInstructorList() {
-      router.push({ name: 'instructorlist' })
-    }
     function clickInstructorDetail() {
-      router.push({ name: 'instructor' })
+      router.push({ name: 'instructorDetail', params: { instructorId: route.params.instructorId } })
     }
     function clickInstructorLive() {
-      router.push({ name: 'instructorlive' })
+      router.push({ name: 'instructorLiveList', params: { instructorId: route.params.instructorId } })
     }
     function clickInstructorCourse() {
-      router.push({ name: 'instructorcourse' })
+      router.push({ name: 'instructorCourseList', params: { instructorId: route.params.instructorId } })
     }
+    function clickInstructorReview() {
+      router.push({ name: 'instructorReviewList', params: { instructorId: route.params.instructorId }})
+    }
+
 
     function clickSetting() {
       state.subNav = false
@@ -226,14 +236,13 @@ export default {
     function clickLogout() {
       state.subNav = false
       state.mainNav = false
-      localStorage.removeItem('JWT')
       store.dispatch('userLogout')
       router.push({ name: 'login' })
     }
 
     return {
       state,
-      clickHome, clickProfile, clickClass, clickInstructor, clickSetting, clickLogout
+      clickHome, clickProfile, clickCourse, clickInstructor, clickSetting, clickLogout
     }
   },
   }
