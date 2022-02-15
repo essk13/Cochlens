@@ -1,25 +1,14 @@
 package com.ssafy.api.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-import com.querydsl.core.types.dsl.StringPath;
 import com.ssafy.common.model.response.BaseResponseBody;
-import com.ssafy.db.entity.Course;
-import com.ssafy.db.entity.Review;
 import com.ssafy.db.entity.Role;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.checker.units.qual.A;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.util.List;
 
 public class UserDto {
