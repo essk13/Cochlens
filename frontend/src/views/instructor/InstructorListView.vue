@@ -4,7 +4,7 @@
     <q-input
       outlined
       bottom-slots
-      v-model="text"
+      v-model="state.searchText"
       label="찾으시는 강사를 입력하세요."
       counter
       maxlength="30"
@@ -21,31 +21,39 @@
   <div class="top-instructor-block column shadow-2">
     <div class="col-auto text-bold q-pb-sm">인기강사 Top</div>
     <div class="col top-instructor-list row justify-between no-wrap">
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
+      <instructor-item
+        v-for="instructor in state.instructorList.slice(0, 4)"
+        :key="instructor.userId"
+        :instructor="instructor"
+      >
+      </instructor-item>
     </div>
   </div>
   <!-- 강사 목록 -->
   <div class="instructor-block column justify-around">
     <div class="instructor-list col row justify-between no-wrap">
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
+      <instructor-item
+        v-for="instructor in state.instructorList.slice(4, 8)"
+        :key="instructor.userId"
+        :instructor="instructor"
+      >
+      </instructor-item>
     </div>
     <div class="instructor-list col row justify-between no-wrap">
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
+      <instructor-item
+        v-for="instructor in state.instructorList.slice(8, 12)"
+        :key="instructor.userId"
+        :instructor="instructor"
+      >
+      </instructor-item>
     </div>
     <div class="instructor-list col row justify-between no-wrap">
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
-      <instructor-item></instructor-item>
+      <instructor-item
+        v-for="instructor in state.instructorList.slice(12, 16)"
+        :key="instructor.userId"
+        :instructor="instructor"
+      >
+      </instructor-item>
     </div>
   </div>
   <!-- pagination -->
@@ -62,8 +70,10 @@
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
 import InstructorItem from '@/components/instructor/InstructorItem'
+import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'InstructorListView',
@@ -72,20 +82,28 @@ export default {
   },
 
   setup() {
+    const store = useStore()
     const state = reactive({
       searchText: '',
       searchDense: true,
       paginationCurrent: 1,
+      instructorList: store.state.instructorStore.instructorList,
+    })
+
+    // store.dispatch('instructorStore/getInstructorList')
+
+    watchEffect(() => {
+      state.instructorList = store.state.instructorStore.instructorList
     })
 
     return {
-      state
+      state,
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header {
   height: 9vh;
 }

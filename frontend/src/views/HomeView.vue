@@ -24,7 +24,7 @@
         <div class="home-contents-block column">
           <div class="contents-header col-auto">
             <span class="contents-title">나의 수강 강좌</span>
-            <span class="contents-more">더보기></span>
+            <span class="contents-more" @click="moveToTakingCourse">더보기></span>
           </div>
           <!-- 강좌 목록 -->
           <div class="my-course-list col column justify-between no-wrap">
@@ -97,11 +97,16 @@ export default {
     }
 
     const state = reactive({
-      slide: 1
+      slide: 1,
     })
+
+    function moveToTakingCourse() {
+      router.push({ name: 'profile' })
+    }
 
     return {
       state,
+      moveToTakingCourse,
     }
   }
 }
@@ -142,6 +147,7 @@ export default {
   font-size: 1.2vh;
   color: blue;
   margin-left: 0.4vw;
+  cursor: pointer;
 }
 
 /* .my-course-list {

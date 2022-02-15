@@ -2,38 +2,49 @@
   <div @click="moveInstructorDetail" class="instructor-item">
     <div class="instructor-profile-img shadow-2">
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
+      <!-- <img :src="state.profileImageUrl"> -->
     </div>
     <div class="instructor-profile-info shadow-2">
-      <div class="instructor-name q-mb-xs text-bold">아이유</div>
-      <div>이메일 : iu@gmail.com</div>
-      <div>강좌 수 : 200</div>
-      <div>별점 : ★5.0 (200000)</div>
+      <div class="instructor-name q-mb-xs text-bold">{{ props.instructor.userNickname }}</div>
+      <div>이메일 : {{ props.instructor.email }}</div>
+      <div>강좌 수 : {{ props.instructor.courseCount }}</div>
+      <div>별점 : ★{{ props.instructor.courseReviewRateAverage }} ({{ props.instructor.courseReviewCount }})</div>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
+import { reactive, computed } from '@vue/reactivity'
+// import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
   name: 'InstructorItem',
   components: {
   },
-
-  setup() {
+  props: {
+    instructor: Object,
+  },
+  setup(props) {
+    // const store = useStore()
     const router = useRouter()
     const state = reactive({
-      id: '001'
+      profileImageUrl: computed(() => props.instructor.profileImage)
     })
 
+    // 강사 상세 정보로 이동
     function moveInstructorDetail() {
-      router.push({ name: 'instructorDetail', params: { instructorId: state.id }})
+      // store.dispatch('instructorStore/getInstructorDetail', props.instructor.userId)
+      // .then(() => {
+      //   router.push({ name: 'instructorDetail', params: { instructorId: props.instructor.userId }})
+      // })
+      router.push({ name: 'instructorDetail', params: { instructorId: props.instructor.userId }})
     }
 
     return {
       state,
-      moveInstructorDetail
+      props,
+      moveInstructorDetail,
     }
   }
 }
@@ -44,6 +55,10 @@ export default {
   position: relative;
   width: 380px;
   height: 150px;
+}
+
+.instructor-item:hover > div {
+  box-shadow: 0 5px 10px rgb(0 0 0 / 70%);
 }
 
 .instructor-profile-img {
