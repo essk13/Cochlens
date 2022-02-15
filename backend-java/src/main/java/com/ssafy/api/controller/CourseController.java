@@ -13,6 +13,7 @@ import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -123,8 +124,21 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<List<CourseDto.CourseListRes>> getCourseList() {
-        List<CourseDto.CourseListRes> list = courseService.getCourseList();
+    public ResponseEntity<List<CourseDto.CourseListRes>> getCourseList(@ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+        List<CourseDto.CourseListRes> list = courseService.getCourseList(pageable);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping("/best")
+    @ApiOperation(value = "최고 강좌 목록 조회", notes = "최고 강좌 목록을 조회한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 401, message = "인증 실패"),
+            @ApiResponse(code = 404, message = "사용자 없음"),
+            @ApiResponse(code = 500, message = "서버 오류")
+    })
+    public ResponseEntity<List<CourseDto.CourseListRes>> getBestCourseList() {
+        List<CourseDto.CourseListRes> list = courseService.getBestCourseList();
         return ResponseEntity.ok().body(list);
     }
 
@@ -136,7 +150,7 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<CourseDto.CourseRes> getCourse(@ApiIgnore Authentication authentication,
+    public ResponseEntity<CourseDto.CourseDetailRes> getCourse(@ApiIgnore Authentication authentication,
             @ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId){
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         String email = userDetails.getUsername();
@@ -148,7 +162,7 @@ public class CourseController {
         boolean isWish = false;
         boolean isJoin = false;
 
-        return ResponseEntity.ok().body(CourseDto.CourseRes.of(course, lectureList, reviewList, isJoin, isWish));
+        return ResponseEntity.ok().body(CourseDto.CourseDetailRes.of(course, 0, isJoin, isWish, lectureList, reviewList));
     }
 
     @GetMapping("/search")
@@ -159,8 +173,10 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<List<CourseDto.CourseListRes>> getSearchCourseList(@ApiParam(value="강좌 제목 정보", required = true) @RequestParam String courseName) {
-        List<CourseDto.CourseListRes> list = courseService.getSearchCourseList(courseName);
+    public ResponseEntity<List<CourseDto.CourseListRes>> getSearchCourseList(
+            @ApiParam(value="강좌 제목 정보", required = true) @RequestParam String courseName,
+            @ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+        List<CourseDto.CourseListRes> list = courseService.getSearchCourseList(courseName, pageable);
         return ResponseEntity.ok().body(list);
     }
 
@@ -176,7 +192,7 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<CourseDto.CourseRes> updateCourse(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
+    public ResponseEntity<CourseDto.CourseDetailRes> updateCourse(@ApiParam(value="강좌 id 정보", required = true) @PathVariable Long courseId,
                                                             @ApiParam(value="강좌 수정 정보", required = true) @RequestBody CourseDto.CourseInsertReq courseInsertInfo) {
 
         courseService.updateCourse(courseId, courseInsertInfo);

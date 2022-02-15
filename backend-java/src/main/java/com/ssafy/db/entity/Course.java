@@ -21,30 +21,32 @@ public class Course {
     String courseName;
     @Column(name = "course_description", nullable = false)
     String courseDescription;
+    @Column(name = "course_category", nullable = false)
+    String courseCategory;
+    @Column(name = "course_thumbnail")
+    String courseThumbnail;
+    @Column(name = "course_intro_video")
+    String courseIntroVideo;
     @Temporal(TemporalType.DATE)
     @Column(name = "course_open_date", nullable = false)
     Date courseOpenDate;
     @Temporal(TemporalType.DATE)
     @Column(name = "course_close_date")
     Date courseCloseDate;
-    @Column(name = "course_cycle", nullable = false)
-    int courseCycle;
-    @Column(name = "course_thumbnail")
-    String courseThumbnail;
-    @Column(name = "course_category", nullable = false)
-    String courseCategory;
-    @Column(name = "course_limit_people", nullable = false)
-    int courseLimitPeople;
     @Column(name = "course_fee", nullable = false)
     int courseFee;
-    @Column(name = "course_intro_video")
-    String courseIntroVideo;
+    @Column(name = "course_cycle", nullable = false)
+    int courseCycle;
+    @Column(name = "course_limit_people", nullable = false)
+    int courseLimitPeople;
+
     @Column(name = "course_wish_count")
     int courseWishCount;
     @Column(name = "course_review_count")
     int courseReviewCount;
-    @Column(name = "course_review_grade")
-    double courseReviewGrade;
+    @Column(name = "course_review_rate_average")
+    double courseReviewRateAverage;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
@@ -55,10 +57,6 @@ public class Course {
 
     public void increaseReviewCount() {
         courseReviewCount++;
-    }
-
-    public void calReviewGrade(int reviewGrade) {
-
     }
 
     @Builder

@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.dto.CourseDto;
 import com.ssafy.db.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +21,12 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     @Override
     public List<CourseDto.CourseListRes> findCourseListByBest() {
-        return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
-                        course.courseId, course.courseName, course.courseDescription, course.courseThumbnail,
-                        course.courseCategory, course.courseOpenDate, course.courseCloseDate,
-                        course.courseFee, course.user.userName.as("instructorName"),
-                        course.courseReviewCount, course.courseReviewGrade.as("courseReviewRateAverage"), course.courseWishCount))
+        return jpaQueryFactory.select(Projections.constructor(CourseDto.CourseListRes.class,
+                        course.courseId, course.courseName, course.courseDescription,
+                        course.courseCategory, course.courseThumbnail,
+                        course.courseOpenDate, course.courseCloseDate,
+                        course.courseFee, course.courseWishCount, course.courseReviewCount,
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
                 .from(course)
                 .orderBy(course.courseWishCount.desc())
                 .limit(5)
@@ -33,26 +35,29 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     @Override
     public List<CourseDto.CourseListRes> findCourseListByRecent(User user) {
-        return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
+        return jpaQueryFactory.select(Projections.constructor(CourseDto.CourseListRes.class,
                         registerCourse.course.courseId, registerCourse.course.courseName, registerCourse.course.courseDescription,
-                        registerCourse.course.courseThumbnail, registerCourse.course.courseCategory,
-                        registerCourse.course.courseOpenDate, registerCourse.course.courseCloseDate, registerCourse.course.courseFee,
-                        registerCourse.course.user.userName.as("instructorName"), registerCourse.course.courseReviewCount,
-                        registerCourse.course.courseReviewGrade.as("courseReviewRateAverage"), registerCourse.course.courseWishCount))
+                        registerCourse.course.courseCategory, registerCourse.course.courseThumbnail,
+                        registerCourse.course.courseOpenDate, registerCourse.course.courseCloseDate,
+                        registerCourse.course.courseFee, registerCourse.course.courseWishCount, registerCourse.course.courseReviewCount,
+                        registerCourse.course.courseReviewRateAverage.as("courseReviewRateAverage"), registerCourse.course.user.userName.as("instructorName")))
                 .from(registerCourse)
                 .where(registerCourse.user.eq(user))
                 .fetch();
     }
 
     @Override
-    public List<CourseDto.CourseListRes> findCourseListByCourseName(String courseName) {
-        return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
-                        course.courseId, course.courseName, course.courseDescription, course.courseThumbnail,
-                        course.courseCategory, course.courseOpenDate, course.courseCloseDate,
-                        course.courseFee, course.user.userName.as("instructorName"),
-                        course.courseReviewCount, course.courseReviewGrade.as("courseReviewRateAverage"), course.courseWishCount))
+    public List<CourseDto.CourseListRes> findCourseListByCourseName(String courseName, Pageable pageable) {
+        return jpaQueryFactory.select(Projections.constructor(CourseDto.CourseListRes.class,
+                        course.courseId, course.courseName, course.courseDescription,
+                        course.courseCategory, course.courseThumbnail,
+                        course.courseOpenDate, course.courseCloseDate,
+                        course.courseFee, course.courseWishCount, course.courseReviewCount,
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
                 .from(course)
                 .where(course.courseName.contains(courseName))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
     }
 
@@ -62,7 +67,7 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                 jpaQueryFactory.select(Projections.constructor(CourseDto.CourseInstructorVO.class,
                                 course.courseId.count().as("courseCount"),
                                 course.courseReviewCount.sum().as("courseReviewCount"),
-                                MathExpressions.round(course.courseReviewGrade.avg(), 1).as("courseReviewGrade")))
+                                MathExpressions.round(course.courseReviewRateAverage.avg(), 1).as("courseReviewGrade")))
                         .from(course)
                         .where(course.user.eq(user))
                         .groupBy(course.user.userId)
@@ -72,11 +77,12 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     @Override
     public List<CourseDto.CourseListRes> findAllByLiveList(User user) {
-        return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
-                        course.courseId, course.courseName, course.courseDescription, course.courseThumbnail,
-                        course.courseCategory, course.courseOpenDate, course.courseCloseDate,
-                        course.courseFee, course.user.userName.as("instructorName"),
-                        course.courseReviewCount, course.courseReviewGrade.as("courseReviewRateAverage"), course.courseWishCount))
+        return jpaQueryFactory.select(Projections.constructor(CourseDto.CourseListRes.class,
+                        course.courseId, course.courseName, course.courseDescription,
+                        course.courseCategory, course.courseThumbnail,
+                        course.courseOpenDate, course.courseCloseDate,
+                        course.courseFee, course.courseWishCount, course.courseReviewCount,
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
                 .from(course)
                 .where(course.user.eq(user), Expressions.currentDate().between(course.courseOpenDate, course.courseCloseDate))
                 .fetch();
@@ -84,11 +90,12 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
 
     @Override
     public List<CourseDto.CourseListRes> findAllByVodList(User user) {
-        return jpaQueryFactory.select(Projections.bean(CourseDto.CourseListRes.class,
-                        course.courseId, course.courseName, course.courseDescription, course.courseThumbnail,
-                        course.courseCategory, course.courseOpenDate, course.courseCloseDate,
-                        course.courseFee, course.user.userName.as("instructorName"),
-                        course.courseReviewCount, course.courseReviewGrade.as("courseReviewRateAverage"), course.courseWishCount))
+        return jpaQueryFactory.select(Projections.constructor(CourseDto.CourseListRes.class,
+                        course.courseId, course.courseName, course.courseDescription,
+                        course.courseCategory, course.courseThumbnail,
+                        course.courseOpenDate, course.courseCloseDate,
+                        course.courseFee, course.courseWishCount, course.courseReviewCount,
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
                 .from(course)
                 .where(course.user.eq(user), Expressions.currentDate().between(course.courseOpenDate, course.courseCloseDate).not())
                 .fetch();

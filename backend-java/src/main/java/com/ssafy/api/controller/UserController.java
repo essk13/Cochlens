@@ -5,6 +5,8 @@ import com.ssafy.api.service.CourseService;
 import com.ssafy.api.service.ReviewService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +52,7 @@ public class UserController {
     })
 	public ResponseEntity<? extends BaseResponseBody> register(
 			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserDto.UserRegisterPostReq registerInfo) {
-		User user = userService.createUser(registerInfo);
+		userService.createUser(registerInfo);
 		return ResponseEntity.ok().build();
 	}
 
@@ -95,38 +97,23 @@ public class UserController {
 		return ResponseEntity.ok().body(UserDto.UserRes.of(user));
 	}
 
-	@GetMapping("/me/wishlist")
-	@ApiOperation(value = "찜목록 조회", notes = "찜 강좌 list를 조회한다.")
+	@GetMapping("/profile")
+	@ApiOperation(value = "회원 프로필 조회", notes = "로그인한 회원 본인의 프로필을 응답한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
 			@ApiResponse(code = 401, message = "인증 실패"),
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<List<WishlistDto.WishlistRes>> getWishlist(@ApiIgnore Authentication authentication) {
-
+	public ResponseEntity<UserDto.UserProfileRes> getUserProfile(@ApiIgnore Authentication authentication) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String email = userDetails.getUsername();
 
-		List<WishlistDto.WishlistRes> list = userService.getWishlist(email);
-		return ResponseEntity.ok().body(list);
-	}
-
-	@GetMapping("/me/review")
-	@ApiOperation(value = "작성 리뷰 목록 조회", notes = "작성 리뷰 list를 조회한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 401, message = "인증 실패"),
-			@ApiResponse(code = 404, message = "사용자 없음"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<List<ReviewDto.ReviewListRes>> getReview(@ApiIgnore Authentication authentication) {
-
-		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-		String email = userDetails.getUsername();
-
-//		List<ReviewDto.ReviewListRes> list = reviewService.getReviewListByEmail(email);
-		return ResponseEntity.ok().build();
+		User user = userService.getUserByEmail(email);
+		String thumbnailImage = user.getThumbnailImage();
+		List<CourseDto.CourseListRes> registerCourseList = courseService.getRegisterCourseList(user);
+		List<CourseDto.CourseListRes> wishCourseList = courseService.getWishCourseList(user);
+		return ResponseEntity.ok().body(UserDto.UserProfileRes.of(thumbnailImage, registerCourseList, wishCourseList));
 	}
 
 	@GetMapping("/instructor")
@@ -137,8 +124,36 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<List<UserDto.UserInstructorRes>> getInstructorList() {
-		List<UserDto.UserInstructorRes> list = userService.getInstructorList();
+	public ResponseEntity<List<UserDto.UserInstructorRes>> getInstructorList(@ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+		List<UserDto.UserInstructorRes> list = userService.getInstructorList(pageable);
+		return ResponseEntity.ok().body(list);
+	}
+
+	@GetMapping("/instructor/search")
+	@ApiOperation(value = "강사 검색", notes = " 강사를 검색한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<UserDto.UserInstructorRes>> getSearchInstructorList(
+			@ApiParam(value="강좌 제목 정보", required = true) @RequestParam String instructorName,
+			@ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+		List<UserDto.UserInstructorRes> list = userService.getSearchInstructorList(instructorName, pageable);
+		return ResponseEntity.ok().body(list);
+	}
+
+	@GetMapping("/instructor/best")
+	@ApiOperation(value = "최고 강사 조회", notes = "최고 강사를 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<List<UserDto.UserInstructorRes>> getBestInstructorList() {
+		List<UserDto.UserInstructorRes> list = userService.getBestInstructorList();
 		return ResponseEntity.ok().body(list);
 	}
 
@@ -175,14 +190,14 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<UserDto.UserPutRes> update(@ApiIgnore Authentication authentication,
-												  @RequestBody @ApiParam(value = "회원 수정 정보", required = true) UserDto.UserPutRes userPutRes) {
+	public ResponseEntity<UserDto.UserPutReq> update(@ApiIgnore Authentication authentication,
+												  @RequestBody @ApiParam(value = "회원 수정 정보", required = true) UserDto.UserPutReq userPutReq) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String email = userDetails.getUsername();
 
-		User user = userService.update(email, userPutRes);
+		User user = userService.updateUser(email, userPutReq);
 
-		return ResponseEntity.ok().body(UserDto.UserPutRes.of(user));
+		return ResponseEntity.ok().body(UserDto.UserPutReq.of(user));
 	}
 
 	/**
