@@ -34,9 +34,10 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         return Optional.ofNullable(user);
     }
 
+    @Override
     public List<UserDto.UserInstructorRes> findInstructorList() {
         return jpaQueryFactory.select(Projections.constructor(UserDto.UserInstructorRes.class,
-                user.userId, user.email, user.userName, user.userNickname, user.profileImage,
+                        user.userId, user.email, user.userName, user.userNickname, user.profileImage,
                         course.courseId.count().as("courseCount"),
                         course.courseReviewCount.sum().as("courseReviewCount"),
                         MathExpressions.round(course.courseReviewGrade.avg(), 1).as("courseReviewRateAverage")))
@@ -44,6 +45,22 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 .innerJoin(course)
                 .on(user.eq(course.user))
                 .groupBy(course.user)
+                .fetch();
+    }
+
+    @Override
+    public List<UserDto.UserInstructorRes> findByBestInstructorList() {
+        return jpaQueryFactory.select(Projections.constructor(UserDto.UserInstructorRes.class,
+                        user.userId, user.email, user.userName, user.userNickname, user.profileImage,
+                        course.courseId.count().as("courseCount"),
+                        course.courseReviewCount.sum().as("courseReviewCount"),
+                        MathExpressions.round(course.courseReviewGrade.avg(), 1).as("courseReviewRateAverage")))
+                .from(user)
+                .innerJoin(course)
+                .on(user.eq(course.user))
+                .groupBy(course.user)
+                .orderBy(course.courseId.count().desc())
+                .limit(5)
                 .fetch();
     }
 }

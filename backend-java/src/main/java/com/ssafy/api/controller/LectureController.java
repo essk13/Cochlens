@@ -25,8 +25,8 @@ public class LectureController {
     @Autowired
     CourseService courseService;
 
-    /*
-        create
+    /**
+     * create
     */
 
     @PostMapping("/{courseId}")
@@ -44,8 +44,8 @@ public class LectureController {
         return ResponseEntity.ok().build();
     }
 
-    /*
-        read
+    /**
+     * read
     */
 
     @GetMapping("/{lectureId}")
@@ -61,8 +61,8 @@ public class LectureController {
         return ResponseEntity.ok().body(LectureDto.LectureRes.of(lecture));
     }
 
-    /*
-        update
+    /**
+     * update
     */
 
     @PutMapping("/{lectureId}")
@@ -104,8 +104,8 @@ public class LectureController {
         return ResponseEntity.ok().build();
     }
 
-    /*
-        delete
+    /**
+     * delete
     */
 
 //    @DeleteMapping("/{lectureId}")

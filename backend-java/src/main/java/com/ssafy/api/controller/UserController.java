@@ -3,7 +3,6 @@ package com.ssafy.api.controller;
 import com.ssafy.api.dto.*;
 import com.ssafy.api.service.CourseService;
 import com.ssafy.api.service.ReviewService;
-import com.ssafy.db.repository.UserRepository;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +35,6 @@ public class UserController {
 	@Autowired
 	ReviewService reviewService;
 
-	@Autowired
-	UserRepository userRepository;
-
 	/**
 	 * create
 	*/
@@ -61,6 +57,23 @@ public class UserController {
 	/**
 	 * read
 	*/
+
+	@GetMapping("/main")
+	@ApiOperation(value = "메인 화면 조회", notes = "메인 화면을 조회한다.")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 401, message = "인증 실패"),
+			@ApiResponse(code = 404, message = "사용자 없음"),
+			@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<MainDtoRes> getMain(@ApiIgnore Authentication authentication) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+
+		List<CourseDto.CourseListRes> registerCourseList = courseService.getRecentCourseList(userDetails.getUser());
+		List<UserDto.UserInstructorRes> instructorList = userService.getBestInstructorList();
+		List<CourseDto.CourseListRes> courseList = courseService.getBestCourseList();
+		return ResponseEntity.ok().body(MainDtoRes.of(registerCourseList, instructorList, courseList));
+	}
 
 	@GetMapping("/me")
 	@ApiOperation(value = "회원 본인 정보 조회", notes = "로그인한 회원 본인의 정보를 응답한다.")
@@ -148,20 +161,6 @@ public class UserController {
 		return ResponseEntity.ok().body(UserDto.InstructorDetailRes.of(
 				user, courseInstructorVO.getCourseCount(), courseInstructorVO.getCourseReviewCount(), courseInstructorVO.getCourseReviewGrade(),
 				courseReviewList, liveOpenCourseList, vodOpenCourseList));
-	}
-
-	@GetMapping("/instructor/best")
-	@ApiOperation(value = "베스트 강사 조회", notes = "베스트 강사 list를 조회한다.")
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "성공"),
-			@ApiResponse(code = 401, message = "인증 실패"),
-			@ApiResponse(code = 404, message = "사용자 없음"),
-			@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<List<UserDto.UserRes>> getBestInstructorList() {
-//        찜이 가장 많은 강좌를 갖고있는 강사를 최대 5개까지 가져옴
-		List<UserDto.UserRes> list = userService.getBestInstructorList();
-		return ResponseEntity.ok().body(list);
 	}
 
 	/**

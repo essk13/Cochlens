@@ -50,6 +50,9 @@ public class CourseDto {
      * Response
      */
 
+    /**
+     * Course List read
+     */
     @Getter
     @Setter
     @NoArgsConstructor
@@ -62,6 +65,10 @@ public class CourseDto {
         String courseName;
         @ApiModelProperty(name="courseDescription", example="description")
         String courseDescription;
+        @ApiModelProperty(name="courseThumbnail", example="thumbnail address")
+        String courseThumbnail;
+        @ApiModelProperty(name="courseCategory", example="category")
+        String courseCategory;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
         @ApiModelProperty(name="courseOpenDate", example="2022/02/10")
         Date courseOpenDate;
@@ -70,22 +77,19 @@ public class CourseDto {
         Date courseCloseDate;
         @ApiModelProperty(name="courseCycle", example="1")
         int courseCycle;
-        @ApiModelProperty(name="courseThumbnail", example="thumbnail address")
-        String courseThumbnail;
-        @ApiModelProperty(name="courseCategory", example="category")
-        String courseCategory;
         @ApiModelProperty(name="courseLimitPeople", example="30")
         int courseLimitPeople;
         @ApiModelProperty(name="courseFee", example="100000")
         int courseFee;
         @ApiModelProperty(name="instructorName", example="ssafy")
         String instructorName;
+
         @ApiModelProperty(name="courseReviewCount", example="10")
         int courseReviewCount;
         @ApiModelProperty(name="courseReviewRateAverage", example="4.88")
         Double courseReviewRateAverage;
-        @ApiModelProperty(name="wishCount", example="10")
-        int wishCount;
+        @ApiModelProperty(name="courseWishCount", example="10")
+        int courseWishCount;
 
         public static CourseListRes of(Course course) {
             CourseListRes res = new CourseListRes();
@@ -103,12 +107,15 @@ public class CourseDto {
             res.setCourseCategory(course.getCourseCategory());
             res.setCourseReviewCount(course.getCourseReviewCount());
             res.setCourseReviewRateAverage(course.getCourseReviewGrade());
-            res.setWishCount(course.getCourseWishCount());
+            res.setCourseWishCount(course.getCourseWishCount());
 
             return res;
         }
     }
 
+    /**
+     * Course detail read
+     */
     @Getter
     @Setter
     @ApiModel("CourseRes")
@@ -192,6 +199,9 @@ public class CourseDto {
      *  Value Object
      */
 
+    /**
+     * Course Instructor rate
+     */
     @Getter
     @Setter
     @NoArgsConstructor

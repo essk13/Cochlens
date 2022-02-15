@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface UserCustomRepository {
     public List<UserDto.UserInstructorRes> findInstructorList();
+    public List<UserDto.UserInstructorRes> findByBestInstructorList();
 }

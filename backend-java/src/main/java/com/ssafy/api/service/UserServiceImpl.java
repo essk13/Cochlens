@@ -165,83 +165,9 @@ public class UserServiceImpl implements UserService {
 		return userRes;
 	}
 
-	/*
-		수정 필요
-	 */
 	@Override
-	public List<UserDto.UserRes> getBestInstructorList(){
-		int userSize = userRepository.findAll().size();
-
-		int[] arr = new int[userSize + 1];
-		List<Wishlist> list = wishlistRepository.findAll();
-		for (Wishlist wishlist : list) {
-			arr[Math.toIntExact(wishlist.getUser().getUserId())] += 1;
-		}
-
-		List<UserDto.UserRes> result = new ArrayList<>();
-
-		int count = Math.min(arr.length, 5);
-
-		for (int i = 0; i < count; i++) {
-			int max = Arrays.stream(arr).max().getAsInt();
-
-//            max 값을 가진 index 찾기(강좌 번호)
-			int maxIndex = Ints.indexOf(arr, max);
-//			int maxIndex = Arrays.asList(arr).indexOf(max);
-
-			arr[maxIndex] = 0;
-
-			if (maxIndex == 0) break;
-
-			User user = userRepository.getOne(Long.valueOf(maxIndex));
-
-			int courseCount = 0;
-			int courseReviewCount = 0;
-			int courseReviewRateSum = 0;
-			Double courseReviewRateAverage = 0.0;
-
-			List<Review> reviewList = reviewRepository.findAll();
-			List<Course> courseList = courseRepository.findAll();
-			for (Course course : courseList) {
-				if ( user == course.getUser()) {
-					courseCount += 1;
-
-					for  (Review review : reviewList){
-						if(course == review.getCourse()){
-							courseReviewCount += 1;
-							courseReviewRateSum += review.getReviewGrade();
-						}
-					}
-				}
-			}
-
-			if (courseReviewCount != 0){
-//                소수점 둘째자리까지 표시
-				courseReviewRateAverage = Math.round(Double.valueOf(courseReviewRateSum / courseReviewCount) * 100) / 100.0;
-			}
-
-			UserDto.UserRes userListRes = new UserDto.UserRes();
-
-			userListRes.setUserId(user.getUserId());
-			userListRes.setEmail(user.getEmail());
-			userListRes.setUserName(user.getUserName());
-			userListRes.setUserNickname(user.getUserNickname());
-//			userListRes.setUserDescription(user.getUserDescription());
-//				userListRes.setIsSubtitle(user.isSubtitle());
-//				userListRes.setIsCommand(user.isCommand());
-//				userListRes.setIsSTT(user.isSTT());
-//				userListRes.setIsFaceFocusing(user.isFaceFocusing());
-//				userListRes.setRole(user.getRole());
-			userListRes.setProfileImage(user.getProfileImage());
-//			userListRes.setThumbnailImage(user.getThumbnailImage());
-
-//			userListRes.setCourseCount(courseCount);
-//			userListRes.setCourseReviewCount(courseReviewCount);
-//			userListRes.setCourseReviewRateAverage(courseReviewRateAverage);
-
-			result.add(userListRes);
-		}
-		return result;
+	public List<UserDto.UserInstructorRes> getBestInstructorList(){
+		return userRepository.findByBestInstructorList();
 	}
 
 	/**

@@ -15,19 +15,18 @@ public interface CourseService {
     /* read */
     Course getCourse(Long courseId);
     List<CourseDto.CourseListRes> getCourseList();
-    CourseDto.CourseRes getCourseByCourseId(Long courseId, String email);
     CourseDto.CourseInstructorVO getInstructorRate(User user);
 
     List<CourseDto.CourseListRes> getCourseLiveList(User user);
     List<CourseDto.CourseListRes> getCourseVodList(User user);
 
     List<CourseDto.CourseListRes> getBestCourseList();
-    List<CourseDto.CourseListRes> getRecentCourseList(Long userId);
+    List<CourseDto.CourseListRes> getRecentCourseList(User user);
     List<CourseDto.CourseListRes> getSearchCourseList(String courseName);
     /* update */
     Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
     /* delete */
-    void deregisterCourse(Long userId, Long courseId);
-    void deregisterWishlist(Long userId, Long courseId);
+    void deregisterCourse(User user, Course course);
+    void deregisterWishlist(User user, Course course);
 
 }

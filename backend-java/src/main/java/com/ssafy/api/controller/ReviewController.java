@@ -22,16 +22,16 @@ public class ReviewController {
     @Autowired
     ReviewService reviewService;
 
-    /*
-        create
+    /**
+     * create
     */
 
-    /*
-        read
+    /**
+     * read
     */
 
-    /*
-        update
+    /**
+     * update
     */
 
     @PutMapping("/{reviewId}")
@@ -49,8 +49,8 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
-    /*
-        delete
+    /**
+     * delete
     */
 
     public ResponseEntity<?> delete(@ApiParam(value="리뷰 id 정보", required = true) @PathVariable Long reviewId) {
