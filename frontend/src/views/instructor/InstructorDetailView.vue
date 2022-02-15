@@ -12,14 +12,14 @@
           <span class="text-h6 text-bold">강사 소개</span>
         </div>
         <div class="col">
-          <div>네이버, 카카오, 라인플러스, 쿠팡, 배달의 민족, 당근마켓, 토스를 거친 AI분야 세계 최고 권위자. 네이버, 카카오, 라인플러스, 쿠팡, 배달의 민족, 당근마켓, 토스를 거친 AI분야 세계 최고 권위자.</div>
+          <div>{{ state.instructorDetail.userDescription }}</div>
         </div>
       </div>
       <!-- 강사 리뷰 -->
       <div class="instructor-review-block col-6 column q-pl-lg">
         <div class="contents-header col-auto">
           <span class="contents-title">수강후기</span>
-          <span class="contents-more">더보기></span>
+          <span class="contents-more" @click="moveToReviewList">더보기></span>
         </div>
         <div class="instructor-review-list col">
           <q-list bordered class="rounded-borders">
@@ -63,10 +63,13 @@
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
 import InstructorHeader from "@/components/instructor/InstructorHeader"
 import CourseItem from '@/components/course/CourseItem'
 import CourseReview from '@/components/course/CourseReview'
+import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { useRouter, useRoute } from 'vue-router'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'InstructorDetailView',
@@ -77,11 +80,25 @@ export default {
   },
 
   setup() {
+    const store = useStore()
+    const router = useRouter()
+    const route = useRoute()
     const state = reactive({
+      instructorDetail: store.state.instructorStore.instructorDetail,
+    })
+
+    // 수강후기로 이동
+    function moveToReviewList() {
+      router.push({ name: 'instructorReviewList', params: { instructorId: route.params.instructorId }})
+    }
+
+    watchEffect(() => {
+      state.instructorDetail = store.state.instructorStore.instructorDetail
     })
 
     return {
-      state
+      state,
+      moveToReviewList
     }
   }
 }
@@ -109,6 +126,7 @@ export default {
   font-size: 1.2vh;
   color: blue;
   margin-left: 0.4vw;
+  cursor: pointer;
 }
 
 .instructor-review-list {

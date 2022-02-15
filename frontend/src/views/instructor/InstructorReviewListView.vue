@@ -8,6 +8,12 @@
   <!-- 강사 리뷰 목록 -->
   <div class="contents q-mx-xl q-pb-xl">
     <q-list bordered class="instructor-review-list rounded-borders q-mx-xl">
+      <!-- <course-review
+        v-for="courseReview in state.instructorReviewList"
+        :key="courseReview.reviewId"
+        :courseReview="courseReview"
+      >
+      </course-review> -->
       <course-review></course-review>
       <course-review></course-review>
       <course-review></course-review>
@@ -33,9 +39,11 @@
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
 import InstructorHeader from "@/components/instructor/InstructorHeader"
 import CourseReview from '@/components/course/CourseReview'
+import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'InstructorReviewListView',
@@ -45,7 +53,13 @@ export default {
   },
 
   setup() {
+    const store = useStore()
     const state = reactive({
+      instructorReviewList: store.state.instructorStore.instructorDetail.courseReviewList
+    })
+
+    watchEffect(() => {
+      state.instructorReviewList = store.state.instructorStore.instructorDetail.courseReviewList
     })
 
     return {

@@ -1,42 +1,50 @@
 <template>
   <!-- 강좌 정보 -->
   <div @click="clickCourse" class="course-item column justify-end shadow-3">
+  <!-- <div @click="clickCourse" class="course-item column justify-end shadow-3" :style="{ backgroundImage: `url('${state.thumbnailImageUrl}')` }"> -->
     <!-- 강좌 설명 -->
     <div class="course-info row">
       <div class="col-8 q-pl-sm q-pt-xs">
         <div class="text-bold">강쉡의 요리교실</div>
+        <!-- <div class="text-bold">{{ props.courseItem.courseName }}</div> -->
         <div class="course-rate text-caption">★5.0</div>
+        <!-- <div class="course-rate text-caption">★{{ props.courseItem.courseReviewAverage }}</div> -->
       </div>
       <div class="col-4 q-pr-sm text-right">
         <div class="text-bold text-caption">강태훈</div>
+        <!-- <div class="text-bold text-caption">{{ props.courseItem.instructorName }}</div> -->
         <div class="text-bold text-caption">#요리조리</div>
+        <!-- <div class="text-bold text-caption">#{{ props.courseItem.courseCategory }}</div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
+import { reactive, computed } from '@vue/reactivity'
 import { useRouter } from 'vue-router'
-
 
 export default {
   name: 'CourseItem',
   components: {
   },
-
-  setup() {
+  props: {
+    courseItem: Object,
+  },
+  setup(props) {
     const router = useRouter()
     const state = reactive({
-      id: '001'
+      id: '001',
+      thumbnailImageUrl: computed(() => props.courseItem.courseThumbnail),
     })
 
     function clickCourse(){
       router.push({ name: 'courseDetail', params: { courseId: state.id }})
+      // router.push({ name: 'courseDetail', params: { courseId: props.courseItem.courseId }})
     }
 
     return {
-      state, clickCourse
+      state, props, clickCourse
     }
   }
 }
@@ -48,6 +56,10 @@ export default {
   background-position: center;
   border-radius: 1vh;
   overflow: hidden;
+}
+
+.course-item:hover {
+  box-shadow: 0 5px 10px rgb(0 0 0 / 70%);
 }
 
 .course-img {
