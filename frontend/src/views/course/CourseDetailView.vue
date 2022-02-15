@@ -1,10 +1,10 @@
 <template>
   <div class="course-roof">
-    <div class="profile-roof"></div>
+    <div class="course-roof-img" id="course-roof"></div>
     <div class="profile-roof-cover"></div>
-    <div class="profile-img text-white"></div>
-    <p class="course-detail-title">강쉡의 요리교실</p>
-    <p class="course-detail-instructor">강사 : 강태훈</p>
+    <div class="course-img text-white" id="course-img"></div>
+    <p class="course-detail-title">{{ state.courseData.courseName }}</p>
+    <p class="course-detail-instructor">강사 : {{ state.courseData.instructorName }}</p>
   </div>
 
   <div class="row course-detail-upper-area">
@@ -13,17 +13,15 @@
       <div class="q-mb-xl">
         <p class="profile-menu-title">강좌 소개</p>
         <p>
-          강태훈 강사님의 신나는 요리교실. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다.  이것은 샘플 텍스트입니다.
-          <br>
-          이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 
-          이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다. 이것은 샘플 텍스트입니다.
+          {{ state.courseData.courseDescription }}
         </p>
       </div>
 
       <!-- 커리큘럼 -->
       <div>
-        <div>
-          <p class="profile-menu-title">커리큘럼</p>
+        <div class="row justify-between item-center content-center">
+          <p class="profile-menu-title q-mb-none">커리큘럼</p>
+          <q-btn @click="clickCreate" color="blue" label="강의 생성" dense />
         </div>
         <div class="course-detail-curriculum row">
           <div class="course-detail-thumbnail"></div>
@@ -44,15 +42,8 @@
               강사 : 강태훈<br>
             </p>
           </div>
-          <q-btn @click="joinLeacture" color="purple">강의 시작하기</q-btn>
+          <q-btn @click="joinLecture" color="purple">강의 시작하기</q-btn>
         </div>
-        <div class="course-detail-curriculum"></div>
-        <div class="course-detail-curriculum"></div>
-        <div class="course-detail-curriculum"></div>
-        <div class="course-detail-curriculum"></div>
-        <div class="course-detail-curriculum"></div>
-        <div class="course-detail-curriculum"></div>
-        <div class="course-detail-curriculum"></div>
         <div class="course-detail-curriculum"></div>
       </div>
     </div>
@@ -64,12 +55,14 @@
         <q-card class="reservation-card q-mb-xl">
           <q-card-section class="bg-purple text-white">
             <div class="text-h6">수강신청</div>
-            <div class="text-subtitle2">by John Doe</div>
+            <div class="text-subtitle2">시작: {{ state.courseData.courseOpenDate }} / 종료: {{ state.courseData.courseCloseDate }}</div>
           </q-card-section>
 
           <q-card-actions align="around">
-            <q-btn flat>신청하기</q-btn>
-            <q-btn flat>찜 하기</q-btn>
+            <q-btn v-if="state.courseData.isJoin" @click="clickRegister" flat>신청하기</q-btn>
+            <q-bt v-else @click="clickDeregister" flat>수강중인 강좌</q-bt>
+            <q-btn v-if="state.courseData.isWish" @click="clickWish" flat>찜 하기</q-btn>
+            <q-bt v-else @click="clickUnwish" flat>찜한 강좌</q-bt>
           </q-card-actions>
         </q-card>
 
@@ -82,14 +75,14 @@
             </div>
             <div class="text-subtitle2">by John Doe</div>
           </q-card-section>
-          <q-list bordered class="course-review-preview rounded-borders">
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
+          <q-list v-if="state.courseData.reviewList" bordered class="course-review-preview rounded-borders">
+            <course-review
+              v-for="(reviewItem, index) in state.courseData.reviewList"
+              :key="index"
+              :review-item = "reviewItem"
+            ></course-review>
           </q-list>
+          <div v-else>리뷰가 없습니다.</div>
         </q-card>
       </div>
     </div>
@@ -101,6 +94,7 @@ import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import CourseReview from '@/components/course/CourseReview'
+import { onMounted } from '@vue/runtime-core'
 
 export default {
   name: 'CourseDetailView',
@@ -114,17 +108,71 @@ export default {
     const url = 'wss://' + location.host + '/groupcall'
     store.dispatch('courseStore/setWs', url)
 
+    console.log(store.state.courseStore.courseData)
+
     const state = reactive({
       name: 'test',
       room: '',
+      courseData: store.state.courseStore.courseData,
+    })
+
+    // Mounted
+    onMounted(() => {
+      const courseImg = document.getElementById('profile-img')
+      const courseRoofImg = document.getElementById('profile-roof')
+      if (state.courseData.instructorImg) {
+        courseImg.style.backgroundImage = `url(${state.courseData.instructorImg})`
+      } else {
+        courseImg.style.backgroundImage = `url('/img/kang.968d430f.png')`
+      }
+
+      if (state.courseData.courseThumbnail) {
+        courseRoofImg.style.backgroundImage = `url(${state.courseData.courseThumbnail})`
+      } else {
+        courseRoofImg.style.backgroundImage = `url('/img/cooking_roof.c34b6973.jpg')`
+      }
     })
 
     // Function
     function moveCourseReview() {
       router.push({ name: 'courseReviewList', params: { courseId: route.params.courseId } })
     }
+
+    function clickRegister() {
+      state.courseData.isJoin = true
+      store.dispatch('registerCourse')
+    }
+
+    function clickDeregister() {
+      state.courseData.isJoin = false
+      store.dispatch('deregisterCourse')
+    }
+
+    function clickWish() {
+      state.courseData.isWish = true
+      store.dispatch('wishCourse')
+    }
+
+    function clickUnwish() {
+      state.courseData.isWish = false
+      store.dispatch('unwishCourse')
+    }
+
+    function createLecture() {
+      store.dispatch('createLecture', {})
+    }
+
+    function startLecture() {
+      let message = {
+        id : 'joinRoom',
+        name : 'Instructor',
+        room : 'testroom',
+      }
+      store.dispatch('courseStore/register', message)
+      router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
+    }
     
-    function joinLeacture() {
+    function joinLecture() {
       let message = {
         id : 'joinRoom',
         name : state.name,
@@ -135,7 +183,15 @@ export default {
     }
 
     return {
-      state, url, joinLeacture, moveCourseReview,
+      state, url,
+      clickRegister,
+      clickDeregister,
+      clickWish,
+      clickUnwish,
+      createLecture,
+      startLecture,
+      joinLecture,
+      moveCourseReview,
     }
   }
 }
@@ -145,6 +201,26 @@ export default {
 .course-roof {
   position: sticky;
   top: 0;
+}
+
+.course-roof-img {
+  width: 100%;
+  height: 180px;
+  background-image: url('@/assets/cooking_roof.jpg');
+  background-size: cover;
+  background-position: 20%;
+}
+
+.course-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50px;
+  background-image: url('@/assets/kang.png');
+  background-size: cover;
+  position: absolute;
+  z-index: 3;
+  top: 60px;
+  left: 60px;
 }
 
 .course-detail-title {

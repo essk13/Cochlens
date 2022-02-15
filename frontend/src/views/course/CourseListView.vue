@@ -4,12 +4,13 @@
     <q-input
       outlined
       bottom-slots
-      v-model="text"
+      v-model="state.searchText"
       label="찾으시는 강좌를 입력하세요."
       counter
       maxlength="30"
       :dense="state.searchDense"
       class="search-bar"
+      @keyup.enter="searchCourse"
     >
       <template v-slot:append>
         <q-icon v-if="state.searchText !== ''" name="close" @click="state.searchText = ''" class="cursor-pointer" />
@@ -68,6 +69,8 @@
 <script>
 import { reactive } from '@vue/reactivity'
 import CourseItem from '@/components/course/CourseItem'
+import { useStore } from 'vuex'
+import { watchEffect } from '@vue/runtime-core'
 
 export default {
   name: 'CourseListView',
@@ -75,14 +78,34 @@ export default {
     CourseItem,
   },
   setup() {
+    const store = useStore()
     const state = reactive({
       searchText: '',
       searchDense: true,
       paginationCurrent: 1,
+      courseList: store.state.courseStore.courseList,
+      bestCourseList : store.state.courseStore.bestCourseList,
     })
 
+    store.dispatch('courseStore/getBestCourseList')
+    store.dispatch('courseStore/getCourseList')
+
+    // Watch
+    watchEffect(() => {
+      state.courseList = store.state.courseStore.courseList
+    })
+    watchEffect(() => {
+      state.bestCourseList = store.state.courseStore.courseList
+    })
+
+    function searchCourse() {
+      console.log(state.searchText)
+      store.dispatch('courseStore/searchCourse', state.searchText)
+    }
+
     return {
-      state, 
+      state,
+      searchCourse,
     }
   }
 }
@@ -101,10 +124,6 @@ export default {
   background-color: rgb(187, 210, 255);
   height: 23vh;
   padding: 2vh 10vh 3vh 10vh;
-}
-
-.top-course-list {
-
 }
 
 .course-block {

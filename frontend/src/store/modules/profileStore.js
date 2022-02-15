@@ -56,7 +56,7 @@ const profileStore = {
     },
 
     updateUser({ rootState }) {
-      console.log(rootState)
+      const user = rootState.user
       axios({
         method: 'put',
         url: `${BASE_URL}users/me`,
@@ -64,19 +64,19 @@ const profileStore = {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
         data: {
-          email: rootState.user.email,
-          isCommand: rootState.user.isCommand,
-          isFaceFocusing: rootState.user.isFaceFocusing,
-          isSTT: rootState.user.isSTT,
-          isSubtitle: rootState.user.isSubtitle,
+          email: user.email,
+          isCommand: user.isCommand,
+          isFaceFocusing: user.isFaceFocusing,
+          isSTT: user.isSTT,
+          isSubtitle: user.isSubtitle,
           // 임시
           password: "asdfasdfasdf",
-          profileImage: rootState.user.profileImage,
-          role: rootState.user.role,
-          thumbnailImage: rootState.user.thumbnailImage,
-          userDescription: rootState.user.userDescription,
-          userName: rootState.user.userName,
-          userNickname: rootState.user.userNickname
+          profileImage: user.profileImage,
+          role: user.role,
+          thumbnailImage: user.thumbnailImage,
+          userDescription: user.userDescription,
+          userName: user.userName,
+          userNickname: user.userNickname
         }
       })
         .then((res) => {
