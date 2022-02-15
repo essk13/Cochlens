@@ -30,6 +30,7 @@
 
 <script>
 import { reactive, computed } from '@vue/reactivity'
+// import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -38,15 +39,18 @@ export default {
     takingCourseItem: Object,
   },
   setup (props) {
+    // const store = useStore()
     const router = useRouter()
     const state = reactive({
       id: 1,
       thumbnailImageUrl: computed(() => props.takingCourseItem.courseThumbnail),
     })
 
+    // 강좌 상세 정보로 이동
     function clickCourse(){
-      router.push({ name: 'courseDetail', params: { courseId: state.id }})
+      // store.dispatch('courseStore/getCourseDetail', props.takingCourseItem.courseId)
       // router.push({ name: 'courseDetail', params: { courseId: props.takingCourseItem.courseId }})
+      router.push({ name: 'courseDetail', params: { courseId: state.id }})
     }
 
     return {

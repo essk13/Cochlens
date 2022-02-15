@@ -28,6 +28,21 @@ const instructorStore = {
       "userNickname": "hotsix",
       "vodOpenCourseList": "vod_open_course_list"
     },],  // 강사 조회 목록
+    bestInstructorList: [{
+      "courseCount": 10,
+      "courseReviewCount": 10,
+      "courseReviewList": "course_review_list",
+      "courseReviewRateAverage": 4.88,
+      "email": "ssafy@ssafy.com",
+      "liveOpenCourseList": "live_open_course_list",
+      "profileImage": "notexisted",
+      "thumbnailImage": "notexisted",
+      "userDescription": "notexisted",
+      "userId": 0,
+      "userName": "ssafy",
+      "userNickname": "hotsix",
+      "vodOpenCourseList": "vod_open_course_list"
+    },],
     instructorDetail: {
       "courseCount": 10,
       "courseReviewCount": 10,
@@ -57,6 +72,11 @@ const instructorStore = {
       state.instructorList = instructorList
     },
 
+    // 인기 강사 목록 설정
+    SET_BEST_INSTRUCTOR_LIST(state, bestInstructorList) {
+      state.bestInstructorList = bestInstructorList
+    },
+
     // 강사 상세 정보 설정
     SET_INSTRUCTOR_DETAIL(state, instructorDetail) {
       state.instructorDetail = instructorDetail
@@ -64,11 +84,49 @@ const instructorStore = {
   },
   actions: {
     // 강사 목록 조회
-    getInstructorList({ commit }) {
+    getInstructorList({ commit }, page) {
       return new Promise((resolve, reject) => {
         axios({
           method: 'get',
-          url: `${BASE_URL}users/instructor`,
+          url: `${BASE_URL}users/instructor?page=${page}`,
+          headers: setHeader()
+        })
+        .then(res => {
+          commit('SET_INSTRUCTOR_LIST', res.data)
+          resolve(res)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+
+    // 인기 강사 목록 조회
+    getBestInstructorList({ commit }) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          url: `${BASE_URL}users/instructor/best`,
+          headers: setHeader()
+        })
+        .then(res => {
+          commit('SET_BEST_INSTRUCTOR_LIST', res.data)
+          resolve(res)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+
+    // 강사 검색
+    searchInstructor({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          url: `${BASE_URL}users/instructor/search?userNickname=${data.text}?page=${data.page}`,
           headers: setHeader()
         })
         .then(res => {
