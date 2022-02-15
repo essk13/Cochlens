@@ -5,6 +5,7 @@ import com.ssafy.db.entity.*;
 import com.ssafy.db.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -70,12 +71,12 @@ public class CourseServiceImpl implements CourseService {
      */
 
     @Override
-    public List<CourseDto.CourseListRes> getCourseList(Pageable pageable) {
-        List<CourseDto.CourseListRes> result = new ArrayList<>();
-        List<Course> list = (List<Course>) courseRepository.findAll(pageable);
+    public List<CourseDto.CourseAllRes> getCourseList(Pageable pageable) {
+        List<CourseDto.CourseAllRes> result = new ArrayList<>();
+        List<Course> list = courseRepository.findAll(pageable).getContent();
 
         for (Course course : list) {
-            CourseDto.CourseListRes courseRes = CourseDto.CourseListRes.of(course);
+            CourseDto.CourseAllRes courseRes = CourseDto.CourseAllRes.of(course);
             result.add(courseRes);
         }
         return result;

@@ -15,7 +15,7 @@ public interface CourseService {
     void registerWishlist(User user, Course course);
     /* read */
     Course getCourse(Long courseId);
-    List<CourseDto.CourseListRes> getCourseList(Pageable pageable);
+    List<CourseDto.CourseAllRes> getCourseList(Pageable pageable);
     CourseDto.CourseInstructorVO getInstructorRate(User user);
 
     List<CourseDto.CourseListRes> getRegisterCourseList(User user);

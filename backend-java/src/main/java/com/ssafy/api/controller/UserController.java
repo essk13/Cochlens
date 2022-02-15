@@ -7,6 +7,8 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -124,7 +126,7 @@ public class UserController {
 			@ApiResponse(code = 404, message = "사용자 없음"),
 			@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<List<UserDto.UserInstructorRes>> getInstructorList(@ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+	public ResponseEntity<List<UserDto.UserInstructorRes>> getInstructorList(Pageable pageable) {
 		List<UserDto.UserInstructorRes> list = userService.getInstructorList(pageable);
 		return ResponseEntity.ok().body(list);
 	}
@@ -139,7 +141,7 @@ public class UserController {
 	})
 	public ResponseEntity<List<UserDto.UserInstructorRes>> getSearchInstructorList(
 			@ApiParam(value="강좌 제목 정보", required = true) @RequestParam String instructorName,
-			@ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+			Pageable pageable) {
 		List<UserDto.UserInstructorRes> list = userService.getSearchInstructorList(instructorName, pageable);
 		return ResponseEntity.ok().body(list);
 	}

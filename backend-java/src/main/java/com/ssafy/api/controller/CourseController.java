@@ -14,6 +14,8 @@ import com.ssafy.db.entity.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -124,8 +126,8 @@ public class CourseController {
             @ApiResponse(code = 404, message = "사용자 없음"),
             @ApiResponse(code = 500, message = "서버 오류")
     })
-    public ResponseEntity<List<CourseDto.CourseListRes>> getCourseList(@ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
-        List<CourseDto.CourseListRes> list = courseService.getCourseList(pageable);
+    public ResponseEntity<List<CourseDto.CourseAllRes>> getCourseList(Pageable pageable) {
+        List<CourseDto.CourseAllRes> list = courseService.getCourseList(pageable);
         return ResponseEntity.ok().body(list);
     }
 
@@ -175,7 +177,7 @@ public class CourseController {
     })
     public ResponseEntity<List<CourseDto.CourseListRes>> getSearchCourseList(
             @ApiParam(value="강좌 제목 정보", required = true) @RequestParam String courseName,
-            @ApiParam(value="페이지 정보", required = true) @RequestParam Pageable pageable) {
+            Pageable pageable) {
         List<CourseDto.CourseListRes> list = courseService.getSearchCourseList(courseName, pageable);
         return ResponseEntity.ok().body(list);
     }
