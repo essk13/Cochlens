@@ -1,27 +1,28 @@
 <template>
-<div class="course-detail-curriculum row justfiy-between">
-  <dir class="row">
-    <div class="course-detail-thumbnail"></div>
-    <div>
-      <p class="curriculum-title">{{ props.lectureItem.lectureName }}</p>
-      <p class="curriculum-description">
-        강사 : {{ instructor }}<br>
-        날짜 : {{ props.lectureItem.lectureDate }} / 길이 : {{ props.lectureItem.lectureRuntime }}
-      </p>
+  <div class="course-detail-curriculum row justfiy-between">
+    <div class="row">
+      <div class="course-detail-thumbnail"></div>
+      <div>
+        <p class="curriculum-title">{{ props.lectureItem.lectureName }}</p>
+        <p class="curriculum-description">
+          강사 : {{ state.instructor }}<br>
+          날짜 : {{ props.lectureItem.lectureDate }} / 길이 : {{ props.lectureItem.lectureRuntime }}
+        </p>
+      </div>
     </div>
-  </dir>
-  <q-btn v-if="!props.lectureItem.lectureState && state.userName === state.instructorName" @click="startLecture" color="purple">강의 시작</q-btn>
-  <q-btn v-else-if="props.lectureItem.lectureState === 'live' && !state.userName === state.instructorName" @click="joinLecture" color="purple">강의 참가</q-btn>
-  <q-btn v-else-if="props.lectureItem.lectureState === 'done' && state.userName === state.instructorName" @click="uploadVOD" color="purple">VOD 등록</q-btn>
-  <q-btn v-else-if="props.lectureItem.lectureState === 'done' && !state.userName === state.instructorName" disable color="purple">종 료</q-btn>
-  <q-btn v-else @click="watchVOD" color="purple">VOD</q-btn>
-</div>
+    <div>
+      <q-btn v-if="props.lectureItem.lectureState == 'before' && state.userName === state.instructorName" @click="startLecture" color="purple" label="강의 시작" />
+      <q-btn v-else-if="props.lectureItem.lectureState === 'live' && !state.userName === state.instructorName" @click="joinLecture" color="purple" label="강의 참가" />
+      <q-btn v-else @click="watchVOD" color="purple" label="VOD" />
+    </div>
+  </div>
 </template>
 
 <script>
 import { reactive } from '@vue/reactivity'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+
 export default {
   name: 'LectureItem',
   components: {
@@ -67,6 +68,7 @@ export default {
 
     return {
       state,
+      props,
       startLecture,
       joinLecture,
       uploadVOD,
@@ -77,6 +79,14 @@ export default {
 </script>
 
 <style>
+.course-detail-curriculum {
+  width: 100%;
+  height: 130px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  background: gray;
+}
+
 .course-detail-thumbnail {
   width: 200px;
   height: 130px;

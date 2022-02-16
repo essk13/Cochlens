@@ -16,8 +16,8 @@
   <div class="profile-component">
     <profile-main v-if="state.home"></profile-main>
     <taking-course-list v-else-if="state.taking"></taking-course-list>
-    <wish-list v-if="state.wishList"></wish-list>
-    <profile-update v-if="state.update"></profile-update>
+    <wish-list v-else-if="state.wish"></wish-list>
+    <profile-update v-else-if="state.update"></profile-update>
   </div>
 </template>
 <script>
@@ -47,6 +47,9 @@ export default {
       update: false,
       userData: store.state.user
     })
+
+    // Created
+    store.dispatch('profileStore/getUserCourse')
 
     // Mounted
     onMounted(() => {
@@ -82,25 +85,25 @@ export default {
       const componentName = store.state.profileStore.component
       if ( componentName === 'home') {
         state.home = true
-          state.taking = false
-          state.wish = false
-          state.update = false
+        state.taking = false
+        state.wish = false
+        state.update = false
       } else if (componentName === 'taking') {
-          state.home = false
-          state.taking = true
-          state.wish = false
-          state.update = false
-        } else if (componentName === 'wish') {
-          state.home = false
-          state.taking = false
-          state.wish = true
-          state.update = false
-        } else {
-          state.home = false
-          state.taking = false
-          state.wish = false
-          state.update = true
-        }
+        state.home = false
+        state.taking = true
+        state.wish = false
+        state.update = false
+      } else if (componentName === 'wish') {
+        state.home = false
+        state.taking = false
+        state.wish = true
+        state.update = false
+      } else {
+        state.home = false
+        state.taking = false
+        state.wish = false
+        state.update = true
+      }
     }
     // 수정 페이지 이동
     function moveUpdate() {

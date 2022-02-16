@@ -27,35 +27,19 @@ const profileStore = {
   },
 
   actions: {
-    // 찜 목록 조회
-    getWishList({ commit }) {
+    // 찜, 수강 목록 조회
+    getUserCourse({ commit }) {
       axios({
         method: 'get',
-        url: `${BASE_URL}users/me/wishlist`,
+        url: `${BASE_URL}users/profile`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
           console.log(res)
-          commit('SET_WISHLIST', res.data)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-    // 수강 목록 조회
-    getTakingList({ commit }) {
-      axios({
-        method: 'get',
-        url: `${BASE_URL}course/recent`,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('JWT')}`
-        },
-      })
-        .then((res) => {
-          console.log(res)
-          commit('SET_TAKINGLIST', res.data)
+          commit('SET_TAKINGLIST', res.data.registerCourseList)
+          commit('SET_WISHLIST', res.data.wishCourseList)
         })
         .catch((err) => {
           console.log(err)
