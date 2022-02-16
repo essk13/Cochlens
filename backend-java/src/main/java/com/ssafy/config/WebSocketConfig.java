@@ -2,7 +2,6 @@ package com.ssafy.config;
 
 import com.ssafy.config.handler.CallHandler;
 import com.ssafy.config.handler.ChatHandler;
-import com.ssafy.config.handler.RecHandler;
 import com.ssafy.config.webrtc.RoomManager;
 import com.ssafy.config.webrtc.UserRegistry;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +38,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     }
 
     @Bean
-    public RecHandler recHandler() {
-        return new RecHandler();
-    }
-
-    @Bean
     public KurentoClient kurentoClient() {
         return KurentoClient.create();
     }
@@ -59,6 +53,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chatHandler, "/ws/chat");
         registry.addHandler(groupCallHandler(), "/groupcall");
-        registry.addHandler(recHandler(), "/recording");
+//        registry.addHandler(recHandler(), "/recording");
     }
 }

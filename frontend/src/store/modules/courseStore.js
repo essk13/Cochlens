@@ -1,5 +1,6 @@
 import Participant from './js/participant.js'
 import kurentoUtils from 'kurento-utils'
+// import { part } from 'core-js/core/function'
 
 const courseStore = {
   namespaced: true,
@@ -8,7 +9,7 @@ const courseStore = {
     participants: {},
     name: '',
     room: '',
-    webRtcPeer: {},
+    webRtcPeer: Object,
   },
 
   getters: {
@@ -79,6 +80,12 @@ const courseStore = {
         case 'error':
           // setState(NO_CALL);
           dispatch('onError','Error message from server: ' + msg.message)
+          break
+        case 'stopped':
+          break
+        case 'paused':
+          break
+        case 'recording':
           break
         /**
          * recoding end
@@ -157,11 +164,11 @@ const courseStore = {
         }
       }
       console.log(state.name + " registered in room " + state.room)
-      var participant = new Participant(state.name)
+      let participant = new Participant(state.name)
       commit('ADD_PARTICIPANT', { name: state.name, participant })
-      var video = participant.getVideoElement()
+      let video = participant.getVideoElement()
 
-      var options = {
+      let options = {
             localVideo: video,
             mediaConstraints: constraints,
             onicecandidate: participant.onIceCandidate.bind(participant),
@@ -191,7 +198,7 @@ const courseStore = {
     // 다른 유저 퇴실
     onParticipantLeft({ state }, request) {
       console.log('Participant ' + request.name + ' left')
-      var participant = state.participants[request.name]
+      let participant = state.participants[request.name]
       participant.dispose()
     },
 
@@ -219,16 +226,18 @@ const courseStore = {
     startResponse({ state }, msg) {
       // setState(IN_CALL);
       console.log('SDP answer received from server. Processing ...');
-    
-      state.webRtcPeer.processAnswer(msg.sdpAnswer, function(error) {
+      console.log(msg)
+      state.participants[msg.name].rtcPeer.processAnswer(msg.sdpAnswer, function(error) {
         if (error)
           return console.error(error);
       });
     },
 
     playResponse({ state }, msg) {
+      console.log('SDP answer received from server. Processing ...');
+      console.log(msg)
       // setState(IN_PLAY);
-      state.webRtcPeer.processAnswer(msg.sdpAnswer, function(error) {
+      state.participants[msg.name].rtcPeer.processAnswer(msg.sdpAnswer, function(error) {
         if (error)
           return console.error(error);
       });
@@ -248,34 +257,66 @@ const courseStore = {
      */
   
     /**
-     * recoding view function
+     * recording view function
      */
 
-     startRecoding({ dispatch, state }, videoOutput) {
+    startRecording({ state }, videoOutput) {
       console.log('Creating WebRtcPeer and generating local sdp offer ...');
+      console.log(state.participants)
 
-      let videoInput = document.getElementById('video-' + state.name)
+      let participant = state.participants[state.name]
+      console.log(state.name)
+      console.log(participant)
+      let videoInput = document.getElementById("video-" + state.name)
+      console.log(videoInput)
+      console.log(videoOutput)
+      let constraints = {
+        audio : true,
+        video : {
+          mandatory : {
+            minWidth : 320,
+            minHeight : 120,
+            maxWidth : 320,
+            maxHeight : 120,
+            maxFrameRate : 15,
+            minFrameRate : 15
+          }
+        }
+      }
       let options = {
           localVideo : videoInput,
           remoteVideo : videoOutput,
-          mediaConstraints : dispatch('getConstraints'),
-          onicecandidate : dispatch('onIceCandidate')
+          mediaConstraints : constraints,
+          onicecandidate : participant.onIceCandidate.bind(participant),
+          configuration: {
+            iceServers: [{
+              'urls': 'turn:3.34.253.8:3478?transport=udp',
+              'username': 'myuser',
+              'credential': 'mypassword'
+            }]
+          }
       }
 
-      state.webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options,
-          function(error) {
-        if (error)
-          return console.error(error);
-        state.webRtcPeer.generateOffer(dispatch('onOffer'));
-      });
+      participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(
+        options,
+        function(error) {
+          if (error)
+            return console.error(error);
+
+          this.generateOffer (participant.offerToRecordingVideo.bind(participant))
+          this.audioEnabled = false
+        });
     }, 
 
     getConstraints() {
       console.log('getConstraints................... ...');
       // let mode = 'video-and-audio';
       let constraints = {
-          audio : true,
-          video : true
+        audio : true,
+        video :{
+          width: 640,
+          framerate: 15
+        }
       }
       // if (mode == 'video-only') {
       //   constraints.audio = false;
@@ -307,43 +348,65 @@ const courseStore = {
       }
       dispatch('sendMessage', message)
     },
-    stopRecoding({ dispatch, state }) {
+    stopRecording({ dispatch, state }) {
       // var stopMessageId = (state == IN_CALL) ? 'stop' : 'stopPlay';
       // console.log('Stopping video while in ' + state + '...');
       // setState(POST_CALL);
-      if (state.webRtcPeer) {
-        state.webRtcPeer.dispose();
-        state.webRtcPeer = null;
+      let participant = state.participants[state.name]
+      if (participant.rtcPeer) {
+        participant.rtcPeer.dispose();
+        participant.rtcPeer = null;
 
         let message = {
             // id : stopMessageId
-            id : 'stopPlay'
+            id : 'stopRecording'
         }
         dispatch('sendMessage', message)
       }
       // hideSpinner(videoInput, videoOutput);
     },
-    playRecoding({ dispatch, state }, videoOutput) {
+    playRecording({ state }, videoOutput) {
       console.log("Starting to play recorded video...");
 
       // Disable start button
       // setState(DISABLED);
       // showSpinner(videoOutput);
-
+      let constraints = {
+        audio : true,
+        video : {
+          mandatory : {
+            minWidth : 320,
+            minHeight : 120,
+            maxWidth : 320,
+            maxHeight : 120,
+            maxFrameRate : 15,
+            minFrameRate : 15
+          }
+        }
+      }
       console.log('Creating WebRtcPeer and generating local sdp offer ...');
+      let participant = state.participants[state.name]
 
       var options = {
           remoteVideo : videoOutput,
-          mediaConstraints : dispatch('getConstraints'),
-          onicecandidate : dispatch('onIceCandidate'),
+          mediaConstraints :constraints,
+          onicecandidate : participant.onIceCandidate.bind(participant),
+          configuration: {
+            iceServers: [{
+              'urls': 'turn:3.34.253.8:3478?transport=udp',
+              'username': 'myuser',
+              'credential': 'mypassword'
+            }]
+          }
       }
 
-      state.webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
-          function(error) {
-        if (error)
-          return console.error(error);
-        state.webRtcPeer.generateOffer(dispatch('onPlayOffer'));
-      });
+      participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(
+        options,
+        function(error) {
+          if (error)
+            return console.error(error);
+          this.generateOffer (participant.offerToPlayVideo.bind(participant))
+        });
     },
 
     onPlayOffer({ dispatch }, error, offerSdp) {

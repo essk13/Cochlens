@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import lombok.RequiredArgsConstructor;
 import org.kurento.client.*;
 import org.kurento.jsonrpc.JsonUtils;
 import org.slf4j.Logger;
@@ -17,26 +18,28 @@ import org.springframework.web.socket.WebSocketSession;
 
 import com.google.gson.JsonObject;
 
+@RequiredArgsConstructor
 public class UserSession implements Closeable {
+    private static final String RECORDER_FILE_PATH = "file:///tmp/HelloWorldRecorded.webm";
 
     private static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
-    private final String name;
-    private final WebSocketSession session;
+    private String name = "";
+    private WebSocketSession session = null;
 
-    private final MediaPipeline pipeline;
+    private MediaPipeline pipeline;
 
-    private final String roomName;
-    private final WebRtcEndpoint outgoingMedia;
+    private String roomName;
+    private WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
-    private String id;
-    private MediaPipeline mediaPipeline;
-    private WebRtcEndpoint webRtcEndpoint;
+//    private String id;
+//    private MediaPipeline mediaPipeline;
+//    private WebRtcEndpoint webRtcEndpoint;
     private RecorderEndpoint recorderEndpoint;
     private Date stopTimestamp;
 
-    public UserSession(final String name, String roomName, final WebSocketSession session,
+    public UserSession(String name, String roomName, WebSocketSession session,
                        MediaPipeline pipeline) {
 
         this.pipeline = pipeline;
@@ -64,28 +67,28 @@ public class UserSession implements Closeable {
         });
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+//    public String getId() {
+//        return id;
+//    }
+//
+//    public void setId(String id) {
+//        this.id = id;
+//    }
 
     public WebRtcEndpoint getWebRtcEndpoint() {
-        return webRtcEndpoint;
+        return outgoingMedia;
     }
 
     public void setWebRtcEndpoint(WebRtcEndpoint webRtcEndpoint) {
-        this.webRtcEndpoint = webRtcEndpoint;
+        this.outgoingMedia = webRtcEndpoint;
     }
 
     public MediaPipeline getMediaPipeline() {
-        return mediaPipeline;
+        return pipeline;
     }
 
     public void setMediaPipeline(MediaPipeline mediaPipeline) {
-        this.mediaPipeline = mediaPipeline;
+        this.pipeline = mediaPipeline;
     }
 
     public void setRecorderEndpoint(RecorderEndpoint recorderEndpoint) {
@@ -194,6 +197,245 @@ public class UserSession implements Closeable {
         });
     }
 
+    /**
+     * startRecording
+     * @param jsonMessage
+     */
+
+    public void startRecording(UserSession sender, String sdpOffer, JsonObject jsonMessage) {
+        try {
+//            MediaPipeline pipeline = kurento.createMediaPipeline();
+//            webRtcEndpoint = this.getEndpointForUser(sender);
+            outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
+            outgoingMedia.connect(outgoingMedia);
+
+            MediaProfileSpecType profile = getMediaProfileFromMessage(jsonMessage);
+
+            RecorderEndpoint recorder = new RecorderEndpoint.Builder(pipeline, RECORDER_FILE_PATH)
+                    .withMediaProfile(profile).build();
+
+            recorder.addRecordingListener(new EventListener<RecordingEvent>() {
+
+                @Override
+                public void onEvent(RecordingEvent event) {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("id", "recording");
+                    try {
+                        synchronized (session) {
+                            session.sendMessage(new TextMessage(response.toString()));
+                        }
+                    } catch (IOException e) {
+                        log.error(e.getMessage());
+                    }
+                }
+
+            });
+
+            recorder.addStoppedListener(new EventListener<StoppedEvent>() {
+
+                @Override
+                public void onEvent(StoppedEvent event) {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("id", "stopped");
+                    try {
+                        synchronized (session) {
+                            session.sendMessage(new TextMessage(response.toString()));
+                        }
+                    } catch (IOException e) {
+                        log.error(e.getMessage());
+                    }
+                }
+
+            });
+
+            recorder.addPausedListener(new EventListener<PausedEvent>() {
+
+                @Override
+                public void onEvent(PausedEvent event) {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("id", "paused");
+                    try {
+                        synchronized (session) {
+                            session.sendMessage(new TextMessage(response.toString()));
+                        }
+                    } catch (IOException e) {
+                        log.error(e.getMessage());
+                    }
+                }
+
+            });
+
+            connectAccordingToProfile(outgoingMedia, recorder, profile);
+
+            // 3. SDP negotiation
+            String sdpAnswer = outgoingMedia.processOffer(sdpOffer);
+
+            // 4. Gather ICE candidates
+            outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
+
+                @Override
+                public void onEvent(IceCandidateFoundEvent event) {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("id", "iceCandidate");
+                    response.addProperty("name", name);
+                    response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
+                    try {
+                        synchronized (session) {
+                            session.sendMessage(new TextMessage(response.toString()));
+                        }
+                    } catch (IOException e) {
+                        log.error(e.getMessage());
+                    }
+                }
+            });
+
+            JsonObject response = new JsonObject();
+            response.addProperty("id", "startResponse");
+            response.addProperty("name", sender.getName());
+            response.addProperty("sdpAnswer", sdpAnswer);
+
+            this.sendMessage(response);
+
+            outgoingMedia.gatherCandidates();
+
+            recorder.record();
+        } catch (Throwable t) {
+            log.error("Start error", t);
+            sendError(session, t.getMessage());
+        }
+    }
+
+    private MediaProfileSpecType getMediaProfileFromMessage(JsonObject jsonMessage) {
+
+        MediaProfileSpecType profile;
+        switch (jsonMessage.get("mode").getAsString()) {
+            case "audio-only":
+                profile = MediaProfileSpecType.WEBM_AUDIO_ONLY;
+                break;
+            case "video-only":
+                profile = MediaProfileSpecType.WEBM_VIDEO_ONLY;
+                break;
+            default:
+                profile = MediaProfileSpecType.WEBM;
+        }
+
+        return profile;
+    }
+
+    private void connectAccordingToProfile(WebRtcEndpoint webRtcEndpoint, RecorderEndpoint recorder,
+                                           MediaProfileSpecType profile) {
+        switch (profile) {
+            case WEBM:
+                webRtcEndpoint.connect(recorder, MediaType.AUDIO);
+                webRtcEndpoint.connect(recorder, MediaType.VIDEO);
+                break;
+            case WEBM_AUDIO_ONLY:
+                webRtcEndpoint.connect(recorder, MediaType.AUDIO);
+                break;
+            case WEBM_VIDEO_ONLY:
+                webRtcEndpoint.connect(recorder, MediaType.VIDEO);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported profile for this tutorial: " + profile);
+        }
+    }
+
+    /**
+     * play recording
+     * @param sender
+     * @param session
+     * @param jsonMessage
+     */
+    public void playRecording(UserSession sender, final WebSocketSession session, JsonObject jsonMessage) {
+        try {
+//            String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
+//            String sdpAnswer = this.getEndpointForUser(sender).processAnswer(sdpOffer);
+
+//            final MediaPipeline pipeline = kurento.createMediaPipeline();
+//            WebRtcEndpoint webRtcEndpoint = this.getEndpointForUser(sender);
+            outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
+            PlayerEndpoint player = new PlayerEndpoint.Builder(pipeline, RECORDER_FILE_PATH).build();
+            player.connect(outgoingMedia);
+
+            // Player listeners
+            player.addErrorListener(new EventListener<ErrorEvent>() {
+                @Override
+                public void onEvent(ErrorEvent event) {
+                    log.info("ErrorEvent for session '{}': {}", session.getId(), event.getDescription());
+                    sendPlayEnd(session, pipeline);
+                }
+            });
+            player.addEndOfStreamListener(new EventListener<EndOfStreamEvent>() {
+                @Override
+                public void onEvent(EndOfStreamEvent event) {
+                    log.info("EndOfStreamEvent for session '{}'", session.getId());
+                    sendPlayEnd(session, pipeline);
+                }
+            });
+
+            // 3. SDP negotiation
+            String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
+            String sdpAnswer = outgoingMedia.processOffer(sdpOffer);
+
+            JsonObject response = new JsonObject();
+            response.addProperty("id", "playResponse");
+            response.addProperty("name", sender.getName());
+            response.addProperty("sdpAnswer", sdpAnswer);
+
+            // 4. Gather ICE candidates
+            outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
+
+                @Override
+                public void onEvent(IceCandidateFoundEvent event) {
+                    JsonObject response = new JsonObject();
+                    response.addProperty("id", "iceCandidate");
+                    response.addProperty("name", name);
+                    response.add("candidate", JsonUtils.toJsonObject(event.getCandidate()));
+                    try {
+                        synchronized (session) {
+                            session.sendMessage(new TextMessage(response.toString()));
+                        }
+                    } catch (IOException e) {
+                        log.error(e.getMessage());
+                    }
+                }
+            });
+
+            // 5. Play recorded stream
+            player.play();
+
+            this.sendMessage(response);
+
+            outgoingMedia.gatherCandidates();
+        } catch (Throwable t) {
+            log.error("Play error", t);
+            sendError(session, t.getMessage());
+        }
+    }
+
+    public void sendPlayEnd(WebSocketSession session, MediaPipeline pipeline) {
+        try {
+            JsonObject response = new JsonObject();
+            response.addProperty("id", "playEnd");
+            session.sendMessage(new TextMessage(response.toString()));
+        } catch (IOException e) {
+            log.error("Error sending playEndOfStream message", e);
+        }
+        // Release pipeline
+        pipeline.release();
+    }
+
+    private void sendError(WebSocketSession session, String message) {
+        try {
+            JsonObject response = new JsonObject();
+            response.addProperty("id", "error");
+            response.addProperty("message", message);
+            session.sendMessage(new TextMessage(response.toString()));
+        } catch (IOException e) {
+            log.error("Exception sending message", e);
+        }
+    }
+
     public void stop() {
         if (recorderEndpoint != null) {
             final CountDownLatch stoppedCountDown = new CountDownLatch(1);
@@ -214,17 +456,18 @@ public class UserSession implements Closeable {
                 log.error("Exception while waiting for state change", e);
             }
             recorderEndpoint.removeStoppedListener(subscriptionId);
+//            this.webRtcEndpoint = null;
         }
     }
 
-    public void release() {
-        this.mediaPipeline.release();
-        this.webRtcEndpoint = null;
-        this.mediaPipeline = null;
-        if (this.stopTimestamp == null) {
-            this.stopTimestamp = new Date();
-        }
-    }
+//    public void release() {
+//        this.mediaPipeline.release();
+//        this.webRtcEndpoint = null;
+//        this.mediaPipeline = null;
+//        if (this.stopTimestamp == null) {
+//            this.stopTimestamp = new Date();
+//        }
+//    }
 
     @Override
     public void close() throws IOException {
@@ -273,14 +516,29 @@ public class UserSession implements Closeable {
     }
 
     public void addCandidate(IceCandidate candidate, String name) {
-        if (this.name.compareTo(name) == 0) {
-            outgoingMedia.addIceCandidate(candidate);
-        } else {
-            WebRtcEndpoint webRtc = incomingMedia.get(name);
-            if (webRtc != null) {
-                webRtc.addIceCandidate(candidate);
-            }
-        }
+//        switch (type) {
+//            case "origin": {
+                if (this.name.compareTo(name) == 0) {
+                    outgoingMedia.addIceCandidate(candidate);
+                } else {
+                    WebRtcEndpoint webRtc = incomingMedia.get(name);
+                    if (webRtc != null) {
+                        webRtc.addIceCandidate(candidate);
+                    }
+                }
+//                break;
+//            }
+//            case "record": {
+//                if (this.name.compareTo(name) == 0) {
+//                    webRtcEndpoint.addIceCandidate(candidate);
+//                } else {
+//                    WebRtcEndpoint webRtc = webRtcEndpoint;
+//                    if (webRtc != null) {
+//                        webRtc.addIceCandidate(candidate);
+//                    }
+//                }
+//            }
+//        }
     }
 
     /*

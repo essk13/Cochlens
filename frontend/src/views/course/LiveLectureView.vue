@@ -45,8 +45,8 @@
       </q-carousel>
     </div>
     <div v-if="state.isMainScreen" class="main-screen-block">
-        <video id="videoOutput" autoplay width="480px" height="360px"
-					poster="@/assets/logo.svg"></video>
+        <video id="videoOutput" autoplay style="width: 480px; height: 320px;"
+					:poster="state.logo"></video>
       <span class="main-screen-subtitles">{{ state.res }}</span>
     </div>
     <div v-else class="all-screen-list-block">
@@ -73,6 +73,7 @@ import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
 import { onMounted } from '@vue/runtime-core'
+import logo from '@/assets/logo.svc'
 // import model_json from '@/assets/my_model/model.json'
 // import metadata_json from '@/assets/my_model/metadata.json'
 
@@ -84,8 +85,8 @@ export default {
   setup() {
     const store = useStore()
 
-    const url = 'wss://' + location.host + '/recording'
-    store.dispatch('courseStore/setWs', url)
+    // const url = 'wss://' + location.host + '/groupcall'
+    // store.dispatch('courseStore/setWs', url)
 
     // const URL = "../../asstes/my_model/"
     const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
@@ -95,6 +96,7 @@ export default {
       isMainScreen: true,
       res: '',
       videoOutput: document.getElementById('videoOutput'),
+      logo
     })
 
     // Mounted
@@ -114,6 +116,8 @@ export default {
 
     function startRecording() {
       console.log('startRecording')
+      state.videoOutput = document.getElementById('videoOutput')
+      console.log(state.videoOutput)
       store.dispatch('courseStore/startRecording', state.videoOutput)
     }
 
@@ -175,7 +179,7 @@ export default {
   }
 
     return {
-      state, url, URL,
+      state, URL,
       leaveRoom,
       startRecording, stopRecording, playRecording,
       init, predict
