@@ -95,7 +95,7 @@ export default {
     })
 
     store.dispatch('instructorStore/getBestInstructorList')
-    store.dispatch('instructorStore/getInstructorList', { page: state.paginationCurrent, size: state.listSize })
+    store.dispatch('instructorStore/getInstructorList', 1)
 
     function searchInsturtor() {
       state.searchResult = state.searchText

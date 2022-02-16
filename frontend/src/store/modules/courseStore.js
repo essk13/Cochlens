@@ -248,8 +248,7 @@ const courseStore = {
         method: 'get',
         url: `${BASE_URL}course?page=${page}&size=15`,
         headers: {
-          page: `1`,
-          size: `5`
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
@@ -279,13 +278,12 @@ const courseStore = {
     },
 
     // 강좌 검색
-    searchCourse({ commit }, text) {
+    searchCourse({ commit }, data) {
       axios({
         method: 'get',
-        url: `${BASE_URL}course/search?courseName=${text}`,
+        url: `${BASE_URL}course/search?courseName=${data.text}&page=${data.page}&size=15`,
         headers: {
-          page: `1`,
-          size: `5`
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {

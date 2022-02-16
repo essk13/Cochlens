@@ -81,6 +81,7 @@ export default {
     const store = useStore()
     const state = reactive({
       searchText: '',
+      searchResult: '',
       searchDense: true,
       paginationCurrent: 1,
       courseList: store.state.courseStore.courseList,
@@ -99,10 +100,15 @@ export default {
       state.bestCourseList = store.state.courseStore.bestCourseList
     })
 
+    watchEffect(() => {
+      store.dispatch('courseStore/searchCourse', { text: state.searchResult, page: state.paginationCurrent })
+    })
+
     // Function
     // 강좌 검색
     function searchCourse() {
-      store.dispatch('courseStore/searchCourse', state.searchText)
+      state.searchResult = state.searchText
+      state.paginationCurrent = 1
     }
 
     return {
