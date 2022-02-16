@@ -13,56 +13,9 @@ const setHeader = function () {
 const instructorStore = {
   namespaced: true,
   state: {
-    instructorList: [{
-      "courseCount": 10,
-      "courseReviewCount": 10,
-      "courseReviewList": "course_review_list",
-      "courseReviewRateAverage": 4.88,
-      "email": "ssafy@ssafy.com",
-      "liveOpenCourseList": "live_open_course_list",
-      "profileImage": "notexisted",
-      "thumbnailImage": "notexisted",
-      "userDescription": "notexisted",
-      "userId": 0,
-      "userName": "ssafy",
-      "userNickname": "hotsix",
-      "vodOpenCourseList": "vod_open_course_list"
-    },],  // 강사 조회 목록
-    bestInstructorList: [{
-      "courseCount": 10,
-      "courseReviewCount": 10,
-      "courseReviewList": "course_review_list",
-      "courseReviewRateAverage": 4.88,
-      "email": "ssafy@ssafy.com",
-      "liveOpenCourseList": "live_open_course_list",
-      "profileImage": "notexisted",
-      "thumbnailImage": "notexisted",
-      "userDescription": "notexisted",
-      "userId": 0,
-      "userName": "ssafy",
-      "userNickname": "hotsix",
-      "vodOpenCourseList": "vod_open_course_list"
-    },],
-    instructorDetail: {
-      "courseCount": 10,
-      "courseReviewCount": 10,
-      "courseReviewList": "course_review_list",
-      "courseReviewRateAverage": 4.88,
-      "email": "ssafy@ssafy.com",
-      "isCommand": false,
-      "isFaceFocusing": false,
-      "isSTT": false,
-      "isSubtitle": false,
-      "liveOpenCourseList": "live_open_course_list",
-      "profileImage": "notexisted",
-      "role": "User",
-      "thumbnailImage": "notexisted",
-      "userDescription": "notexisted",
-      "userId": 0,
-      "userName": "ssafy",
-      "userNickname": "hotsix",
-      "vodOpenCourseList": "vod_open_course_list"
-    },  // 강사 상세 정보
+    instructorList: null,  // 강사 조회 목록
+    bestInstructorList: null,  // 인기 강사 조회 목록
+    instructorDetail: null,  // 강사 상세 정보
   },
   getters: {
   },
@@ -84,11 +37,11 @@ const instructorStore = {
   },
   actions: {
     // 강사 목록 조회
-    getInstructorList({ commit }, page) {
+    getInstructorList({ commit }, data) {
       return new Promise((resolve, reject) => {
         axios({
           method: 'get',
-          url: `${BASE_URL}users/instructor?page=${page}`,
+          url: `${BASE_URL}users/instructor?page=${data.page}&size=${data.size}`,
           headers: setHeader()
         })
         .then(res => {
@@ -126,7 +79,7 @@ const instructorStore = {
       return new Promise((resolve, reject) => {
         axios({
           method: 'get',
-          url: `${BASE_URL}users/instructor/search?userNickname=${data.text}?page=${data.page}`,
+          url: `${BASE_URL}users/instructor/search?instructorName=${data.text}&page=${data.page}&size=${data.size}`,
           headers: setHeader()
         })
         .then(res => {

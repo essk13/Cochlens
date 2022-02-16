@@ -8,17 +8,15 @@
     </div>
     <!-- 베스트 강사 설명 -->
     <div class="best-instructor-info col-3">
-      <span>강태훈</span>
-      <!-- <span>{{ props.bestInstructor.userNickname }}</span> -->
-      <span class="best-instructor-rate">★5.0</span>
-      <!-- <span class="best-instructor-rate">★{{  }}</span> -->
+      <span>{{ props.bestInstructor.userNickname }}</span>
+      <span class="best-instructor-rate">★{{  }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import { reactive, computed } from '@vue/reactivity'
-// import { useStore } from 'vuex'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -29,20 +27,18 @@ export default {
     bestInstructor: Object,
   },
   setup(props) {
-    // const store = useStore()
+    const store = useStore()
     const router = useRouter()
     const state = reactive({
-      id: 1,
       profileImageUrl: computed(() => props.bestInstructor.profileImage)
     })
 
     // 강사 상세 정보로 이동
     function moveInstructorDetail() {
-      // store.dispatch('instructorStore/getInstructorDetail', props.bestInstructor.userId)
-      // .then(() => {
-      //   router.push({ name: 'instructorDetail', params: { instructorId: props.bestInstructor.userId }})
-      // })
-      router.push({ name: 'instructorDetail', params: { instructorId: state.id }})
+      store.dispatch('instructorStore/getInstructorDetail', props.bestInstructor.userId)
+      .then(() => {
+        router.push({ name: 'instructorDetail', params: { instructorId: props.bestInstructor.userId }})
+      })
     }
 
     return {
