@@ -30,16 +30,10 @@ public class CourseServiceImpl implements CourseService {
     RegisterCourseRepository registerCourseRepository;
 
     @Autowired
-    RegisterCourseRepositorySupport registerCourseRepositorySupport;
-
-    @Autowired
     ReviewRepository reviewRepository;
 
     @Autowired
     WishlistRepository wishlistRepository;
-
-    @Autowired
-    private JPAQueryFactory jpaQueryFactory;
 
     @Override
     public Course createCourse(User user, CourseDto.CourseInsertReq courseInsertInfo) {

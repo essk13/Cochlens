@@ -131,6 +131,9 @@ export default {
       router.push({ name: 'courseReview' })
     }
     
+    /**
+     * 강의 시작 함수
+     */
     function joinLeacture() {
       let message = {
         id : 'joinRoom',

@@ -1,9 +1,12 @@
-package com.ssafy;
+package com.ssafy.config.webrtc;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.kurento.client.*;
 import org.kurento.jsonrpc.JsonUtils;
@@ -21,26 +24,18 @@ public class UserSession implements Closeable {
     private final String name;
     private final WebSocketSession session;
 
-    private MediaPipeline pipeline;
-//    private final MediaPipeline pipeline;
+    private final MediaPipeline pipeline;
 
     private final String roomName;
-    private WebRtcEndpoint outgoingMedia;
-//    private final WebRtcEndpoint outgoingMedia;
+    private final WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
-//    추가
+
+    private String id;
+    private MediaPipeline mediaPipeline;
+    private WebRtcEndpoint webRtcEndpoint;
     private RecorderEndpoint recorderEndpoint;
+    private Date stopTimestamp;
 
-    public void setRecorderEndpoint(RecorderEndpoint recorderEndpoint) {
-        this.recorderEndpoint = recorderEndpoint;
-    }
-
-    public void setMediaPipeline(MediaPipeline mediaPipeline) {
-        this.pipeline = mediaPipeline;
-    }
-    public void setWebRtcEndpoint(WebRtcEndpoint webRtcEndpoint) {
-        this.outgoingMedia = webRtcEndpoint;
-    }
     public UserSession(final String name, String roomName, final WebSocketSession session,
                        MediaPipeline pipeline) {
 
@@ -67,6 +62,34 @@ public class UserSession implements Closeable {
                 }
             }
         });
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public WebRtcEndpoint getWebRtcEndpoint() {
+        return webRtcEndpoint;
+    }
+
+    public void setWebRtcEndpoint(WebRtcEndpoint webRtcEndpoint) {
+        this.webRtcEndpoint = webRtcEndpoint;
+    }
+
+    public MediaPipeline getMediaPipeline() {
+        return mediaPipeline;
+    }
+
+    public void setMediaPipeline(MediaPipeline mediaPipeline) {
+        this.mediaPipeline = mediaPipeline;
+    }
+
+    public void setRecorderEndpoint(RecorderEndpoint recorderEndpoint) {
+        this.recorderEndpoint = recorderEndpoint;
     }
 
     public WebRtcEndpoint getOutgoingWebRtcPeer() {
@@ -169,6 +192,38 @@ public class UserSession implements Closeable {
                         senderName);
             }
         });
+    }
+
+    public void stop() {
+        if (recorderEndpoint != null) {
+            final CountDownLatch stoppedCountDown = new CountDownLatch(1);
+            ListenerSubscription subscriptionId = recorderEndpoint
+                    .addStoppedListener(new EventListener<StoppedEvent>() {
+
+                        @Override
+                        public void onEvent(StoppedEvent event) {
+                            stoppedCountDown.countDown();
+                        }
+                    });
+            recorderEndpoint.stop();
+            try {
+                if (!stoppedCountDown.await(5, TimeUnit.SECONDS)) {
+                    log.error("Error waiting for recorder to stop");
+                }
+            } catch (InterruptedException e) {
+                log.error("Exception while waiting for state change", e);
+            }
+            recorderEndpoint.removeStoppedListener(subscriptionId);
+        }
+    }
+
+    public void release() {
+        this.mediaPipeline.release();
+        this.webRtcEndpoint = null;
+        this.mediaPipeline = null;
+        if (this.stopTimestamp == null) {
+            this.stopTimestamp = new Date();
+        }
     }
 
     @Override

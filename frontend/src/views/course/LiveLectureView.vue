@@ -45,7 +45,8 @@
       </q-carousel>
     </div>
     <div v-if="state.isMainScreen" class="main-screen-block">
-      <img src="https://cdn.quasar.dev/img/mountains.jpg">
+        <video id="videoOutput" autoplay width="480px" height="360px"
+					poster="@/assets/logo.svg"></video>
       <span class="main-screen-subtitles">{{ state.res }}</span>
     </div>
     <div v-else class="all-screen-list-block">
@@ -53,11 +54,11 @@
     </div>
     <div class="menu-block row justify-between">
       <div class="col-1 row justify-center items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="startRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-2 row justify-between items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="stopRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="playRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-1 row justify-center items-center">
@@ -82,6 +83,10 @@ export default {
 
   setup() {
     const store = useStore()
+
+    const url = 'wss://' + location.host + '/recording'
+    store.dispatch('courseStore/setWs', url)
+
     // const URL = "../../asstes/my_model/"
     const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
     let webcam, model, maxPredictions
@@ -89,11 +94,12 @@ export default {
       screenSlide: 1,
       isMainScreen: true,
       res: '',
+      videoOutput: document.getElementById('videoOutput'),
     })
 
     // Mounted
     onMounted(() => {
-      init()
+      // init()
     })
 
     // Function
@@ -101,6 +107,29 @@ export default {
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'course' })
     }
+
+    /**
+     * 녹화 관련 함수들
+     */
+
+    function startRecording() {
+      console.log('startRecording')
+      store.dispatch('courseStore/startRecording', state.videoOutput)
+    }
+
+    function stopRecording() {
+      console.log('stopRecording')
+      store.dispatch('courseStore/stopRecording')
+    }
+
+    function playRecording() {
+      console.log('playRecording')
+      store.dispatch('courseStore/playRecording', state.videoOutput)
+    }
+
+    /**
+     * motion
+     */
 
     async function init() {
       const modelURL = URL + "model.json"
@@ -146,8 +175,10 @@ export default {
   }
 
     return {
-      state, URL,
-      leaveRoom, init, predict
+      state, url, URL,
+      leaveRoom,
+      startRecording, stopRecording, playRecording,
+      init, predict
     }
   }
 }
