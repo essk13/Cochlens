@@ -314,17 +314,17 @@ const courseStore = {
     },
 
     // 강좌 수강 신청
-    registerCourse() { 
+    registerCourse({ commit }, id) { 
       axios({
         method: 'post',
-        // 임시(추 후 Parameter 수정)
-        url: `${BASE_URL}course/2/register`,
+        url: `${BASE_URL}course/${id}/register`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
           console.log(res)
+          commit('')
         })
         .catch((err) => {
           console.log(err)
@@ -332,17 +332,17 @@ const courseStore = {
     },
 
     // 강좌 수강 신청 취소
-    deregisterCourse() {
+    deregisterCourse({ commit }, id) {
       axios({
         method: 'delete',
-        // 임시(추 후 Parameter 수정)
-        url: `${BASE_URL}course/2/deregister`,
+        url: `${BASE_URL}course/${id}/deregister`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
           console.log(res)
+          commit('')
         })
         .catch((err) => {
           console.log(err)
@@ -350,17 +350,17 @@ const courseStore = {
     },
 
     // 강좌 찜
-    wishCourse() {
+    wishCourse({ commit }, id) {
       axios({
         method: 'post',
-        // 임시(추 후 Parameter 수정)
-        url: `${BASE_URL}course/2/wish`,
+        url: `${BASE_URL}course/${id}/wish`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
           console.log(res)
+          commit('')
         })
         .catch((err) => {
           console.log(err)
@@ -368,17 +368,17 @@ const courseStore = {
     },
 
     // 강좌 찜 취소
-    unwishCourse() {
+    unwishCourse({ commit }, id) {
       axios({
         method: 'delete',
-        // 임시(추 후 Parameter 수정)
-        url: `${BASE_URL}course/2/wish`,
+        url: `${BASE_URL}course/${id}/wish`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
           console.log(res)
+          commit('')
         })
         .catch((err) => {
           console.log(err)

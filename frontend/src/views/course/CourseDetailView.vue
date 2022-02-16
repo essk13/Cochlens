@@ -48,7 +48,7 @@
           <q-card-actions align="around">
             <div>
               <q-btn v-if="state.courseData.instructorName === state.userName" @click="moveCourseUpdate" flat>강좌 수정</q-btn>
-              <q-btn v-else-if="state.courseData.courseJoinCount === state.courseData.courseLimitPeople && !state.courseData.isJoin" @click="clickRegister" flat>신청마감</q-btn>
+              <q-btn v-else-if="state.courseData.courseJoinCount === state.courseData.courseLimitPeople && !state.courseData.isJoin" disable flat>신청마감</q-btn>
               <q-btn v-else-if="!state.courseData.isJoin" @click="clickRegister" flat>신청하기</q-btn>
               <q-btn v-else-if="state.courseData.isJoin" @click="clickDeregister" flat>수강중인 강좌</q-btn>
             </div>
@@ -97,7 +97,7 @@
 
         <p class="q-mb-xs">강의 날짜 / 시간</p>
         <div class="row items-start">
-          <q-date v-model="state.lectureDate" mask="YYYY-MM-DD HH:mm" color="purple" class="q-mb-md" />
+          <q-date v-model="state.lectureDate" color="purple" class="q-mb-md" />
 
           <div class="q-gutter-sm row">
             <q-input filled v-model="state.lectureOpenTime" mask="time" :rules="['time']" label="시작 시간">
@@ -207,7 +207,7 @@ export default {
       lectureDate: `${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}`,
       lectureName: '',
       lectureOpenTime: `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`,
-      lectureRuntime: '2',
+      lectureRuntime: '02:00',
       lectureState: 'before',
       lectureThumbnail: null,
       lectureVod: null,
@@ -218,12 +218,10 @@ export default {
       reviewRate: 5,
     })
 
-    console.log('store')
-    console.log(store.state.courseStore.courseData)
-    console.log('state')
-    console.log(state.lectureList)
-    console.log('lectureItem')
-    console.log(state.lectureList[0])
+    console.log(store.state.courseStore.courseData.courseJoinCount)
+    console.log(store.state.courseStore.courseData.courseWishCount)
+    console.log(store.state.courseStore.courseData.isJoin)
+    console.log(store.state.courseStore.courseData.isWish)
 
     // Mounted
     onMounted(() => {
@@ -270,25 +268,25 @@ export default {
     function clickRegister() {
       state.courseData.isJoin = true
       state.courseData.courseJoinCount += 1
-      store.dispatch('registerCourse')
+      store.dispatch('courseStore/registerCourse', state.courseData.courseId)
     }
     // 수강 취소
     function clickDeregister() {
       state.courseData.isJoin = false
       state.courseData.courseJoinCount -= 1
-      store.dispatch('deregisterCourse')
+      store.dispatch('courseStore/deregisterCourse', state.courseData.courseId)
     }
     // 찜 추가
     function clickWish() {
       state.courseData.isWish = true
       state.courseData.courseWishCount += 1
-      store.dispatch('wishCourse')
+      store.dispatch('courseStore/wishCourse', state.courseData.courseId)
     }
     // 찜 취소
     function clickUnwish() {
       state.courseData.isWish = false
       state.courseData.courseWishCount -= 1
-      store.dispatch('unwishCourse')
+      store.dispatch('courseStore/unwishCourse', state.courseData.courseId)
     }
     // 강좌 수정
     function moveCourseUpdate() {

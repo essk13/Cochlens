@@ -23,16 +23,12 @@
         </div>
         <div class="instructor-review-list col">
           <q-list bordered class="rounded-borders">
-            <!-- <course-review
+            <course-review
               v-for="courseReview in state.instructorReviewList"
               :key="courseReview.reviewId"
               :course-review="courseReview"
             >
-            </course-review> -->
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
+            </course-review>
           </q-list>
         </div>
       </div>
@@ -44,17 +40,12 @@
         <span class="contents-more" @click="moveToLiveCourseList">더보기></span>
       </div>
       <div class="in-progress-course-list col row justify-around items-center no-wrap">
-        <!-- <course-item
+        <course-item
           v-for="liveOpenCourse in state.liveOpenCourseList"
           :key="liveOpenCourse.courseId"
           :course-item="liveOpenCourse"
         >
-        </course-item> -->
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
+        </course-item>
       </div>
     </div>
     <!-- 강사의 전체 강좌 -->
@@ -64,17 +55,12 @@
         <span class="contents-more" @click="moveToVodCourseList">더보기></span>
       </div>
       <div class="all-course-list col row justify-around items-center no-wrap">
-        <!-- <course-item
+        <course-item
           v-for="vodOpenCourse in state.vodOpenCourseList"
           :key="vodOpenCourse.courseId"
           :course-item="vodOpenCourse"
         >
-        </course-item> -->
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
+        </course-item>
       </div>
     </div>
   </div>
