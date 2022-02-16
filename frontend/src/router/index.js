@@ -12,6 +12,7 @@ import CourseListView from '../views/course/CourseListView'
 import CourseReviewView from '../views/course/CourseReviewView'
 import CourseCreateView from '../views/course/CourseCreateView'
 import LiveLectureView from '../views/course/LiveLectureView'
+import LiveLectureRecode from '../views/course/LiveLectureRecode'
 
 import InstructorListView from '../views/instructor/InstructorListView'
 import InstructorDetailView from '../views/instructor/InstructorDetailView'
@@ -72,6 +73,12 @@ const routes = [
     path: '/live',
     name: 'live',
     component: LiveLectureView
+
+  },
+  { // 라이브 레코드
+    path: '/recode',
+    name: 'recode',
+    component: LiveLectureRecode
 
   },
 
