@@ -79,7 +79,7 @@ const routes = [
     component: LiveLectureView
   },
   { // 채팅
-    path: '/chat',
+    path: '/chat/:lectureId',
     name: 'chat',
     component: ChatView
   },

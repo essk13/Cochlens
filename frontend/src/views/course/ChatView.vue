@@ -21,10 +21,15 @@ import SockJS from 'sockjs-client'
 import Stomp from 'webstomp-client'
 
 import { reactive } from '@vue/reactivity'
+
+import {useRoute} from 'vue-router'
+
 export default {
   name: 'ChatView',
   
   setup() {
+    
+    const route = useRoute()
     const state = reactive({
       text: '',
       chatList: [],
@@ -42,7 +47,7 @@ export default {
     }
 
     const subscribeChat = () => {
-      state.stompClient.subscribe(`/topic/lecture`, res => {
+      state.stompClient.subscribe(`/topic/${route.params.lectureId}`, res => {
         const chatMsg = JSON.parse(res.body)
         state.chatList.push(chatMsg)
       })
@@ -57,7 +62,7 @@ export default {
           userName: 'Mr.깡',
           content: state.text
         }
-        state.stompClient.send(`/app/chat`, JSON.stringify(msg), {})
+        state.stompClient.send(`/app/chat/${route.params.lectureId}`, JSON.stringify(msg), {})
         state.text = ''
       }
     }
