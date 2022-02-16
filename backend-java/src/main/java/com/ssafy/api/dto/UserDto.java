@@ -32,8 +32,6 @@ public class UserDto {
         String userName;
         @ApiModelProperty(name="닉네임", example="hotsix")
         String userNickname;
-        @ApiModelProperty(name="유저 Role", example="INSTRUCTOR")
-        Role role;
     }
 
     /**

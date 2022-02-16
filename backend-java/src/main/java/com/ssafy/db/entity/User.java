@@ -50,10 +50,11 @@ public class User {
     boolean isFaceFocusing;
 
     @Builder
-    public User(String email, String password, String userName, String profileImage, Role role) {
+    public User(String email, String password, String userName, String userNickname, String profileImage, Role role) {
         this.email = email;
         this.password = password;
         this.userName = userName;
+        this.userNickname = userNickname;
         this.profileImage = profileImage;
         this.role = role;
     }

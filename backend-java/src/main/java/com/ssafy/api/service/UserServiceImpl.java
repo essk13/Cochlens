@@ -43,9 +43,9 @@ public class UserServiceImpl implements UserService {
 				.email(userRegisterInfo.getEmail())
 				.password(passwordEncoder.encode(userRegisterInfo.getPassword()))
 				.userName(userRegisterInfo.getUserName())
-				.role(userRegisterInfo.getRole())
+				.userNickname(userRegisterInfo.getUserNickname())
+				.role(Role.USER)
 				.build();
-		user.setUserNickname(userRegisterInfo.getUserNickname());
 		return userRepository.save(user);
 	}
 

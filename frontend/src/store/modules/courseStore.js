@@ -248,7 +248,8 @@ const courseStore = {
         method: 'get',
         url: `${BASE_URL}course`,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+          page: `1`,
+          size: `5`
         },
       })
         .then((res) => {
@@ -266,7 +267,6 @@ const courseStore = {
         method: 'get',
         url: `${BASE_URL}course/best`,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
       })
         .then((res) => {
@@ -284,7 +284,8 @@ const courseStore = {
         method: 'get',
         url: `${BASE_URL}course/search?courseName=${text}`,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+          page: `1`,
+          size: `5`
         },
       })
         .then((res) => {
