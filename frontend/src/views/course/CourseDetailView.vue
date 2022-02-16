@@ -21,30 +21,14 @@
       <div>
         <div class="row justify-between item-center content-center">
           <p class="profile-menu-title q-mb-none">커리큘럼</p>
-          <q-btn @click="clickCreate" color="blue" label="강의 생성" dense />
+          <q-btn v-if="state.courseData.instructorName === state.userName" @click="state.isDialog = true" color="blue" label="강의 생성" dense />
+          <q-btn v-else @click="state.isReview = true" color="blue" label="리뷰 작성" dense />
         </div>
-        <div class="course-detail-curriculum row">
-          <div class="course-detail-thumbnail"></div>
-          <div>
-            <p class="curriculum-title">제 1강 요리란 무엇인가? 강쉡이 알려드립니다!</p>
-            <p class="curriculum-description">
-              강사 : 강태훈<br>
-              요리에 대한 모든 것! 강쉡이 하나부터 열까지 다 알려드립니다! 초보에게 강추!<br>
-              별점 : 10/10 (10000+) / 길이 : 1H
-            </p>
-          </div>
-        </div>
-        <div class="course-detail-curriculum row">
-          <div class="course-detail-thumbnail"></div>
-          <div>
-            <p class="curriculum-title">제 2강 닭 한마리 완전 정복</p>
-            <p class="curriculum-description">
-              강사 : 강태훈<br>
-            </p>
-          </div>
-          <q-btn @click="joinLecture" color="purple">강의 시작하기</q-btn>
-        </div>
-        <div class="course-detail-curriculum"></div>
+        <lecture-item
+          v-for="lecture in state.lectureList"
+          :key="lecture.lectureId"
+          :lecture-item="lecture"
+        ></lecture-item>
       </div>
     </div>
     <div class="col-1"></div>
@@ -55,14 +39,23 @@
         <q-card class="reservation-card q-mb-xl">
           <q-card-section class="bg-purple text-white">
             <div class="text-h6">수강신청</div>
-            <div class="text-subtitle2">시작: {{ state.courseData.courseOpenDate }} / 종료: {{ state.courseData.courseCloseDate }}</div>
+            <div class="text-subtitle2">수강료: {{ state.courseData.courseFee }}</div>
+            <div class="text-subtitle2">강좌 주기: {{ state.courseData.courseCycle }}</div>
+            <div class="text-subtitle2">시작일: {{ state.courseData.courseOpenDate }} / 종료일: {{ state.courseData.courseCloseDate }}</div>
+            <div class="text-subtitle2">제한인원: {{ state.courseData.courseJoinCount }} / {{ state.courseData.courseLimitPeople }}</div>
           </q-card-section>
 
           <q-card-actions align="around">
-            <q-btn v-if="state.courseData.isJoin" @click="clickRegister" flat>신청하기</q-btn>
-            <q-bt v-else @click="clickDeregister" flat>수강중인 강좌</q-bt>
-            <q-btn v-if="state.courseData.isWish" @click="clickWish" flat>찜 하기</q-btn>
-            <q-bt v-else @click="clickUnwish" flat>찜한 강좌</q-bt>
+            <div>
+              <q-btn v-if="state.courseData.instructorName === state.userName" @click="moveCourseUpdate" flat>강좌 수정</q-btn>
+              <q-btn v-else-if="state.courseData.courseJoinCount === state.courseData.courseLimitPeople && !state.courseData.isJoin" disable flat>신청마감</q-btn>
+              <q-btn v-else-if="!state.courseData.isJoin" @click="clickRegister" flat>신청하기</q-btn>
+              <q-btn v-else-if="state.courseData.isJoin" @click="clickDeregister" flat>수강중인 강좌</q-btn>
+            </div>
+            <div>
+              <q-btn v-if="!state.courseData.isWish" @click="clickWish" flat>찜 하기 ({{ state.courseData.courseWishCount }})</q-btn>
+              <q-btn v-else @click="clickUnwish" flat>찜한 강좌 ({{ state.courseData.courseWishCount }})</q-btn>
+            </div>
           </q-card-actions>
         </q-card>
 
@@ -75,11 +68,11 @@
             </div>
             <div class="text-subtitle2">by John Doe</div>
           </q-card-section>
-          <q-list v-if="state.courseData.reviewList" bordered class="course-review-preview rounded-borders">
+          <q-list v-if="state.reviewList" bordered class="course-review-preview rounded-borders">
             <course-review
-              v-for="(reviewItem, index) in state.courseData.reviewList"
+              v-for="(reviewItem, index) in state.reviewList"
               :key="index"
-              :review-item = "reviewItem"
+              :course-review="reviewItem"
             ></course-review>
           </q-list>
           <div v-else>리뷰가 없습니다.</div>
@@ -87,41 +80,171 @@
       </div>
     </div>
   </div>
+
+  <!-- 강의 생성 모달 -->
+  <q-dialog v-model="state.isDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section>
+        <div class="text-h6">강의 생성</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <p class="q-mb-xs">강의 명</p>
+        <q-input outlined dense v-model="state.lectureName" label="Outlined" class="q-mb-md" />
+
+        <p class="q-mb-xs">강의 종류</p>
+        <q-select outlined dense v-model="state.lectureState" :options="state.options" label="Outlined" class="q-mb-md" />
+
+        <p class="q-mb-xs">강의 날짜 / 시간</p>
+        <div class="row items-start">
+          <q-date v-model="state.lectureDate" color="purple" class="q-mb-md" />
+
+          <div class="q-gutter-sm row">
+            <q-input filled v-model="state.lectureOpenTime" mask="time" :rules="['time']" label="시작 시간">
+              <template v-slot:append>
+                <q-icon name="access_time" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-time v-model="state.lectureOpenTime">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Close" color="primary" flat />
+                      </div>
+                    </q-time>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+
+            <q-input filled v-model="state.lectureCloseTime" mask="time" :rules="['time']" label="종료 시간">
+              <template v-slot:append>
+                <q-icon name="access_time" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-time v-model="state.lectureCloseTime">
+                      <div class="row items-center justify-end">
+                        <q-btn v-close-popup label="Close" color="primary" flat />
+                      </div>
+                    </q-time>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+
+          </div>
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="강의 생성" v-close-popup @click="createLecture" />
+        <q-btn flat label="취소" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <!-- 리뷰 생성 모달 -->
+  <q-dialog v-model="state.isReview" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section>
+        <div class="text-h6">리뷰 생성</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <p class="q-mb-xs">리뷰</p>
+        <q-input outlined dense v-model="state.reviewContent" label="Outlined" class="q-mb-md" />
+        <p class="q-mb-xs">평점</p>
+          <q-rating
+            v-model="state.reviewRate"
+            size="2em"
+            :max="10"
+            color="primary"
+            class="q-mb-md"
+          />
+      </q-card-section>
+
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="리뷰 작성" v-close-popup @click="createReview" />
+        <q-btn flat label="취소" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
+import LectureItem from '@/components/course/LectureItem'
+import CourseReview from '@/components/course/CourseReview'
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import CourseReview from '@/components/course/CourseReview'
-import { onMounted } from '@vue/runtime-core'
+import { onMounted, watchEffect } from '@vue/runtime-core'
 
 export default {
   name: 'CourseDetailView',
   components: {
     CourseReview,
+    LectureItem,
   },
   setup() {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
+    const optionContent = {
+      '라이브': 'before',
+      'VOD': 'vod'
+    }
+    let today = new Date()
     const url = 'wss://' + location.host + '/groupcall'
     store.dispatch('courseStore/setWs', url)
-
-    console.log(store.state.courseStore.courseData)
 
     const state = reactive({
       name: 'test',
       room: '',
       courseData: store.state.courseStore.courseData,
+      lectureList: store.state.courseStore.courseData.lectureList,
+      reviewList: store.state.courseStore.courseData.reviewList,
+      userName: store.state.user.userName,
+
+      isDialog: false,
+      dialogText: 'click',
+      lectureCloseTime: `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`,
+      lectureDate: `${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}`,
+      lectureName: '',
+      lectureOpenTime: `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`,
+      lectureRuntime: '02:00',
+      lectureState: 'before',
+      lectureThumbnail: null,
+      lectureVod: null,
+      options: ['라이브', 'VOD'],
+
+      isReview: false,
+      reviewContent: '',
+      reviewRate: 5,
     })
+
+    console.log(store.state.courseStore.courseData.courseJoinCount)
+    console.log(store.state.courseStore.courseData.courseWishCount)
+    console.log(store.state.courseStore.courseData.isJoin)
+    console.log(store.state.courseStore.courseData.isWish)
 
     // Mounted
     onMounted(() => {
+      setImage()
+    })
+
+    // Watch
+    watchEffect(() => {
+      state.courseData = store.state.courseStore.courseData
+      setImage()
+      changeList()
+    })
+    watchEffect(() => {
+      state.lectureList = store.state.courseStore.courseData.lectureList
+    })
+
+    // Function
+    // 강좌, 강사 사진 설정
+    function setImage() {
       const courseImg = document.getElementById('profile-img')
       const courseRoofImg = document.getElementById('profile-roof')
-      if (state.courseData.instructorImg) {
-        courseImg.style.backgroundImage = `url(${state.courseData.instructorImg})`
+      if (state.courseData.instructorProfileImage) {
+        courseImg.style.backgroundImage = `url(${state.courseData.instructorProfileImage})`
       } else {
         courseImg.style.backgroundImage = `url('/img/kang.968d430f.png')`
       }
@@ -131,37 +254,62 @@ export default {
       } else {
         courseRoofImg.style.backgroundImage = `url('/img/cooking_roof.c34b6973.jpg')`
       }
-    })
-
+    }
     // Function
+    function changeList() {
+      state.lectureList = store.state.courseStore.courseData.lectureList
+      state.reviewList = store.state.courseStore.courseData.reviewList
+    }
+    // 리뷰 페이지 이동
     function moveCourseReview() {
       router.push({ name: 'courseReviewList', params: { courseId: route.params.courseId } })
     }
-
+    // 수강 신청
     function clickRegister() {
       state.courseData.isJoin = true
-      store.dispatch('registerCourse')
+      state.courseData.courseJoinCount += 1
+      store.dispatch('courseStore/registerCourse', state.courseData.courseId)
     }
-
+    // 수강 취소
     function clickDeregister() {
       state.courseData.isJoin = false
-      store.dispatch('deregisterCourse')
+      state.courseData.courseJoinCount -= 1
+      store.dispatch('courseStore/deregisterCourse', state.courseData.courseId)
     }
-
+    // 찜 추가
     function clickWish() {
       state.courseData.isWish = true
-      store.dispatch('wishCourse')
+      state.courseData.courseWishCount += 1
+      store.dispatch('courseStore/wishCourse', state.courseData.courseId)
     }
-
+    // 찜 취소
     function clickUnwish() {
       state.courseData.isWish = false
-      store.dispatch('unwishCourse')
+      state.courseData.courseWishCount -= 1
+      store.dispatch('courseStore/unwishCourse', state.courseData.courseId)
+    }
+    // 강좌 수정
+    function moveCourseUpdate() {
+      router.push({ name: 'courseUpdate', params: { courseId: state.courseData.courseId }})
     }
 
+    // 강의 생성
     function createLecture() {
-      store.dispatch('createLecture', {})
+      store.dispatch('courseStore/createLecture', {
+        id: state.courseData.courseId,
+        data: {
+          lectureCloseTime: state.lectureCloseTime,
+          lectureDate: state.lectureDate,
+          lectureName: state.lectureName,
+          lectureOpenTime: state.lectureOpenTime,
+          lectureRuntime: state.lectureRuntime,
+          lectureState: optionContent[state.lectureState],
+          lectureThumbnail: state.lectureThumbnail,
+          lectureVod: state.lectureVod,
+        }
+      })
     }
-
+    // 강의 시작
     function startLecture() {
       let message = {
         id : 'joinRoom',
@@ -171,7 +319,7 @@ export default {
       store.dispatch('courseStore/register', message)
       router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
     }
-    
+    // 강의 참가
     function joinLecture() {
       let message = {
         id : 'joinRoom',
@@ -182,6 +330,20 @@ export default {
       router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
     }
 
+    // 리뷰 작성
+    function createReview() {
+      store.dispatch('courseStore/createReview', {
+        id: state.courseData.courseId,
+        data: {
+          reviewContent: state.reviewContent,
+          reviewDate: `${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}`,
+          reviewRate: state.reviewRate
+        }
+      })
+      state.reviewContent = ''
+      state.reviewRate = 5
+    }
+
     return {
       state, url,
       clickRegister,
@@ -189,8 +351,10 @@ export default {
       clickWish,
       clickUnwish,
       createLecture,
+      moveCourseUpdate,
       startLecture,
       joinLecture,
+      createReview,
       moveCourseReview,
     }
   }
@@ -252,36 +416,6 @@ export default {
 
 .course-detail-review {
   width: 100%;
-}
-
-.course-detail-thumbnail {
-  width: 200px;
-  height: 130px;
-  border-radius: 5px;
-  background-image: url('@/assets/cooking.jpg');
-  background-size: cover;
-}
-
-.course-detail-curriculum {
-  width: 100%;
-  height: 130px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  background: gray;
-}
-
-.curriculum-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: white;
-  margin: 10px;
-}
-
-.curriculum-description {
-  font-size: 15px;
-  font-weight: 200;
-  color: white;
-  margin: 10px;
 }
 
 .reserve {

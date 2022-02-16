@@ -13,7 +13,6 @@ public class SessionUser implements Serializable {
     private String userDescription;
     private Boolean isSubtitle;
     private Boolean isCommand;
-    private Boolean isSTT;
     private Boolean isFaceFocusing;
     private String profileImage;
 
@@ -24,7 +23,6 @@ public class SessionUser implements Serializable {
         this.userDescription = user.getUserDescription();
         this.isSubtitle = user.isSubtitle();
         this.isCommand = user.isCommand();
-        this.isSTT = user.isSTT();
         this.isFaceFocusing = user.isFaceFocusing();
         this.profileImage = user.getProfileImage();
     }

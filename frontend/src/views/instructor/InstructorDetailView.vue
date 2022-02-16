@@ -23,10 +23,12 @@
         </div>
         <div class="instructor-review-list col">
           <q-list bordered class="rounded-borders">
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
-            <course-review></course-review>
+            <course-review
+              v-for="courseReview in state.instructorReviewList"
+              :key="courseReview.reviewId"
+              :course-review="courseReview"
+            >
+            </course-review>
           </q-list>
         </div>
       </div>
@@ -35,31 +37,55 @@
     <div class="in-progress-course-block col-4 column q-py-sm">
       <div class="contents-header col-auto">
         <span class="contents-title">진행중인 강좌</span>
-        <span class="contents-more">더보기></span>
+        <span class="contents-more" @click="moveToLiveCourseList">더보기></span>
       </div>
       <div class="in-progress-course-list col row justify-around items-center no-wrap">
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
+        <course-item
+          v-for="liveOpenCourse in state.liveOpenCourseList"
+          :key="liveOpenCourse.courseId"
+          :course-item="liveOpenCourse"
+        >
+        </course-item>
       </div>
     </div>
     <!-- 강사의 전체 강좌 -->
     <div class="all-course-block col-4 column q-py-sm">
       <div class="contents-header col-auto">
         <span class="contents-title">전체 강좌</span>
-        <span class="contents-more">더보기></span>
+        <span class="contents-more" @click="moveToVodCourseList">더보기></span>
       </div>
       <div class="all-course-list col row justify-around items-center no-wrap">
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
-        <course-item></course-item>
+        <course-item
+          v-for="vodOpenCourse in state.vodOpenCourseList"
+          :key="vodOpenCourse.courseId"
+          :course-item="vodOpenCourse"
+        >
+        </course-item>
       </div>
     </div>
   </div>
+  <q-btn :label="state.dialogText" color="primary" @click="state.isDialog = true" />
+  <div>{{ state.date }}</div>
+  <q-dialog v-model="state.isDialog" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section>
+        <div class="text-h6">강의 생성</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <q-input dense v-model="state.dialogText" autofocus @keyup.enter="prompt = false" />
+        <div class="q-gutter-md row items-start">
+          <q-date v-model="state.date" mask="YYYY-MM-DD HH:mm" color="purple" />
+          <q-time v-model="state.date" mask="YYYY-MM-DD HH:mm" color="purple" />
+        </div>
+      </q-card-section>
+
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="강의 생성" v-close-popup @click="createLecture" />
+        <q-btn flat label="취소" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -83,8 +109,15 @@ export default {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
+    let today = new Date()
     const state = reactive({
       instructorDetail: store.state.instructorStore.instructorDetail,
+      instructorReviewList: store.state.instructorStore.instructorDetail.courseReviewList.slice(0, 4),
+      liveOpenCourseList: store.state.instructorStore.instructorDetail.liveOpenCourseList.slice(0, 5),
+      vodOpenCourseList: store.state.instructorStore.instructorDetail.vodOpenCourseList.slice(0, 5),
+      isDialog: false,
+      dialogText: 'click',
+      date: `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')} ${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`,
     })
 
     // 수강후기로 이동
@@ -92,13 +125,46 @@ export default {
       router.push({ name: 'instructorReviewList', params: { instructorId: route.params.instructorId }})
     }
 
+    // 라이브 강좌로 이동
+    function moveToLiveCourseList() {
+      router.push({ name: 'instructorLiveList', params: { instructorId: route.params.instructorId }})
+    }
+
+    // 전체 강좌로 이동
+    function moveToVodCourseList() {
+      router.push({ name: 'instructorCourseList', params: { instructorId: route.params.instructorId }})
+    }
+
+    function createLecture() {
+      console.log('createLecture test')
+      console.log('----------------------------------------')
+      console.log(state.dialogText)
+      console.log(state.date)
+      console.log('----------------------------------------')
+    }
+
     watchEffect(() => {
       state.instructorDetail = store.state.instructorStore.instructorDetail
     })
 
+    watchEffect(() => {
+      state.instructorReviewList = store.state.instructorStore.instructorDetail.courseReviewList.slice(0, 4)
+    })
+
+    watchEffect(() => {
+      state.liveOpenCourseList = store.state.instructorStore.instructorDetail.liveOpenCourseList.slice(0, 5)
+    })
+
+    watchEffect(() => {
+      state.vodOpenCourseList = store.state.instructorStore.instructorDetail.vodOpenCourseList.slice(0, 5)
+    })
+
     return {
       state,
-      moveToReviewList
+      moveToReviewList,
+      moveToLiveCourseList,
+      moveToVodCourseList,
+      createLecture
     }
   }
 }

@@ -1,8 +1,10 @@
 <template>
   <p>이름</p>
   <q-input outlined v-model="state.userName" label="이름" dense />
+
   <p class="q-mt-md">닉네임</p>
   <q-input outlined v-model="state.userNickname" label="닉네임" dense />
+
   <p v-if="state.role === 'INSTRUCTOR'" class="q-mt-md">소개</p>
   <q-input v-if="state.role === 'INSTRUCTOR'" outlined v-model="state.userDescription" label="닉네임" type="textarea" />
 
@@ -34,27 +36,10 @@
     </template>
   </q-file>
 
-  <p class="q-mt-md">비밀번호 확인</p>
-  <q-input
-    v-model="state.password"
-    outlined
-    dense
-    bg-color="white"
-    :type="state.isPwd ? 'password' : 'text'"
-    label="비밀번호"
-    lazy-rules
-    :rules="[ val => val && val.length > 7 || '비밀번호는 8자리 이상입니다.']"
-  >
-    <template v-slot:append>
-      <q-icon
-        :name="state.isPwd ? 'visibility_off' : 'visibility'"
-        class="cursor-pointer"
-        @click="state.isPwd = !state.isPwd"
-      />
-    </template>
-  </q-input>
-
-  <q-btn @click="clickUpdate" bg-color="blue-1" label="수정" style="right: 0;" />
+  <div style="width: 100%; text-align: right;">
+    <q-btn @click="clickUpdate" bg-color="blue-1" label="수정" class="q-mr-sm" />
+    <q-btn @click="removeId" bg-color="red" label="회원탈퇴" />
+  </div>
 </template>
 
 <script>
@@ -66,30 +51,37 @@ export default {
     const store = useStore()
     const userData = store.state.user
     const state = reactive({
+      role: userData.role,
       userName: userData.userName,
       userNickname: userData.userNickname,
-      userDescription: userData.userDescription,
       profileImage: userData.profileImage,
       thumbnailImage: userData.thumbnailImage,
-      password: '',
-      isPwd: true,
-      role: userData.role,
+      userDescription: userData.userDescription,
     })
 
     // Function
+    // 회원정보 수정
     function clickUpdate() {
-      console.log(store.state.user.userName)
-      store.state.user.userName = state.userName
-      store.state.user.userNickname = state.userNickname
-      store.state.user.userDescription = state.userDescription
-      store.state.user.profileImage = state.profileImage
-      store.state.user.thumbnailImage = state.thumbnailImage
-      store.dispatch('profileStore/updateUser')
+      store.dispatch('profileStore/updateUser', {
+        email: userData.email,
+        userName: state.userName,
+        userNickname: state.userNickname,
+        profileImage: state.profileImage,
+        thumbnailImage: state.thumbnailImage,
+        userDescription: state.userDescription,
+      })
       store.state.profileStore.component = 'home'
+    }
+    // 회원 탈퇴
+    function removeId() {
+      store.dispatch('removeId')
+      store.dispatch('userLogout')
     }
 
     return {
-      state, clickUpdate
+      state,
+      clickUpdate,
+      removeId,
     }
   }
 }

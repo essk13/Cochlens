@@ -10,6 +10,7 @@
       maxlength="30"
       :dense="state.searchDense"
       class="search-bar"
+      @keyup.enter="searchInsturtor"
     >
       <template v-slot:append>
         <q-icon v-if="state.searchText !== ''" name="close" @click="state.searchText = ''" class="cursor-pointer" />
@@ -22,15 +23,23 @@
     <div class="col-auto text-bold q-pb-sm">인기강사 Top</div>
     <div class="col top-instructor-list row justify-between no-wrap">
       <instructor-item
-        v-for="instructor in state.instructorList.slice(0, 4)"
-        :key="instructor.userId"
-        :instructor="instructor"
+        v-for="bestInstructor in state.bestInstructorList.slice(0, 4)"
+        :key="bestInstructor.userId"
+        :instructor="bestInstructor"
       >
       </instructor-item>
     </div>
   </div>
   <!-- 강사 목록 -->
   <div class="instructor-block column justify-around">
+    <div class="instructor-list col row justify-between no-wrap">
+      <instructor-item
+        v-for="instructor in state.instructorList.slice(0, 4)"
+        :key="instructor.userId"
+        :instructor="instructor"
+      >
+      </instructor-item>
+    </div>
     <div class="instructor-list col row justify-between no-wrap">
       <instructor-item
         v-for="instructor in state.instructorList.slice(4, 8)"
@@ -42,14 +51,6 @@
     <div class="instructor-list col row justify-between no-wrap">
       <instructor-item
         v-for="instructor in state.instructorList.slice(8, 12)"
-        :key="instructor.userId"
-        :instructor="instructor"
-      >
-      </instructor-item>
-    </div>
-    <div class="instructor-list col row justify-between no-wrap">
-      <instructor-item
-        v-for="instructor in state.instructorList.slice(12, 16)"
         :key="instructor.userId"
         :instructor="instructor"
       >
@@ -85,19 +86,37 @@ export default {
     const store = useStore()
     const state = reactive({
       searchText: '',
+      searchResult: '',
       searchDense: true,
       paginationCurrent: 1,
+      listSize: 12,
       instructorList: store.state.instructorStore.instructorList,
+      bestInstructorList: store.state.instructorStore.bestInstructorList,
     })
 
-    // store.dispatch('instructorStore/getInstructorList')
+    store.dispatch('instructorStore/getBestInstructorList')
+    store.dispatch('instructorStore/getInstructorList', 1)
+
+    function searchInsturtor() {
+      state.searchResult = state.searchText
+      state.paginationCurrent = 1
+    }
 
     watchEffect(() => {
       state.instructorList = store.state.instructorStore.instructorList
     })
 
+    watchEffect(() => {
+      state.bestInstructorList = store.state.instructorStore.bestInstructorList
+    })
+
+    watchEffect(() => {
+      store.dispatch('instructorStore/searchInstructor', { text: state.searchResult, page: state.paginationCurrent, size: state.listSize })
+    })
+
     return {
       state,
+      searchInsturtor,
     }
   }
 }

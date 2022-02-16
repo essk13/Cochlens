@@ -69,7 +69,7 @@
       </q-file>
 
       <div style="width: 100%; text-align: right;">
-        <q-btn @click="clickCreate" bg-color="blue-1" label="개설" />
+        <q-btn @click="clickUpdate" bg-color="blue-1" label="수정" />
       </div>
     </div>
     <div class="col-1"></div>
@@ -98,40 +98,44 @@ export default {
   setup () {
     const store = useStore()
     const router = useRouter()
+    const courseData = store.state.courseStore.courseData
     const state = reactive({
       instructorName: store.state.user.userName,
-      title: '강좌 타이틀을 입력하세요.',
-      category: '',
-      description: '',
-      date: {from: '', to: ''},
-      limit: 30,
-      fee: 10000,
-      cycle: 7,
-      thumbnail: null,
+      title: courseData.courseName,
+      category: courseData.courseCategory,
+      description: courseData.courseDescription,
+      date: { from: `${courseData.courseOpenDate}`, to: `${courseData.courseCloseDate}` },
+      limit: courseData.courseLimitPeople,
+      fee: courseData.courseFee,
+      cycle: courseData.courseCycle,
+      thumbnail: courseData.courseThumbnail,
     })
 
     // Function
-    // 강좌 생성
-    function clickCreate() {
-      store.dispatch('courseStore/createCourse', {
-        courseName: state.title,
-        courseDescription: state.description,
-        courseCategory: state.category,
-        courseThumbnail: state.thumbnail,
-        courseIntroVideo: null,
-        courseOpenDate: state.date.to,
-        courseCloseDate: state.date.from,
-        courseFee: state.fee,
-        courseCycle: state.cycle,
-        courseLimitPeople: state.limit,
+    // 강좌 수정
+    function clickUpdate() {
+      store.dispatch('courseStore/updateCourse', {
+        id: courseData.courseId,
+        data: {
+          courseName: state.title,
+          courseDescription: state.description,
+          courseCategory: state.category,
+          courseThumbnail: state.thumbnail,
+          courseIntroVideo: null,
+          courseOpenDate: state.date.to,
+          courseCloseDate: state.date.from,
+          courseFee: state.fee,
+          courseCycle: state.cycle,
+          courseLimitPeople: state.limit,
+        }
       })
-      store.dispatch('courseStore/getCourseList', { page: 1, size: 15 })
-      setTimeout(()=> { router.push({ name: 'courseList' }) }, 300)
+      store.dispatch('courseStore/getCourseList')
+      setTimeout(()=> { router.push({ name: 'courseDetail', params: { courseId: courseData.courseId } }) }, 300)
     }
 
     return {
       state,
-      clickCreate
+      clickUpdate
     }
   }
 }

@@ -29,7 +29,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = Review.builder()
                 .reviewDate(reviewInsertInfo.getReviewDate())
                 .reviewContent(reviewInsertInfo.getReviewContent())
-                .reviewGrade(reviewInsertInfo.getReviewGrade())
+                .reviewRate(reviewInsertInfo.getReviewRate())
                 .user(user)
                 .course(course)
                 .build();
@@ -72,7 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review newReview = Review.builder()
                 .reviewDate(reviewInsertInfo.getReviewDate())
                 .reviewContent(reviewInsertInfo.getReviewContent())
-                .reviewGrade(reviewInsertInfo.getReviewGrade())
+                .reviewRate(reviewInsertInfo.getReviewRate())
                 .user(review.getUser())
                 .course(review.getCourse())
                 .build();
@@ -83,8 +83,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void updateReviewGrade(Course course) {
-        double reviewGrade = reviewRepository.countReviewAverage(course).get();
-        course.setCourseReviewGrade(reviewGrade);
+        double reviewRate = reviewRepository.countReviewAverage(course).get();
+        course.setCourseReviewRateAverage(reviewRate);
         courseRepository.save(course);
         courseRepository.flush();
     }

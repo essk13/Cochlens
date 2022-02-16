@@ -9,7 +9,7 @@
 
     <q-item-section>
       <q-item-label lines="1">Suzan ★5.0</q-item-label>
-      <!-- <q-item-label lines="1">{{ props.courseReview.userReviewRes.userNickname }} ★{{ props.courseReview.reviewGrade }}</q-item-label> -->
+      <!-- <q-item-label lines="1">{{ props.courseReview.author.userNickname }} ★{{ props.courseReview.reviewRate }}</q-item-label> -->
       <q-item-label caption lines="2">
         I'll be in your neighborhood doing errands this
         weekend.
@@ -42,7 +42,7 @@ export default {
   },
   setup(props) {
     const state = reactive({
-      profileImageUrl: computed(() => props.courseReview.userReviewRes.profileImage)
+      profileImageUrl: computed(() => props.courseReview.author.profileImage)
     })
 
     return {
@@ -53,4 +53,11 @@ export default {
 </script>
 
 <style scoped>
+.q-item-type {
+  position: static;
+}
+
+.q-avatar {
+  position: static;
+}
 </style>

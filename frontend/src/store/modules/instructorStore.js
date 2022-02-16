@@ -13,41 +13,9 @@ const setHeader = function () {
 const instructorStore = {
   namespaced: true,
   state: {
-    instructorList: [{
-      "courseCount": 10,
-      "courseReviewCount": 10,
-      "courseReviewList": "course_review_list",
-      "courseReviewRateAverage": 4.88,
-      "email": "ssafy@ssafy.com",
-      "liveOpenCourseList": "live_open_course_list",
-      "profileImage": "notexisted",
-      "thumbnailImage": "notexisted",
-      "userDescription": "notexisted",
-      "userId": 0,
-      "userName": "ssafy",
-      "userNickname": "hotsix",
-      "vodOpenCourseList": "vod_open_course_list"
-    },],  // 강사 조회 목록
-    instructorDetail: {
-      "courseCount": 10,
-      "courseReviewCount": 10,
-      "courseReviewList": "course_review_list",
-      "courseReviewRateAverage": 4.88,
-      "email": "ssafy@ssafy.com",
-      "isCommand": false,
-      "isFaceFocusing": false,
-      "isSTT": false,
-      "isSubtitle": false,
-      "liveOpenCourseList": "live_open_course_list",
-      "profileImage": "notexisted",
-      "role": "User",
-      "thumbnailImage": "notexisted",
-      "userDescription": "notexisted",
-      "userId": 0,
-      "userName": "ssafy",
-      "userNickname": "hotsix",
-      "vodOpenCourseList": "vod_open_course_list"
-    },  // 강사 상세 정보
+    instructorList: null,  // 강사 조회 목록
+    bestInstructorList: null,  // 인기 강사 조회 목록
+    instructorDetail: null,  // 강사 상세 정보
   },
   getters: {
   },
@@ -57,6 +25,11 @@ const instructorStore = {
       state.instructorList = instructorList
     },
 
+    // 인기 강사 목록 설정
+    SET_BEST_INSTRUCTOR_LIST(state, bestInstructorList) {
+      state.bestInstructorList = bestInstructorList
+    },
+
     // 강사 상세 정보 설정
     SET_INSTRUCTOR_DETAIL(state, instructorDetail) {
       state.instructorDetail = instructorDetail
@@ -64,11 +37,49 @@ const instructorStore = {
   },
   actions: {
     // 강사 목록 조회
-    getInstructorList({ commit }) {
+    getInstructorList({ commit }, data) {
       return new Promise((resolve, reject) => {
         axios({
           method: 'get',
-          url: `${BASE_URL}users/instructor`,
+          url: `${BASE_URL}users/instructor?page=${data.page}&size=${data.size}`,
+          headers: setHeader()
+        })
+        .then(res => {
+          commit('SET_INSTRUCTOR_LIST', res.data)
+          resolve(res)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+
+    // 인기 강사 목록 조회
+    getBestInstructorList({ commit }) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          url: `${BASE_URL}users/instructor/best`,
+          headers: setHeader()
+        })
+        .then(res => {
+          commit('SET_BEST_INSTRUCTOR_LIST', res.data)
+          resolve(res)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+
+    // 강사 검색
+    searchInstructor({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          url: `${BASE_URL}users/instructor/search?instructorName=${data.text}&page=${data.page}&size=${data.size}`,
           headers: setHeader()
         })
         .then(res => {

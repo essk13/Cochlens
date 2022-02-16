@@ -16,8 +16,8 @@
   <div class="profile-component">
     <profile-main v-if="state.home"></profile-main>
     <taking-course-list v-else-if="state.taking"></taking-course-list>
-    <wish-list v-if="state.wishList"></wish-list>
-    <profile-update v-if="state.update"></profile-update>
+    <wish-list v-else-if="state.wish"></wish-list>
+    <profile-update v-else-if="state.update"></profile-update>
   </div>
 </template>
 <script>
@@ -27,8 +27,7 @@ import WishList from "@/components/profile/WishList"
 import ProfileUpdate from "@/components/profile/ProfileUpdate"
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
-import { watch } from 'vue'
-import { computed, onMounted } from '@vue/runtime-core'
+import { onMounted, watchEffect } from '@vue/runtime-core'
 
 export default {
   name: 'ProfileView',
@@ -49,14 +48,14 @@ export default {
       userData: store.state.user
     })
 
+    // Created
+    store.dispatch('profileStore/getUserCourse')
+
     // Mounted
     onMounted(() => {
-      store.dispatch('getWishList')
-      store.dispatch('getTakingList')
+      changeComponent()
       const profileImg = document.getElementById('profile-img')
       const profileRoof = document.getElementById('profile-roof')
-      console.log(state.userData.profileImage)
-      console.log(state.userData.thumbnailImage)
       if (state.userData.profileImage) {
         profileImg.style.backgroundImage = `url(${state.userData.profileImage})`
       } else {
@@ -71,40 +70,49 @@ export default {
     })
 
     // Watch
-    watch(
-      computed(() => store.state.profileStore.component),
-      (newComponent, oldComponent) => {
-        console.log('new', newComponent, 'old', oldComponent)
-        if (newComponent === 'home') {
-          state.home = true
-          state.taking = false
-          state.wish = false
-          state.update = false
-        } else if (newComponent === 'taking') {
-          state.home = false
-          state.taking = true
-          state.wish = false
-          state.update = false
-        } else if (newComponent === 'wish') {
-          state.home = false
-          state.taking = false
-          state.wish = true
-          state.update = false
-        } else {
-          state.home = false
-          state.taking = false
-          state.wish = false
-          state.update = true
-        }
+    watchEffect(() => {
+      store.state.profileStore.component
+      changeComponent()
+    })
+
+    watchEffect(() => {
+      state.userData = store.state.user
     })
 
     // Function
+    // 컴포넌트 변화 감지
+    function changeComponent() {
+      const componentName = store.state.profileStore.component
+      if ( componentName === 'home') {
+        state.home = true
+        state.taking = false
+        state.wish = false
+        state.update = false
+      } else if (componentName === 'taking') {
+        state.home = false
+        state.taking = true
+        state.wish = false
+        state.update = false
+      } else if (componentName === 'wish') {
+        state.home = false
+        state.taking = false
+        state.wish = true
+        state.update = false
+      } else {
+        state.home = false
+        state.taking = false
+        state.wish = false
+        state.update = true
+      }
+    }
+    // 수정 페이지 이동
     function moveUpdate() {
       store.state.profileStore.component = 'update'
     }
 
     return {
-      state, moveUpdate
+      state,
+      moveUpdate
     }
   }
 }

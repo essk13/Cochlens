@@ -1,12 +1,11 @@
 package com.ssafy.api.service;
 
-import com.google.common.primitives.Ints;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.dto.*;
 import com.ssafy.common.exception.handler.BusinessException;
 import com.ssafy.db.entity.*;
 import com.ssafy.db.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +29,6 @@ public class UserServiceImpl implements UserService {
 	WishlistRepository wishlistRepository;
 
 	@Autowired
-	ReviewRepository reviewRepository;
-
-	@Autowired
 	PasswordEncoder passwordEncoder;
 
 	/**
@@ -46,10 +42,10 @@ public class UserServiceImpl implements UserService {
 		User user = User.builder()
 				.email(userRegisterInfo.getEmail())
 				.password(passwordEncoder.encode(userRegisterInfo.getPassword()))
-				.userName(userRegisterInfo.getName())
-				.role(userRegisterInfo.getRole())
+				.userName(userRegisterInfo.getUserName())
+				.userNickname(userRegisterInfo.getUserNickname())
+				.role(Role.USER)
 				.build();
-		user.setUserNickname(userRegisterInfo.getNickname());
 		return userRepository.save(user);
 	}
 
@@ -88,115 +84,35 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<UserDto.UserInstructorRes> getInstructorList() {
-		List<UserDto.UserInstructorRes> result = userRepository.findInstructorList();
+	public List<UserDto.UserInstructorRes> getInstructorList(Pageable pageable) {
+		List<UserDto.UserInstructorRes> result = userRepository.findInstructorList(pageable);
 		return result;
-	}
-
-	/*
-		수정 필요
-	 */
-	@Override
-	public UserDto.UserRes getInstructorInfo(Long userId){
-		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
-
-		int courseCount = 0;
-		int courseReviewCount = 0;
-		int courseReviewRateSum = 0;
-		Double courseReviewRateAverage = 0.0;
-
-		List<Review> courseReviewList = new ArrayList<>();
-		List<Course> liveOpenCourseList = new ArrayList<>();
-		List<Course> vodOpenCourseList = new ArrayList<>();
-
-		Date date = new Date();
-
-		List<Review> reviewList = reviewRepository.findAll();
-		List<Course> courseList = courseRepository.findAll();
-		for (Course course : courseList) {
-			if ( user == course.getUser()) {
-				courseCount += 1;
-				if (date.after(course.getCourseOpenDate()) && date.before(course.getCourseCloseDate())){
-					liveOpenCourseList.add(course);
-				}
-				else {
-					vodOpenCourseList.add(course);
-				}
-				for  (Review review : reviewList){
-					if(course == review.getCourse()){
-						courseReviewCount += 1;
-						courseReviewRateSum += review.getReviewGrade();
-						courseReviewList.add(review);
-					}
-				}
-			}
-		}
-
-		if (courseReviewCount != 0){
-//                소수점 둘째자리까지 표시
-			courseReviewRateAverage = Math.round(Double.valueOf(courseReviewRateSum / courseReviewCount) * 100) / 100.0;
-		}
-
-
-		UserDto.UserRes userRes = new UserDto.UserRes();
-
-		userRes.setUserId(user.getUserId());
-		userRes.setEmail(user.getEmail());
-		userRes.setUserName(user.getUserName());
-		userRes.setUserNickname(user.getUserNickname());
-		userRes.setUserDescription(user.getUserDescription());
-//		userRes.setIsSubtitle(user.isSubtitle());
-//		userRes.setIsCommand(user.isCommand());
-//		userRes.setIsSTT(user.isSTT());
-//		userRes.setIsFaceFocusing(user.isFaceFocusing());
-//		userRes.setRole(user.getRole());
-		userRes.setProfileImage(user.getProfileImage());
-		userRes.setThumbnailImage(user.getThumbnailImage());
-
-//		userRes.setCourseCount(courseCount);
-//		userRes.setCourseReviewCount(courseReviewCount);
-//		userRes.setCourseReviewRateAverage(courseReviewRateAverage);
-//		userRes.setCourseReviewList(courseReviewList);
-//		userRes.setLiveOpenCourseList(liveOpenCourseList);
-//		userRes.setVodOpenCourseList(vodOpenCourseList);
-		return userRes;
 	}
 
 	@Override
 	public List<UserDto.UserInstructorRes> getBestInstructorList(){
-		return userRepository.findByBestInstructorList();
+		return userRepository.findInstructorListByBest();
+	}
+
+	@Override
+	public List<UserDto.UserInstructorRes> getSearchInstructorList(String instructorName, Pageable pageable) {
+		return userRepository.findInstructorListByUserNickname(instructorName, pageable);
 	}
 
 	/**
 	 * update
 	 */
 
-	/*
-		수정 필요
-	 */
 	@Override
-	public User update(String email, UserDto.UserPutRes userPutRes) {
-		String emailCheck = userPutRes.getEmail();
+	public User updateUser(String email, UserDto.UserPutReq userPutReq) {
+		User user = getUserByEmail(email);
 
-//		입력한 이메일이 DB에 있고 현재 계정의 이메일과 다를 경우
-		if(userRepository.findByEmail(emailCheck) != userRepository.findByEmail("") && !email.equals(emailCheck)) return null;
-//		if(userCheck != null && !email.equals(emailCheck)) return null;
-
-//		입력한 이메일이 DB에 없거나, 현재 계정의 이메일과 같을 경우
-		User user = userRepository.findByEmail(email).get();
-
-		user.setEmail(userPutRes.getEmail());
-		user.setUserName(userPutRes.getUserName());
-		user.setUserNickname(userPutRes.getUserNickname());
-		user.setProfileImage(userPutRes.getProfileImage());
-		user.setThumbnailImage(userPutRes.getThumbnailImage());
-		user.setUserDescription(userPutRes.getUserDescription());
-		user.setPassword(passwordEncoder.encode(userPutRes.getPassword()));
-		user.setCommand(userPutRes.getIsCommand());
-		user.setRole(userPutRes.getRole());
-		user.setFaceFocusing(userPutRes.getIsFaceFocusing());
-		user.setSubtitle(userPutRes.getIsSubtitle());
-		user.setSTT(userPutRes.getIsSTT());
+		user.setEmail(userPutReq.getEmail());
+		user.setUserName(userPutReq.getUserName());
+		user.setUserNickname(userPutReq.getUserNickname());
+		user.setProfileImage(userPutReq.getProfileImage());
+		user.setThumbnailImage(userPutReq.getThumbnailImage());
+		user.setUserDescription(userPutReq.getUserDescription());
 
 		return userRepository.save(user);
 	}

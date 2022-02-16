@@ -5,6 +5,8 @@ import com.ssafy.db.entity.*;
 import com.ssafy.db.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -69,12 +71,12 @@ public class CourseServiceImpl implements CourseService {
      */
 
     @Override
-    public List<CourseDto.CourseListRes> getCourseList() {
-        List<CourseDto.CourseListRes> result = new ArrayList<>();
-        List<Course> list = courseRepository.findAll();
+    public List<CourseDto.CourseAllRes> getCourseList(Pageable pageable) {
+        List<CourseDto.CourseAllRes> result = new ArrayList<>();
+        List<Course> list = courseRepository.findAll(pageable).getContent();
 
         for (Course course : list) {
-            CourseDto.CourseListRes courseRes = CourseDto.CourseListRes.of(course);
+            CourseDto.CourseAllRes courseRes = CourseDto.CourseAllRes.of(course);
             result.add(courseRes);
         }
         return result;
@@ -88,6 +90,16 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseDto.CourseInstructorVO getInstructorRate(User user) {
         return courseRepository.findInstructorRate(user).get();
+    }
+
+    @Override
+    public List<CourseDto.CourseListRes> getRegisterCourseList(User user) {
+        return registerCourseRepository.findRegisterCourseListByUser(user);
+    }
+
+    @Override
+    public List<CourseDto.CourseListRes> getWishCourseList(User user) {
+        return registerCourseRepository.findWishCourseListByUser(user);
     }
 
     @Override
@@ -111,8 +123,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseDto.CourseListRes> getSearchCourseList(String courseName){
-        return courseRepository.findCourseListByCourseName(courseName);
+    public List<CourseDto.CourseListRes> getSearchCourseList(String courseName, Pageable pageable){
+        return courseRepository.findCourseListByCourseName(courseName, pageable);
     }
 
     /**

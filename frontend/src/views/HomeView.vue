@@ -28,6 +28,12 @@
           </div>
           <!-- 강좌 목록 -->
           <div class="my-course-list col column justify-between no-wrap">
+            <!-- <taking-course
+              v-for="takingCourse in state.takingCourseList"
+              :key="takingCourse.courseId"
+              :taking-course-item="takingCourse"
+            >
+            </taking-course> -->
             <taking-course></taking-course>
             <taking-course></taking-course>
             <taking-course></taking-course>
@@ -45,6 +51,12 @@
 
               <!-- 인기 강사 목록 -->
             <div class="contents-body best-instructor-list col row justify-between shadow-2 no-wrap">
+              <!-- <best-instructor
+                v-for="bestInstructor in state.bestInstructorList"
+                :key="bestInstructor.userId"
+                :best-instructor="bestInstructor"
+              >
+              </best-instructor> -->
               <best-instructor></best-instructor>
               <best-instructor></best-instructor>
               <best-instructor></best-instructor>
@@ -61,6 +73,12 @@
             </div>
             <!-- 인기 강좌 목록 -->
             <div class="contents-body best-course-list col row justify-between shadow-2 no-wrap">
+              <!-- <course-item
+                v-for="bestCourse in state.bestCourseList"
+                :key="bestCourse.courseId"
+                :course-item="bestCourse"
+              >
+              </course-item> -->
               <course-item></course-item>
               <course-item></course-item>
               <course-item></course-item>
@@ -79,6 +97,8 @@ import BestInstructor from '@/components/instructor/BestInstructor.vue'
 import CourseItem from '@/components/course/CourseItem.vue'
 import router from "@/router"
 import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'HomeView',
@@ -96,8 +116,26 @@ export default {
       router.push({ name: 'login' })
     }
 
+    const store = useStore()
     const state = reactive({
       slide: 1,
+      takingCourseList: store.state.profileStore.takingList,
+      bestInstructorList: store.state.instructorStore.bestInstructorList,
+      bestCourseList: store.state.courseStore.bestCourseList,
+    })
+
+    // store.dispatch('getHomeData')
+
+    watchEffect(() => {
+      state.takingCourseList = store.state.profileStore.takingList
+    })
+
+    watchEffect(() => {
+      state.bestInstructorList = store.state.instructorStore.bestInstructorList
+    })
+
+    watchEffect(() => {
+      state.bestCourseList = store.state.courseStore.bestCourseList
     })
 
     function moveToTakingCourse() {

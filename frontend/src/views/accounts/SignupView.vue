@@ -161,7 +161,7 @@ export default {
 
     function clickSingup() {
       store.dispatch('userSignup',
-        { email: state.email, name: state.name, nickname: state.nickname, password: state.password }
+        { email: state.email, userName: state.name, userNickname: state.nickname, password: state.password }
       )
       .then(res => {
         console.log(res)

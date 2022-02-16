@@ -84,6 +84,26 @@ export default createStore({
           alert('err')
         })
     },
+
+    // 홈 화면 데이터 조회
+    getHomeData({ commit }) {
+      axios({
+        method: 'get',
+        url: `${BASE_URL}main`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        }
+      })
+        .then(res => {
+          commit('profileStore/SET_TAKINGLIST', res.data.registerCourseList)
+          commit('instructorStore/SET_BEST_INSTRUCTOR_LIST', res.data.instructorList)
+          commit('courseStore/SET_BEST_COURSE_LIST', res.data.courseList)
+        })
+        .catch(err => {
+          console.log(err)
+          alert('err')
+        })
+    }
   },
   modules: {
     courseStore: courseStore,
