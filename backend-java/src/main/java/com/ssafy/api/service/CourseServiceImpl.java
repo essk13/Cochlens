@@ -168,4 +168,19 @@ public class CourseServiceImpl implements CourseService {
         registerCourseRepository.delete(registerCourse);
     }
 
+
+    @Override
+    public Boolean findIsJoinCourseByUser(String email, Long courseId) {
+        return registerCourseRepository.findIsJoinCourseByEmailAndCourseId(email, courseId);
+    }
+
+    @Override
+    public Boolean findIsWishCourseByEmailAndCourseId(String email, Long courseId) {
+        return registerCourseRepository.findIsWishCourseByEmailAndCourseId(email, courseId);
+    }
+
+    @Override
+    public Long findJoinCountByCourseId(Long courseId){
+        return registerCourseRepository.findJoinCountByCourseId(courseId);
+    }
 }

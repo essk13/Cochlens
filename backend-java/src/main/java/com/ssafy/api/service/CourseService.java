@@ -33,4 +33,10 @@ public interface CourseService {
     void deregisterCourse(User user, Course course);
     void deregisterWishlist(User user, Course course);
 
+    /* check */
+    Boolean findIsJoinCourseByUser(String email, Long courseId);
+    Boolean findIsWishCourseByEmailAndCourseId(String email, Long courseId);
+
+    /* count */
+    Long findJoinCountByCourseId(Long courseId);
 }

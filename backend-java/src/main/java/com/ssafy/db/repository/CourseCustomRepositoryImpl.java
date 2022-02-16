@@ -5,7 +5,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.MathExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.api.dto.CourseDto;
+import com.ssafy.db.entity.QWishlist;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.entity.Wishlist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 

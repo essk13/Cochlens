@@ -54,7 +54,7 @@ public class CourseController {
     })
     public ResponseEntity<? extends BaseResponseBody> createCourse(@ApiIgnore Authentication authentication,
                                                                     @RequestBody @ApiParam(value="강좌 생성 정보", required = true) CourseDto.CourseInsertReq courseInsertInfo) {
-        System.out.println(authentication);
+
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         String email = userDetails.getUsername();
         User user = userService.getUserByEmail(email);
@@ -161,10 +161,11 @@ public class CourseController {
         Course course = courseService.getCourse(courseId);
         List<LectureDto.LectureListRes> lectureList = lectureService.getLectureList(course);
         List<ReviewDto.ReviewListRes> reviewList = reviewService.getReviewListByCourse(course);
-        boolean isWish = false;
-        boolean isJoin = false;
+        boolean isWish = courseService.findIsWishCourseByEmailAndCourseId(email, courseId);
+        boolean isJoin = courseService.findIsJoinCourseByUser(email, courseId);
+        int courseJoinCount = Math.toIntExact(courseService.findJoinCountByCourseId(courseId));
 
-        return ResponseEntity.ok().body(CourseDto.CourseDetailRes.of(course, 0, isJoin, isWish, lectureList, reviewList));
+        return ResponseEntity.ok().body(CourseDto.CourseDetailRes.of(course, courseJoinCount, isJoin, isWish, lectureList, reviewList));
     }
 
     @GetMapping("/search")
