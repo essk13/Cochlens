@@ -9,11 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RegisterCourseRepository extends JpaRepository<RegisterCourse, Long> {
-
-//    Optional<RegisterCourse> findRegisterCourseByUserIdAndCourseId(User user, Course course);
-//    Optional<RegisterCourse> findByRegisterCourseId(Long RegisterCourseId);
-//    Optional<RegisterCourse> findByUserIdAndCourseId(User user, Course course);
-//    Optional<RegisterCourse> findByUserIdAndCourseId(Long userId, Long courseId);
-//    RegisterCourse findByUserIdAndCourseId(Long userId, Long courseId);
+public interface RegisterCourseRepository extends JpaRepository<RegisterCourse, Long>, RegisterCourseCustomRepository {
+    Optional<RegisterCourse> findRegisterCourseByUserAndCourse(User user, Course course);
 }

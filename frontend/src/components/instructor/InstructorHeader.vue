@@ -4,16 +4,18 @@
     <div class="profile-roof-cover"></div>
     <div class="profile-img"></div>
     <div class="instructor-description text-white">
-      <h6 class="q-mb-sm q-mt-none text-bold">아이유</h6>
-      <div>이메일 : iu@gmail.com</div>
-      <div>강좌 수 : 200</div>
-      <div>별점 : ★5.0 (200000)</div>
+      <h6 class="q-mb-sm q-mt-none text-bold">{{ state.instructorDetail.userNickname }}</h6>
+      <div>이메일 : {{ state.instructorDetail.email }}</div>
+      <div>강좌 수 : {{ state.instructorDetail.courseCount }}</div>
+      <div>별점 : ★{{ state.instructorDetail.courseReviewRateAverage }} ({{ state.instructorDetail.courseReviewCount }})</div>
     </div>
   </div>
 </template>
 
 <script>
 import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'InstructorHeader',
@@ -21,7 +23,13 @@ export default {
   },
 
   setup() {
+    const store = useStore()
     const state = reactive({
+      instructorDetail: store.state.instructorStore.instructorDetail,
+    })
+
+    watchEffect(() => {
+      state.instructorDetail = store.state.instructorStore.instructorDetail
     })
 
     return {

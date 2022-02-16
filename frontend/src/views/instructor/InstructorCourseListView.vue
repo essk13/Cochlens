@@ -1,85 +1,80 @@
 <template>
+  <!-- 강사 헤더 -->
   <instructor-header></instructor-header>
+  <!-- 검색 바 -->
   <div class="search">
     <div class="search-title">전체 강좌</div>
-    <q-input
-      outlined
-      bottom-slots
-      v-model="text"
-      label="찾으시는 강좌를 입력하세요."
-      counter
-      maxlength="30"
-      :dense="state.searchDense"
-      class="search-bar"
-    >
-      <template v-slot:append>
-        <q-icon v-if="state.searchText !== ''" name="close" @click="state.searchText = ''" class="cursor-pointer" />
-        <q-icon name="search" />
-      </template>
-    </q-input>
   </div>
-  <div class="contents q-px-xl q-mx-xl q-pb-xl">
+  <!-- 강사의 전체 강좌 목록 -->
+  <div class="q-px-xl q-mx-xl q-pb-xl">
     <div class="row justify-between q-gutter-xl">
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
-      <course></course>
+      <!-- <course-item
+        v-for="vodOpenCourse in state.vodOpenCourseList"
+        :key="vodOpenCourse.courseId"
+        :course-item="vodOpenCourse"
+      >
+      </course-item> -->
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
+      <course-item></course-item>
     </div>
   </div>
 </template>
 
 <script>
-import { reactive } from '@vue/reactivity'
 import InstructorHeader from "@/components/instructor/InstructorHeader"
-import Course from '@/components/course/Course'
+import CourseItem from '@/components/course/CourseItem'
+import { reactive } from '@vue/reactivity'
+import { useStore } from 'vuex'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'InstructorCourseListView',
   components: {
     InstructorHeader,
-    Course,
+    CourseItem,
   },
 
   setup() {
+    const store = useStore()
     const state = reactive({
-      searchText: '',
-      searchDense: true,
+      vodOpenCourseList: store.state.instructorStore.instructorDetail.vodOpenCourseList
+    })
+
+    watchEffect(() => {
+      state.vodOpenCourseList = store.state.instructorStore.instructorDetail.vodOpenCourseList
     })
 
     return {
@@ -91,7 +86,7 @@ export default {
 
 <style scoped lang="scss">
 .search {
-  height: 180px;
+  height: 120px;
   padding: 50px 9vh 0.5vh 9vh;
 }
 
@@ -106,7 +101,7 @@ export default {
 }
 
 ::v-deep {
-  .course {
+  .course-item {
     background-size: auto 100%;
     width: 26vh;
     height: 18vh;

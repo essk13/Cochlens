@@ -16,6 +16,7 @@
             checked-icon="check"
             color="blue"
             unchecked-icon="clear"
+            @click="clickSubtitle"
           />
           자막
         </div>
@@ -27,19 +28,9 @@
             checked-icon="check"
             color="blue"
             unchecked-icon="clear"
+            @click="clickCommand"
           />
           동작 명령어
-        </div>
-
-        <!-- 문자 음성 변환 -->
-        <div>
-          <q-toggle
-            v-model="state.tts"
-            checked-icon="check"
-            color="blue"
-            unchecked-icon="clear"
-          />
-          문자 음성 변환
         </div>
 
         <!-- 강사 얼굴 확대 -->
@@ -49,6 +40,7 @@
             checked-icon="check"
             color="blue"
             unchecked-icon="clear"
+            @click="clickFocusing"
           />
           얼굴 확대
         </div>
@@ -61,48 +53,89 @@
     <div class="col-6 q-pr-md">
       <div class="row">
         <p class="profile-menu-title q-mr-sm">수강 중인 강좌</p>
-        <a href="">더보기</a>
+        <a @click="moveTakingCourse">더보기></a>
       </div>
-      <div class="profile-home-row-menu">
-        <div
-          class="course-profile q-mb-md"
-          v-for="course in state.takingCourseList"
-          :key="course"
-        ></div>
+      <div v-if="state.takingList" class="profile-home-row-menu">
+        <taking-course-vue
+          class="q-mb-md"
+          v-for="(takingItem, index) in state.takingList"
+          :key="index"
+          :taking-course-item="takingItem"
+        >
+        </taking-course-vue>
+      </div>
+      <div v-else class="profile-home-row-menu">
+        수강 중인 강좌가 없습니다.
       </div>
     </div>
 
     <div class="col-6 q-pl-md">
       <div class="row">
         <p class="profile-menu-title q-mr-sm">내가 찜한 강좌</p>
-        <a href="">더보기</a>
+        <a @click="moveWishList">더보기></a>
       </div>
-      <div class="profile-home-row-menu">
-        <div
-          class="course-profile q-mb-md"
-          v-for="wcourse in state.wishCourseList"
-          :key="wcourse"
-        ></div>
+      <div v-if="state.wishList" class="profile-home-row-menu">
+        <taking-course-vue
+          class="q-mb-md"
+          v-for="(wishItem, index) in state.wishList"
+          :key="index"
+          :taking-course-item="wishItem"
+        >
+        </taking-course-vue>
+      </div>
+      <div v-else class="profile-home-row-menu">
+        찜한 강좌가 없습니다.
       </div>
     </div>
   </div>
 </template>
 <script>
+import TakingCourseVue from "./TakingCourse.vue"
 import { reactive } from "vue"
+import { useStore } from 'vuex'
 
 export default {
   name: 'ProfileMain',
+  components: {
+    TakingCourseVue,
+  },
   setup () {
+    const store = useStore()
     const state = reactive({
-      subtitle: true,
-      command: true,
-      tts: true,
-      faceFocusing: true,
-      takingCourseList: [1, 2, 3, 4],
-      wishCourseList: [1, 2, 3, 4],
+      subtitle: store.state.user.isSubtitle,
+      command: store.state.user.isCommand,
+      faceFocusing: store.state.user.isFaceFocusing,
+      takingList: store.state.profileStore.takingList,
+      wishList: store.state.profileStore.wishList,
     })
+
+    // Function
+    // 접근성 설정 변경
+    function clickSubtitle() {
+      store.dispatch('profileStore/changeSubtitle')
+    }
+    function clickCommand() {
+      store.dispatch('profileStore/changeCommand')
+    }
+    function clickFocusing() {
+      store.dispatch('profileStore/changeFocusing')
+    }
+
+    // 컴포넌트 변경
+    function moveTakingCourse() {
+      store.state.profileStore.component = 'taking'
+    }
+    function moveWishList() {
+      store.state.profileStore.component = 'wish'
+    }
+
     return {
-      state
+      state,
+      clickSubtitle,
+      clickCommand,
+      clickFocusing,
+      moveTakingCourse,
+      moveWishList,
     }
   }
 }
