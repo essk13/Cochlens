@@ -21,14 +21,14 @@
       <div>
         <div class="row justify-between item-center content-center">
           <p class="profile-menu-title q-mb-none">커리큘럼</p>
-          <q-btn @click="state.isDialog = true" color="blue" label="강의 생성" dense />
+          <q-btn v-if="state.courseData.instructorName === state.userName" @click="state.isDialog = true" color="blue" label="강의 생성" dense />
+          <q-btn v-else @click="state.isReview = true" color="blue" label="리뷰 작성" dense />
         </div>
         <lecture-item
           v-for="lecture in state.lectureList"
           :key="lecture.lectureId"
           :lecture-item="lecture"
         ></lecture-item>
-        <div class="course-detail-curriculum"></div>
       </div>
     </div>
     <div class="col-1"></div>
@@ -47,7 +47,8 @@
 
           <q-card-actions align="around">
             <div>
-              <q-btn v-if="state.courseData.courseJoinCount === state.courseData.courseLimitPeople && !state.courseData.isJoin" @click="clickRegister" flat>신청마감</q-btn>
+              <q-btn v-if="state.courseData.instructorName === state.userName" @click="moveCourseUpdate" flat>강좌 수정</q-btn>
+              <q-btn v-else-if="state.courseData.courseJoinCount === state.courseData.courseLimitPeople && !state.courseData.isJoin" @click="clickRegister" flat>신청마감</q-btn>
               <q-btn v-else-if="!state.courseData.isJoin" @click="clickRegister" flat>신청하기</q-btn>
               <q-btn v-else-if="state.courseData.isJoin" @click="clickDeregister" flat>수강중인 강좌</q-btn>
             </div>
@@ -80,7 +81,7 @@
     </div>
   </div>
 
-  <!-- Dialog -->
+  <!-- 강의 생성 모달 -->
   <q-dialog v-model="state.isDialog" persistent>
     <q-card style="min-width: 350px">
       <q-card-section>
@@ -137,14 +138,41 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+
+  <!-- 리뷰 생성 모달 -->
+  <q-dialog v-model="state.isReview" persistent>
+    <q-card style="min-width: 350px">
+      <q-card-section>
+        <div class="text-h6">리뷰 생성</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <p class="q-mb-xs">리뷰</p>
+        <q-input outlined dense v-model="state.reviewContent" label="Outlined" class="q-mb-md" />
+        <p class="q-mb-xs">평점</p>
+          <q-rating
+            v-model="state.reviewRate"
+            size="2em"
+            :max="10"
+            color="primary"
+            class="q-mb-md"
+          />
+      </q-card-section>
+
+      <q-card-actions align="right" class="text-primary">
+        <q-btn flat label="리뷰 작성" v-close-popup @click="createReview" />
+        <q-btn flat label="취소" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
-import LectureItem from '@/components/course/lectureItem'
+import LectureItem from '@/components/course/LectureItem'
+import CourseReview from '@/components/course/CourseReview'
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
-import CourseReview from '@/components/course/CourseReview'
 import { onMounted, watchEffect } from '@vue/runtime-core'
 
 export default {
@@ -157,6 +185,10 @@ export default {
     const store = useStore()
     const router = useRouter()
     const route = useRoute()
+    const optionContent = {
+      '라이브': 'before',
+      'VOD': 'vod'
+    }
     let today = new Date()
     const url = 'wss://' + location.host + '/groupcall'
     store.dispatch('courseStore/setWs', url)
@@ -167,6 +199,7 @@ export default {
       courseData: store.state.courseStore.courseData,
       lectureList: store.state.courseStore.courseData.lectureList,
       reviewList: store.state.courseStore.courseData.reviewList,
+      userName: store.state.user.userName,
 
       isDialog: false,
       dialogText: 'click',
@@ -174,12 +207,21 @@ export default {
       lectureDate: `${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}`,
       lectureName: '',
       lectureOpenTime: `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`,
+      lectureRuntime: '2',
       lectureState: 'before',
       lectureThumbnail: null,
       lectureVod: null,
       options: ['라이브', 'VOD'],
+
+      isReview: false,
+      reviewContent: '',
+      reviewRate: 5,
     })
 
+    console.log('store')
+    console.log(store.state.courseStore.courseData)
+    console.log('state')
+    console.log(state.lectureList)
     console.log('lectureItem')
     console.log(state.lectureList[0])
 
@@ -248,20 +290,24 @@ export default {
       state.courseData.courseWishCount -= 1
       store.dispatch('unwishCourse')
     }
+    // 강좌 수정
+    function moveCourseUpdate() {
+      router.push({ name: 'courseUpdate', params: { courseId: state.courseData.courseId }})
+    }
 
     // 강의 생성
     function createLecture() {
       store.dispatch('courseStore/createLecture', {
         id: state.courseData.courseId,
         data: {
-          lectureCloseTime: "12:10",
-          lectureDate: "2022/02/11",
-          lectureName: state.lectuerName,
-          lectureOpenTime: "10:10",
-          lectureRuntime: "02:00",
-          lectureState: state.lectureState,
-          lectureThumbnail: "thumbnail address",
-          lectureVod: "vod address"
+          lectureCloseTime: state.lectureCloseTime,
+          lectureDate: state.lectureDate,
+          lectureName: state.lectureName,
+          lectureOpenTime: state.lectureOpenTime,
+          lectureRuntime: state.lectureRuntime,
+          lectureState: optionContent[state.lectureState],
+          lectureThumbnail: state.lectureThumbnail,
+          lectureVod: state.lectureVod,
         }
       })
     }
@@ -286,6 +332,20 @@ export default {
       router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
     }
 
+    // 리뷰 작성
+    function createReview() {
+      store.dispatch('courseStore/createReview', {
+        id: state.courseData.courseId,
+        data: {
+          reviewContent: state.reviewContent,
+          reviewDate: `${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}`,
+          reviewRate: state.reviewRate
+        }
+      })
+      state.reviewContent = ''
+      state.reviewRate = 5
+    }
+
     return {
       state, url,
       clickRegister,
@@ -293,8 +353,10 @@ export default {
       clickWish,
       clickUnwish,
       createLecture,
+      moveCourseUpdate,
       startLecture,
       joinLecture,
+      createReview,
       moveCourseReview,
     }
   }
@@ -356,14 +418,6 @@ export default {
 
 .course-detail-review {
   width: 100%;
-}
-
-.course-detail-curriculum {
-  width: 100%;
-  height: 130px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  background: gray;
 }
 
 .reserve {
