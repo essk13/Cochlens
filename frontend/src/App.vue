@@ -168,8 +168,7 @@ export default {
 
 
     function clickProfile() {
-      store.dispatch('profileStore/getWishList')
-      store.dispatch('profileStore/getTakingList')
+      store.dispatch('profileStore/getUserCourse')
       state.subNav = true
       router.push({ name: 'profile' })
       state.subNavItems = [
@@ -193,7 +192,7 @@ export default {
 
     function clickCourse() {
       store.dispatch('courseStore/getBestCourseList')
-      store.dispatch('courseStore/getCourseList')
+      store.dispatch('courseStore/getCourseList', 1)
       state.subNav = true
       router.push({ name: 'courseList' })
       state.subNavItems = [

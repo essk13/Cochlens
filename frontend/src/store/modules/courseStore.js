@@ -243,10 +243,10 @@ const courseStore = {
     },
 
     // 강좌 목록 조회
-    getCourseList({ commit }) {
+    getCourseList({ commit }, page) {
       axios({
         method: 'get',
-        url: `${BASE_URL}course`,
+        url: `${BASE_URL}course?page=${page}&size=15`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
@@ -297,11 +297,11 @@ const courseStore = {
     },
 
     // 강좌 상세 정보
-    getCourseDetail({ commit }) {
+    getCourseDetail({ commit }, id) {
       axios({
         method: 'get',
         // 임시(추 후 Parameters 수정)
-        url: `${BASE_URL}course/2`,
+        url: `${BASE_URL}course/${id}`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         },
@@ -381,6 +381,26 @@ const courseStore = {
       })
         .then((res) => {
           console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강의 생성
+    createLecture({ dispatch }, data) {
+      axios({
+        method: 'post',
+        // 임시(추 후 Parameter 수정)
+        url: `${BASE_URL}lecture/${data.id}`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+        data: data.data
+      })
+        .then((res) => {
+          console.log(res)
+          dispatch('getCourseDetail', data.id)
         })
         .catch((err) => {
           console.log(err)

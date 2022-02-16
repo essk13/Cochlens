@@ -5,7 +5,7 @@
     <div>
       <p class="curriculum-title">{{ props.lectureItem.lectureName }}</p>
       <p class="curriculum-description">
-        강사 : {{ instructor }}<br>
+        강사 : {{ state.instructor }}<br>
         날짜 : {{ props.lectureItem.lectureDate }} / 길이 : {{ props.lectureItem.lectureRuntime }}
       </p>
     </div>
@@ -22,6 +22,7 @@
 import { reactive } from '@vue/reactivity'
 import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+
 export default {
   name: 'LectureItem',
   components: {

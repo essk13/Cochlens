@@ -87,12 +87,16 @@ export default {
       bestCourseList : store.state.courseStore.bestCourseList,
     })
 
+    // Created
+    store.dispatch('courseStore/getBestCourseList')
+    store.dispatch('courseStore/getCourseList', 1)
+
     // Watch
     watchEffect(() => {
       state.courseList = store.state.courseStore.courseList
     })
     watchEffect(() => {
-      state.bestCourseList = store.state.courseStore.courseList
+      state.bestCourseList = store.state.courseStore.bestCourseList
     })
 
     // Function
