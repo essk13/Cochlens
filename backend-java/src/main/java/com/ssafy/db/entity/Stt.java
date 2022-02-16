@@ -45,5 +45,6 @@ public class Stt {
         this.sttOffset = sttOffset;
         this.sttDuration = sttDuration;
         this.sttDisplayText = sttDisplayText;
+        this.lecture = lecture;
     }
 }
