@@ -15,7 +15,7 @@
 
 <script>
 import { reactive, computed } from '@vue/reactivity'
-// import { useStore } from 'vuex'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -26,7 +26,7 @@ export default {
     instructor: Object,
   },
   setup(props) {
-    // const store = useStore()
+    const store = useStore()
     const router = useRouter()
     const state = reactive({
       profileImageUrl: computed(() => props.instructor.profileImage)
@@ -34,11 +34,10 @@ export default {
 
     // 강사 상세 정보로 이동
     function moveInstructorDetail() {
-      // store.dispatch('instructorStore/getInstructorDetail', props.instructor.userId)
-      // .then(() => {
-      //   router.push({ name: 'instructorDetail', params: { instructorId: props.instructor.userId }})
-      // })
-      router.push({ name: 'instructorDetail', params: { instructorId: props.instructor.userId }})
+      store.dispatch('instructorStore/getInstructorDetail', props.instructor.userId)
+      .then(() => {
+        router.push({ name: 'instructorDetail', params: { instructorId: props.instructor.userId }})
+      })
     }
 
     return {

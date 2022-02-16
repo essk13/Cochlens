@@ -74,7 +74,7 @@
 import InstructorItem from '@/components/instructor/InstructorItem'
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
-import { watchEffect, watch } from 'vue'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'InstructorListView',
@@ -89,20 +89,17 @@ export default {
       searchResult: '',
       searchDense: true,
       paginationCurrent: 1,
+      listSize: 12,
       instructorList: store.state.instructorStore.instructorList,
       bestInstructorList: store.state.instructorStore.bestInstructorList,
     })
 
-    // store.dispatch('instructorStore/getInstructorList', state.paginationCurrent)
-    // store.dispatch('instructorStore/getBestInstructorList')
+    store.dispatch('instructorStore/getBestInstructorList')
+    store.dispatch('instructorStore/getInstructorList', { page: state.paginationCurrent, size: state.listSize })
 
     function searchInsturtor() {
       state.searchResult = state.searchText
-      if (state.paginationCurrent == 1) {
-        store.dispatch('instructorStore/searchInstructor', { text: state.searchResult, page: state.paginationCurrent })
-      } else {
-        state.paginationCurrent = 1
-      }
+      state.paginationCurrent = 1
     }
 
     watchEffect(() => {
@@ -113,8 +110,8 @@ export default {
       state.bestInstructorList = store.state.instructorStore.bestInstructorList
     })
 
-    watch(state.paginationCurrent, () => {
-      store.dispatch('instructorStore/searchInstructor', { text: state.searchResult, page: state.paginationCurrent })
+    watchEffect(() => {
+      store.dispatch('instructorStore/searchInstructor', { text: state.searchResult, page: state.paginationCurrent, size: state.listSize })
     })
 
     return {

@@ -125,7 +125,7 @@ export default {
         courseCycle: state.cycle,
         courseLimitPeople: state.limit,
       })
-      store.dispatch('courseStore/getCourseList')
+      store.dispatch('courseStore/getCourseList', { page: 1, size: 15 })
       setTimeout(()=> { router.push({ name: 'courseList' }) }, 300)
     }
 
