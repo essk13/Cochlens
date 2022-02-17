@@ -91,7 +91,7 @@ export default {
     const store = useStore()
     const route = useRoute()
 
-    const sockJs = new SockJS("/stomp/chat");
+    const sockJs = new SockJS("/message");
     const stomp = Stomp.over(sockJs);
 
     const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
