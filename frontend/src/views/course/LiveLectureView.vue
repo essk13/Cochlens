@@ -32,15 +32,17 @@
     </div>
     <div class="menu-block row justify-between">
       <div class="col-1 row justify-center items-center">
-        <img @click="startRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+
       </div>
       <div class="col-2 row justify-between items-center">
-        <img @click="stopRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="playRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <div style="width: 4vh; height: 4vh; border-radius: 4vh;" class="mic-on-img"></div>
+        <!-- <div style="width: 4vh; height: 4vh; border-radius: 4vh;" class="mic-off-img"></div> -->
+        <div @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="video-on-img"></div>
+        <!-- <div @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="video-off-img"></div> -->
+        <div @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="exit-img"></div>
       </div>
       <div class="col-1 row justify-center items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+
       </div>
     </div>
   </div>
@@ -156,9 +158,7 @@ export default {
       state.subtitles_text = ''
 
       const audioConfig = sdk.AudioConfig.fromDefaultMicrophoneInput();
-      console.log('1')
       let speechConfig = getSpeechConfig()
-      console.log('2')
 
       // Create the SpeechRecognizer and set up common event handlers and PhraseList data
       recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
