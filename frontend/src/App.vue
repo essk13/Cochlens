@@ -134,23 +134,27 @@ export default {
       computed(() => route.params),
       (newParams, oldParams) => {
         console.log(newParams, oldParams)
-        if (newParams.courseId) {
-          state.subNavItems = [
-            { title: '강좌 목록', icon: '', method: clickCourse },
-            { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
-            { title: '강좌 리뷰', icon: '', method: moveCourseReview },
-            { title: '강좌 개설', icon: '', method: moveCourseCreate },
-            { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
-          ]
-        } else if (newParams.instructorId) {
-          state.subNavItems = [
-            { title: '강사 목록', icon: '', method: clickInstructor},
-            { title: '강사 프로필', icon: '', method: clickInstructorDetail},
-            { title: '강사 라이브 강좌', icon: '', method: clickInstructorLive},
-            { title: '강사 전체 강좌', icon: '', method: clickInstructorCourse},
-            { title: '강사 리뷰', icon: '', method: clickInstructorReview},
-            { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
-          ]
+        if (newParams != oldParams) {
+          if (newParams.courseId) {
+            state.subNavItems = [
+              { title: '강좌 목록', icon: '', method: clickCourseList },
+              { title: '강좌 상세정보', icon: '', method: moveCourseDetail },
+              { title: '강좌 리뷰', icon: '', method: moveCourseReview },
+              { title: '강좌 개설', icon: '', method: moveCourseCreate },
+              { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+            ]
+            state.subNav = true
+          } else if (newParams.instructorId) {
+            state.subNavItems = [
+              { title: '강사 목록', icon: '', method: clickInstructorList},
+              { title: '강사 프로필', icon: '', method: clickInstructorDetail},
+              { title: '강사 라이브 강좌', icon: '', method: clickInstructorLive},
+              { title: '강사 전체 강좌', icon: '', method: clickInstructorCourse},
+              { title: '강사 리뷰', icon: '', method: clickInstructorReview},
+              { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+            ]
+            state.subNav = true
+          }
         }
       }
     )
@@ -164,6 +168,14 @@ export default {
           state.subNav = false
         } else if (oldName == 'liveLecture') {
           state.mainNav = true
+          state.subNav = true
+        } else if (newName == 'profile') {
+          state.subNavItems = [
+            { title: '프로필 홈', icon: '', method: clickProfileHome},
+            { title: '수강 중인 강좌', icon: '', method: clickProfileTaking},
+            { title: '내가 찜한 강좌', icon: '', method: clickProfileWish},
+            { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+          ]
           state.subNav = true
         }
       }
@@ -182,17 +194,18 @@ export default {
 
 
     function clickProfile() {
-      store.dispatch('profileStore/getUserCourse')
-      state.subNav = true
-      router.push({ name: 'profile' })
+      if (route.name != 'profile') {
+        store.dispatch('profileStore/getUserCourse')
+        router.push({ name: 'profile' })
+      }
       state.subNavItems = [
         { title: '프로필 홈', icon: '', method: clickProfileHome},
         { title: '수강 중인 강좌', icon: '', method: clickProfileTaking},
         { title: '내가 찜한 강좌', icon: '', method: clickProfileWish},
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
+      state.subNav = true
     }
-
     function clickProfileHome() {
       store.state.profileStore.component = 'home'
     }
@@ -205,17 +218,29 @@ export default {
 
 
     function clickCourse() {
+      if (!route.params.courseId) {
+        store.dispatch('courseStore/getBestCourseList')
+        store.dispatch('courseStore/getCourseList', 1)
+        router.push({ name: 'courseList' })
+        state.subNavItems = [
+          { title: '강좌 목록', icon: '', method: clickCourseList },
+          { title: '강좌 개설', icon: '', method: moveCourseCreate },
+          { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+        ]
+      }
+      state.subNav = true
+    }
+    function clickCourseList() {
       store.dispatch('courseStore/getBestCourseList')
       store.dispatch('courseStore/getCourseList', 1)
-      state.subNav = true
       router.push({ name: 'courseList' })
       state.subNavItems = [
-        { title: '강좌 목록', icon: '', method: clickCourse },
+        { title: '강좌 목록', icon: '', method: clickCourseList },
         { title: '강좌 개설', icon: '', method: moveCourseCreate },
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
+      state.subNav = true
     }
-
     function moveCourseDetail() {
       router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
     }
@@ -223,17 +248,32 @@ export default {
       router.push({ name: 'courseReviewList', params: { courseId: route.params.courseId } })
     }
     function moveCourseCreate() {
+      state.subNavItems = [
+        { title: '강좌 목록', icon: '', method: clickCourseList },
+        { title: '강좌 개설', icon: '', method: moveCourseCreate },
+        { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+      ]
       router.push({ name: 'courseCreate' })
     }
 
 
     function clickInstructor() {
+      if (!route.params.instructorId) {
+        router.push({ name: 'instructorList' })
+        state.subNavItems = [
+          { title: '강사 목록', icon: '', method: clickInstructorList},
+          { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
+        ]
+      }
       state.subNav = true
+    }
+    function clickInstructorList() {
       router.push({ name: 'instructorList' })
       state.subNavItems = [
-        { title: '강사 목록', icon: '', method: clickInstructor},
+        { title: '강사 목록', icon: '', method: clickInstructorList},
         { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
       ]
+      state.subNav = true
     }
     function clickInstructorDetail() {
       router.push({ name: 'instructorDetail', params: { instructorId: route.params.instructorId } })
@@ -258,7 +298,9 @@ export default {
       state.subNav = false
       state.mainNav = false
       store.dispatch('userLogout')
-      router.push({ name: 'login' })
+      .then(() => {
+        router.push({ name: 'login' })
+      })
     }
 
     return {

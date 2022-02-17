@@ -1,5 +1,5 @@
 import axios from "axios"
-const BASE_URL = 'https://localhost:8443/api/v1/'
+const BASE_URL = 'https://i6d102.p.ssafy.io:8443/'
 
 // JWT 토큰 header 생성
 const setHeader = function () {
@@ -13,21 +13,25 @@ const setHeader = function () {
 const instructorStore = {
   namespaced: true,
   state: {
-    instructorList: null,  // 강사 조회 목록
-    bestInstructorList: null,  // 인기 강사 조회 목록
-    instructorDetail: null,  // 강사 상세 정보
+    instructorList: [],  // 강사 조회 목록
+    bestInstructorList: [],  // 인기 강사 조회 목록
+    instructorDetail: [],  // 강사 상세 정보
   },
   getters: {
   },
   mutations: {
     // 강사 목록 설정
     SET_INSTRUCTOR_LIST(state, instructorList) {
-      state.instructorList = instructorList
+      if (instructorList != []) {
+        state.instructorList = instructorList
+      }
     },
 
     // 인기 강사 목록 설정
     SET_BEST_INSTRUCTOR_LIST(state, bestInstructorList) {
-      state.bestInstructorList = bestInstructorList
+      if (bestInstructorList != []) {
+        state.bestInstructorList = bestInstructorList
+      }
     },
 
     // 강사 상세 정보 설정

@@ -45,8 +45,8 @@
           </q-input>
 
           <div class="row justify-end">
-            <p class="q-pr-md">비밀번호가 기억이 안나시나요?</p>
-            <a @click="move" class="text-primary text-bold">비밀번호 찾기</a>
+            <!-- <p class="q-pr-md">비밀번호가 기억이 안나시나요?</p>
+            <a @click="move" class="text-primary text-bold">비밀번호 찾기</a> -->
           </div>
 
           <!-- Button -->
@@ -66,14 +66,14 @@
               <img :src="state.logo_nt" height="20" class="q-mr-sm">
               회 원 가 입
             </q-btn>
-            <q-btn color="white" text-color="dark" class="full-width q-mb-md">
+            <!-- <q-btn color="white" text-color="dark" class="full-width q-mb-md">
               <img :src="state.google" height="20" class="q-mr-sm">
               구글 로그인
             </q-btn>
             <q-btn color="positive" class="full-width">
               <img :src="state.naver" height="18" class="q-mr-sm">
               네이버 로그인
-            </q-btn>
+            </q-btn> -->
           </div>
         </div>
       </div>
@@ -116,7 +116,6 @@ export default {
     // Function
     function clickLogin() {
       store.dispatch('userLogin', { email: state.email, password: state.password })
-      router.push({ name: 'home' })
       .then(() => { router.push({ name: 'home' }) }) 
     }
 

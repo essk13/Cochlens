@@ -8,23 +8,23 @@
     </q-item-section>
 
     <q-item-section>
-      <q-item-label lines="1">Suzan ★5.0</q-item-label>
-      <!-- <q-item-label lines="1">{{ props.courseReview.author.userNickname }} ★{{ props.courseReview.reviewRate }}</q-item-label> -->
-      <q-item-label caption lines="2">
+      <!-- <q-item-label lines="1">Suzan ★5.0</q-item-label> -->
+      <q-item-label lines="1">{{ props.courseReview.author.userNickname }} ★{{ props.courseReview.reviewRate }}</q-item-label>
+      <!-- <q-item-label caption lines="2">
         I'll be in your neighborhood doing errands this
         weekend.
-      </q-item-label>
-      <!-- <q-item-label caption lines="2">
-        {{ props.courseReview.reviewContent }}
       </q-item-label> -->
+      <q-item-label caption lines="2">
+        {{ props.courseReview.reviewContent }}
+      </q-item-label>
     </q-item-section>
 
-    <q-item-section side top>
-      1 min ago
-    </q-item-section>
     <!-- <q-item-section side top>
-      {{ props.courseReview.reviewDate }}
+      1 min ago
     </q-item-section> -->
+    <q-item-section side top>
+      {{ props.courseReview.reviewDate }}
+    </q-item-section>
   </q-item>
 
   <q-separator inset="item" />
