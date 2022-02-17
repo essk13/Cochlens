@@ -26,8 +26,9 @@ public class Lecture {
     @Temporal(TemporalType.DATE)
     @Column(name = "lecture_date", nullable = false)
     Date lectureDate;
+    @Enumerated(EnumType.STRING)
     @Column(name = "lecture_state", nullable = false)
-    String lectureState;
+    LectureState lectureState;
     @Column(name = "lecture_vod")
     String lectureVod;
     @Temporal(TemporalType.DATE)
@@ -42,7 +43,7 @@ public class Lecture {
 
     @Builder
     public Lecture(Long lectureId, String lectureName, Date lectureRuntime, String lectureThumbnail,
-                   Date lectureDate, String lectureState, String lectureVod,
+                   Date lectureDate, LectureState lectureState, String lectureVod,
                    Date lectureOpenTime, Date lectureCloseTime, Course course) {
         this.lectureId = lectureId;
         this.lectureName = lectureName;

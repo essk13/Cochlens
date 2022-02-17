@@ -47,17 +47,20 @@
     <div v-if="state.isMainScreen" class="main-screen-block">
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
       <span v-if="state.isSubtitles" class="main-screen-subtitles">{{ state.subtitles }}</span>
+        <video id="videoOutput" autoplay style="width: 480px; height: 320px;"
+					></video>
+      <span class="main-screen-subtitles">{{ state.res }}</span>
     </div>
     <div v-else class="all-screen-list-block">
       {{ store.state.courseStore.participants }}
     </div>
     <div class="menu-block row justify-between">
       <div class="col-1 row justify-center items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="startRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-2 row justify-between items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="stopRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="playRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
         <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-1 row justify-center items-center">
@@ -73,6 +76,9 @@ import { useStore } from 'vuex'
 import router from '@/router'
 import { onMounted } from '@vue/runtime-core'
 import { useRoute } from 'vue-router'
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
+// import logo from '@/assets/logo.svc'
 // import model_json from '@/assets/my_model/model.json'
 // import metadata_json from '@/assets/my_model/metadata.json'
 
@@ -84,6 +90,10 @@ export default {
   setup() {
     const store = useStore()
     const route = useRoute()
+
+    const sockJs = new SockJS("/stomp/chat");
+    const stomp = Stomp.over(sockJs);
+
     const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
     let webcam, model, maxPredictions
     const state = reactive({
@@ -93,6 +103,8 @@ export default {
       subtitles: '',
       subtitles_text: '',
       res: '',
+      videoOutput: document.getElementById('videoOutput'),
+      // logo
     })
 
     // [STT 변수]
@@ -210,6 +222,10 @@ export default {
 
           state.subtitles = `${result.text}\r\n`;
 
+          // 소켓 통신으로 사용자들에게 pub...
+          stomp.send('/pub/chat/message', {}, JSON.stringify({roomId: route.params.lectureId, message: state.subtitles, writer: store.state.user.userName}));
+
+
           console.log('detailedResultJson : ', detailedResultJson)
           console.log('state.subtitles_text : ', state.subtitles_text)
           console.log('subtitles_data.subtitles : ', subtitles_data.subtitles)
@@ -218,7 +234,8 @@ export default {
 
     // Mounted
     onMounted(() => {
-      init()
+      // init()
+      connect()
     })
 
     // Function
@@ -231,6 +248,44 @@ export default {
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
     }
+
+    function connect() {
+            // pub/sub event
+      stomp.connect({}, function() {
+        console.log("STOMP Connection")
+        stomp.subscribe("/sub/chat/room/"+ route.params.lectureId, function(message) {
+          var recv = JSON.parse(message.body);
+          // stomp.recvMessage(recv);
+          console.log(recv)
+        });
+        console.log(JSON.stringify({roomId:route.params.lectureId, writer:store.state.user.userName}))
+        stomp.send("/pub/chat/enter", {}, JSON.stringify({roomId:route.params.lectureId, writer:store.state.user.userName}))
+      });
+    }
+    /**
+     * 녹화 관련 함수들
+     */
+
+    function startRecording() {
+      console.log('startRecording')
+      state.videoOutput = document.getElementById('videoOutput')
+      console.log(state.videoOutput)
+      store.dispatch('courseStore/startRecording', state.videoOutput)
+    }
+
+    function stopRecording() {
+      console.log('stopRecording')
+      store.dispatch('courseStore/stopRecording')
+    }
+
+    function playRecording() {
+      console.log('playRecording')
+      store.dispatch('courseStore/playRecording', state.videoOutput)
+    }
+
+    /**
+     * motion
+     */
 
     async function init() {
       const modelURL = URL + "model.json"
@@ -276,10 +331,11 @@ export default {
   }
 
     return {
-      state, URL,
+      state, URL, connect,
       leaveRoom, init, predict,
       doContinuousRecognition,
       stopContinuousRecognition,
+      startRecording, stopRecording, playRecording
     }
   }
 }

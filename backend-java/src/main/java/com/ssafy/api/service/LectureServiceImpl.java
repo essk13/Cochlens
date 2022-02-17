@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.ssafy.db.entity.LectureState.LIVE;
+import static com.ssafy.db.entity.LectureState.VOD;
+
 @Service("lectureService")
-public class LectureServiceImpl implements LectureService{
+public class LectureServiceImpl implements LectureService {
     @Autowired
     LectureRepository lectureRepository;
 
@@ -87,14 +90,14 @@ public class LectureServiceImpl implements LectureService{
     @Override
     public void openLecture(Long lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId).get();
-        lecture.setLectureState("open");
+        lecture.setLectureState(LIVE);
         lectureRepository.save(lecture);
     }
 
     @Override
     public void closeLecture(Long lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId).get();
-        lecture.setLectureState("close");
+        lecture.setLectureState(VOD);
         lectureRepository.save(lecture);
     }
 

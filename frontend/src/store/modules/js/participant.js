@@ -5,6 +5,7 @@ export default function Participant(name) {
   const PARTICIPANT_CLASS = 'participant';
 
   this.name = name;
+
   let container = document.createElement('div');
   container.className = isPresentMainParticipant() ? PARTICIPANT_CLASS : PARTICIPANT_MAIN_CLASS;
   container.id = name;
@@ -52,10 +53,34 @@ export default function Participant(name) {
   this.offerToReceiveVideo = function(error, offerSdp){
     if (error) return console.error ("sdp offer error")
     console.log('Invoking SDP offer callback function');
-    var msg =  { id : "receiveVideoFrom",
-        sender : name,
-        sdpOffer : offerSdp
-      };
+    var msg =  { 
+      id : "receiveVideoFrom",
+      sender : name,
+      sdpOffer : offerSdp
+    };
+    store.dispatch('courseStore/sendMessage', msg)
+  }
+
+  this.offerToRecordingVideo = function(error, offerSdp) {
+    if (error) return console.error ("sdp offer error")
+    console.log('Invoking SDP offer callback function');
+    var msg =  { 
+      id : 'startRecording',
+      sender : name,
+      sdpOffer : offerSdp,
+      mode : 'video-and-audio'
+    };
+    store.dispatch('courseStore/sendMessage', msg)
+  }
+
+  this.offerToPlayVideo = function(error, offerSdp) {
+    if (error) return console.error ("sdp offer error")
+    console.log('Invoking SDP offer callback function');
+    var msg =  { 
+      id : 'playRecording',
+      sender : name,
+      sdpOffer : offerSdp
+    };
     store.dispatch('courseStore/sendMessage', msg)
   }
 
@@ -66,7 +91,7 @@ export default function Participant(name) {
       var msg = {
         id: 'onIceCandidate',
         candidate: candidate,
-        name: name
+        name: name,
       };
       store.dispatch('courseStore/sendMessage', msg)
   }

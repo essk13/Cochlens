@@ -186,8 +186,8 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const optionContent = {
-      '라이브': 'before',
-      'VOD': 'vod'
+      '라이브': 'BEFORE',
+      'VOD': 'VOD'
     }
     let today = new Date()
     const url = 'wss://' + location.host + '/groupcall'
@@ -309,26 +309,6 @@ export default {
         }
       })
     }
-    // 강의 시작
-    function startLecture() {
-      let message = {
-        id : 'joinRoom',
-        name : 'Instructor',
-        room : 'testroom',
-      }
-      store.dispatch('courseStore/register', message)
-      router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
-    }
-    // 강의 참가
-    function joinLecture() {
-      let message = {
-        id : 'joinRoom',
-        name : state.name,
-        room : 'testroom',
-      }
-      store.dispatch('courseStore/register', message)
-      router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: '001' } })
-    }
 
     // 리뷰 작성
     function createReview() {
@@ -352,8 +332,6 @@ export default {
       clickUnwish,
       createLecture,
       moveCourseUpdate,
-      startLecture,
-      joinLecture,
       createReview,
       moveCourseReview,
     }
