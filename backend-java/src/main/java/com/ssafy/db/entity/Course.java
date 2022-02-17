@@ -60,6 +60,13 @@ public class Course {
         courseReviewCount++;
     }
 
+
+    @PrePersist
+    public void prePersist() {
+        this.courseThumbnail = this.courseThumbnail == null ? "" : this.courseThumbnail;
+        this.courseIntroVideo = this.courseIntroVideo == null ? "" : this.courseIntroVideo;
+    }
+
     @Builder
     public Course(Long courseId, String courseName, String courseDescription, Date courseOpenDate, Date courseCloseDate,
                   String courseCategory, int courseCycle, String courseThumbnail, String courseIntroVideo,
