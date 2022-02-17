@@ -14,7 +14,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 
-public class CallHandler extends TextWebSocketHandler {
+public class  CallHandler extends TextWebSocketHandler {
     private static final Logger log = LoggerFactory.getLogger(CallHandler.class);
 
     private static final Gson gson = new GsonBuilder().create();

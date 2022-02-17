@@ -18,12 +18,14 @@
     "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
     "quasar": "^2.0.0",
     "roboto-fontface": "*",
+    "sockjs-client": "^1.5.2",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuetify": "^3.0.0-alpha.0",
     "vuex": "^4.0.0",
     "vuex-persistedstate": "^4.1.0",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.0.0",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
