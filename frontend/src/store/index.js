@@ -7,7 +7,7 @@ import courseStore from '@/store/modules/courseStore'
 import instructorStore from '@/store/modules/instructorStore'
 import profileStore from '@/store/modules/profileStore'
 
-const BASE_URL = 'https://i6d102.p.ssafy.io:8443/'
+const BASE_URL = 'https://i6d102.p.ssafy.io:8443/api/v1/'
 
 export default createStore({
   plugins: [createPersistedState()],

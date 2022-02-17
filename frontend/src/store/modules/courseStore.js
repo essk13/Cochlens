@@ -2,7 +2,7 @@ import Participant from './js/participant.js'
 import kurentoUtils from 'kurento-utils'
 import axios from 'axios'
 
-const BASE_URL = 'https://i6d102.p.ssafy.io:8443/'
+const BASE_URL = 'https://i6d102.p.ssafy.io:8443/api/v1/'
 
 const courseStore = {
   namespaced: true,

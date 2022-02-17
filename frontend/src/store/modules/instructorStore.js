@@ -1,5 +1,5 @@
 import axios from "axios"
-const BASE_URL = 'https://i6d102.p.ssafy.io:8443/'
+const BASE_URL = 'https://i6d102.p.ssafy.io:8443/api/v1/'
 
 // JWT 토큰 header 생성
 const setHeader = function () {
