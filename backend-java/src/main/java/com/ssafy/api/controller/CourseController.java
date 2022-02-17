@@ -75,6 +75,7 @@ public class CourseController {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         Course course = courseService.getCourse(courseId);
+        if (!courseService.findIsJoinCourseByUserAndCourseId(userDetails.getUser().getEmail(), courseId))
         courseService.registerCourse(userDetails.getUser(), course);
         return ResponseEntity.ok().build();
     }
@@ -92,6 +93,7 @@ public class CourseController {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         Course course = courseService.getCourse(courseId);
+        if (!courseService.findIsWishCourseByEmailAndCourseId(userDetails.getUser().getEmail(), courseId))
         courseService.registerWishlist(userDetails.getUser(), course);
         return ResponseEntity.ok().build();
     }
