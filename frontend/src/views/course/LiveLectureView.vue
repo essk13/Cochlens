@@ -117,6 +117,7 @@ export default {
     // if (store.state.user.userNickname == store.state.courseStore.courseData.instructorNickname) {
     if (store.state.user.userName == store.state.courseStore.courseData.instructorName) {
       doContinuousRecognition()
+      connect()
     }
 
     // [STT 함수]
@@ -235,7 +236,6 @@ export default {
     // Mounted
     onMounted(() => {
       // init()
-      connect()
     })
 
     // Function
@@ -250,16 +250,17 @@ export default {
     }
 
     function connect() {
+        console.log("STOMP connect start")
             // pub/sub event
       stomp.connect({}, function() {
         console.log("STOMP Connection")
         stomp.subscribe("/sub/chat/room/"+ route.params.lectureId, function(message) {
-          var recv = JSON.parse(message.body);
+          var recv = JSON.parse(message.body)
           // stomp.recvMessage(recv);
-          console.log(recv)
+          console.log("/sub/chat/room/" + recv)
         });
-        console.log(JSON.stringify({roomId:route.params.lectureId, writer:store.state.user.userName}))
-        stomp.send("/pub/chat/enter", {}, JSON.stringify({roomId:route.params.lectureId, writer:store.state.user.userName}))
+        console.log("/pub/chat/enter" + JSON.stringify({roomId: route.params.lectureId, writer: store.state.user.userName}))
+        stomp.send("/pub/chat/enter", {}, JSON.stringify({roomId: route.params.lectureId, message: '', writer: store.state.user.userName}))
       });
     }
     /**

@@ -1,6 +1,6 @@
 package com.ssafy.api.service;
 
-import com.ssafy.api.dto.ChatRoomDto;
+//import com.ssafy.api.dto.ChatRoomDto;
 import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
@@ -19,7 +19,7 @@ public interface LectureService {
     void closeLecture(Long lectureId);
 
     /*  */
-    ChatRoomDto findLectureById(Long lectureId);
+//    ChatRoomDto findLectureById(Long lectureId);
     /* delete */
 //    List<Map<String, Object>> getLectureByCourseId(Long courseId);
 }

@@ -61,7 +61,7 @@ const courseStore = {
       console.log('set_ws: ' + url)
       commit('SET_WS', url)
       state.ws.onmessage = function (msg) {
-        console.log('set_ws: ' + msg.data)
+        // console.log('set_ws: ' + msg.data)
         let parsedMessage = JSON.parse(msg.data)
         dispatch('onMessage', parsedMessage)
       }
@@ -160,7 +160,6 @@ const courseStore = {
     },
 
     receiveVideoResponse({ state }, res) {
-      console.log('receive_video_response: ' + res)
       state.participants[res.name].rtcPeer.processAnswer (
         res.sdpAnswer,
         function (error) {
@@ -215,7 +214,6 @@ const courseStore = {
 
     // 다른 유저 퇴실
     onParticipantLeft({ state }, request) {
-      console.log('Participant ' + request.name + ' left')
       let participant = state.participants[request.name]
       participant.dispose()
     },
@@ -243,8 +241,6 @@ const courseStore = {
 
     startResponse({ state }, msg) {
       // setState(IN_CALL);
-      console.log('SDP answer received from server. Processing ...');
-      console.log(msg)
       state.participants[msg.name].rtcPeer.processAnswer(msg.sdpAnswer, function(error) {
         if (error)
           return console.error(error);
@@ -252,8 +248,6 @@ const courseStore = {
     },
 
     playResponse({ state }, msg) {
-      console.log('SDP answer received from server. Processing ...');
-      console.log(msg)
       // setState(IN_PLAY);
       state.participants[msg.name].rtcPeer.processAnswer(msg.sdpAnswer, function(error) {
         if (error)
@@ -279,15 +273,8 @@ const courseStore = {
      */
 
     startRecording({ state }, videoOutput) {
-      console.log('Creating WebRtcPeer and generating local sdp offer ...');
-      console.log(state.participants)
-
       let participant = state.participants[state.name]
-      console.log(state.name)
-      console.log(participant)
       let videoInput = document.getElementById("video-" + state.name)
-      console.log(videoInput)
-      console.log(videoOutput)
       let constraints = {
         audio : true,
         video : {
@@ -345,9 +332,6 @@ const courseStore = {
       return constraints;
     },
     onIceCandidate({ dispatch }, candidate) {
-      console.log('onIceCandidate................... ...');
-      console.log('Local candidate' + JSON.stringify(candidate));
-    
       let message = {
           id : 'onIceCandidate',
           candidate : candidate
@@ -358,7 +342,6 @@ const courseStore = {
     onOffer({ dispatch }, error, offerSdp) {
       if (error)
         return console.error('Error generating the offer');
-      console.info('Invoking SDP offer callback function ' + location.host);
       let message = {
           id : 'start',
           sdpOffer : offerSdp,
@@ -384,8 +367,6 @@ const courseStore = {
       // hideSpinner(videoInput, videoOutput);
     },
     playRecording({ state }, videoOutput) {
-      console.log("Starting to play recorded video...");
-
       // Disable start button
       // setState(DISABLED);
       // showSpinner(videoOutput);
@@ -402,7 +383,6 @@ const courseStore = {
           }
         }
       }
-      console.log('Creating WebRtcPeer and generating local sdp offer ...');
       let participant = state.participants[state.name]
 
       var options = {
@@ -430,7 +410,6 @@ const courseStore = {
     onPlayOffer({ dispatch }, error, offerSdp) {
       if (error)
         return console.error('Error generating the offer');
-      console.info('Invoking SDP offer callback function ' + location.host);
       let message = {
           id : 'play',
           sdpOffer : offerSdp
@@ -441,7 +420,7 @@ const courseStore = {
     // 데이터 전송
     sendMessage({ state }, msg) {
       var jsonMessage = JSON.stringify(msg);
-      console.log('send_message: ' + jsonMessage);
+      // console.log('send_message: ' + jsonMessage);
       state.ws.send(jsonMessage);
     },
 

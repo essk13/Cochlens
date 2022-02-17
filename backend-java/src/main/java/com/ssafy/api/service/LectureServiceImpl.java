@@ -1,6 +1,6 @@
 package com.ssafy.api.service;
 
-import com.ssafy.api.dto.ChatRoomDto;
+//import com.ssafy.api.dto.ChatRoomDto;
 import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
@@ -101,9 +101,9 @@ public class LectureServiceImpl implements LectureService {
         lectureRepository.save(lecture);
     }
 
-    @Override
-    public ChatRoomDto findLectureById(Long lectureId) {
-        Lecture lecture = getLectureInfo(lectureId);
-        return ChatRoomDto.of(lecture);
-    }
+//    @Override
+//    public ChatRoomDto findLectureById(Long lectureId) {
+//        Lecture lecture = getLectureInfo(lectureId);
+//        return ChatRoomDto.of(lecture);
+//    }
 }
