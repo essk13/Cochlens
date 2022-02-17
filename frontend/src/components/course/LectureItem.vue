@@ -14,8 +14,12 @@
       <q-btn v-if="props.lectureItem.lectureState == 'BEFORE' && state.userName === state.instructor" @click="startLecture" color="purple" label="강의 시작" />
       <q-btn v-else-if="props.lectureItem.lectureState == 'BEFORE' && !(state.userName === state.instructor)" color="purple" disable label="시작 예정" />
       <q-btn v-else-if="props.lectureItem.lectureState === 'LIVE' && !(state.userName === state.instructor)" @click="joinLecture" color="purple" label="강의 참가" />
+<<<<<<< HEAD:frontend/src/components/course/LectureItem.vue
       <q-btn v-else @click="joinLecture" color="purple" label="VOD" />
       <q-btn @click="joinLecture" color="purple" label="일단 참가" />
+=======
+      <q-btn v-else @click="watchVOD" color="purple" label="VOD" />
+>>>>>>> feature/socket:frontend/src/components/course/lectureItem.vue
     </div>
   </div>
 </template>

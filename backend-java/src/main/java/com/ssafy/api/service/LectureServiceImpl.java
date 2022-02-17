@@ -1,5 +1,6 @@
 package com.ssafy.api.service;
 
+//import com.ssafy.api.dto.ChatRoomDto;
 import com.ssafy.api.dto.LectureDto;
 import com.ssafy.db.entity.Course;
 import com.ssafy.db.entity.Lecture;
@@ -10,8 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.ssafy.db.entity.LectureState.LIVE;
+import static com.ssafy.db.entity.LectureState.VOD;
+
 @Service("lectureService")
-public class LectureServiceImpl implements LectureService{
+public class LectureServiceImpl implements LectureService {
     @Autowired
     LectureRepository lectureRepository;
 
@@ -86,14 +90,20 @@ public class LectureServiceImpl implements LectureService{
     @Override
     public void openLecture(Long lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId).get();
-        lecture.setLectureState("open");
+        lecture.setLectureState(LIVE);
         lectureRepository.save(lecture);
     }
 
     @Override
     public void closeLecture(Long lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId).get();
-        lecture.setLectureState("close");
+        lecture.setLectureState(VOD);
         lectureRepository.save(lecture);
     }
+
+//    @Override
+//    public ChatRoomDto findLectureById(Long lectureId) {
+//        Lecture lecture = getLectureInfo(lectureId);
+//        return ChatRoomDto.of(lecture);
+//    }
 }

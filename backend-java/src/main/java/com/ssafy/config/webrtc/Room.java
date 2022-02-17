@@ -1,4 +1,4 @@
-package com.ssafy;
+package com.ssafy.config.webrtc;
 
 import java.io.Closeable;
 import java.io.IOException;
