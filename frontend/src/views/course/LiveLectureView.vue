@@ -12,29 +12,15 @@
       >
         <q-carousel-slide :name="1" class="column no-wrap">
           <div id="participants" class="row fit items-center q-gutter-xs q-col-gutter no-wrap">
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+
           </div>
         </q-carousel-slide>
       </q-carousel>
     </div>
     <div v-if="state.isMainScreen" class="main-screen-block">
+      <div style="position: relative" id="face-detection">
+        <canvas id="face-video"></canvas>
+      </div>
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
       <span v-if="state.isSubtitles" class="main-screen-subtitles">{{ state.subtitles }}</span>
     </div>
@@ -65,8 +51,9 @@ import { useStore } from 'vuex'
 import router from '@/router'
 import { onMounted } from '@vue/runtime-core'
 import { useRoute } from 'vue-router'
-// import model_json from '@/assets/my_model/model.json'
-// import metadata_json from '@/assets/my_model/metadata.json'
+
+import * as faceapi from 'face-api.js'
+import $ from 'jquery'
 
 export default {
   name: 'LiveLectureView',
@@ -76,8 +63,8 @@ export default {
   setup() {
     const store = useStore()
     const route = useRoute()
-    const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
-    let webcam, model, maxPredictions
+    // const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
+    // let webcam, model, maxPredictions
     const state = reactive({
       screenSlide: 1,
       isMainScreen: true,
@@ -85,6 +72,10 @@ export default {
       subtitles: '',
       subtitles_text: '',
       res: '',
+      face_width: null,
+      face_height: null,
+      face_x: null,
+      face_y: null,
     })
 
     // [STT 변수]
@@ -208,10 +199,135 @@ export default {
       }
     }
 
-    // Mounted
+    // [Face Detection]
+    // 얼굴 인식 변수
+    const SSD_MOBILENETV1 = 'ssd_mobilenetv1'
+    const TINY_FACE_DETECTOR = 'tiny_face_detector'
+    let selectedFaceDetector = SSD_MOBILENETV1
+    // ssd_mobilenetv1 options
+    let minConfidence = 0.4
+    // tiny_face_detector options
+    let inputSize = 224
+    let scoreThreshold = 0.4
+
+    // 얼굴 인식 옵션
+    function getFaceDetectorOptions() {
+      return selectedFaceDetector === SSD_MOBILENETV1
+        ? new faceapi.SsdMobilenetv1Options({ minConfidence })
+        : new faceapi.TinyFaceDetectorOptions({ inputSize, scoreThreshold })
+    }
+    // 얼굴 인식 모델 로드
+    function isFaceDetectionModelLoaded() {
+      return !!getCurrentFaceDetectionNet().params
+    }
+    // 얼굴 인식 모델 선정
+    function getCurrentFaceDetectionNet() {
+      if (selectedFaceDetector === SSD_MOBILENETV1) {
+        return faceapi.nets.ssdMobilenetv1
+      }
+      if (selectedFaceDetector === TINY_FACE_DETECTOR) {
+        return faceapi.nets.tinyFaceDetector
+      }
+    }
+    // 얼굴 인식 컨트롤러 변경
+    async function changeFaceDetector(detector) {
+      ['#ssd_mobilenetv1_controls', '#tiny_face_detector_controls']
+        .forEach(id => $(id).hide())
+
+      selectedFaceDetector = detector
+      const faceDetectorSelect = $('#selectFaceDetector')
+      faceDetectorSelect.val(detector)
+      faceDetectorSelect.select()
+
+      $('#loader').show()
+      if (!isFaceDetectionModelLoaded()) {
+        await getCurrentFaceDetectionNet().load('https://storage.googleapis.com/cochlens/models/tiny_face_detector_model-weights_manifest.json')
+      }
+
+      $(`#${detector}_controls`).show()
+      $('#loader').hide()
+    }
+    // 얼굴 인식 컨트롤러 삽입
+    function initFaceDetectionControls() {
+      const faceDetectorSelect = $('#selectFaceDetector')
+      faceDetectorSelect.val(selectedFaceDetector)
+      faceDetectorSelect.select()
+
+      const inputSizeSelect = $('#inputSize')
+      inputSizeSelect.val(inputSize)
+      inputSizeSelect.select()
+    }
+
+    // 영상 재생
+    async function onPlay() {
+      const cam = document.getElementById('video-Instructor')
+
+      if(cam.paused || cam.ended || !isFaceDetectionModelLoaded())
+        return setTimeout(() => onPlay())
+
+
+      const options = getFaceDetectorOptions()
+
+      const result = await faceapi.detectSingleFace(cam, options)
+
+      if (result) {
+        state.face_width = result.box.width
+        state.face_height = result.box.height
+        state.face_x = result.box.x
+        state.face_y = result.box.y
+      }
+
+      setTimeout(() => onPlay())
+    }
+    // 얼굴 인식 시작
+    async function run() {
+      await changeFaceDetector(TINY_FACE_DETECTOR)
+    }
+
+    // 캡처 대상 인식(강사 화면)
+    function doLoad() {
+      const video = document.getElementById("video-Instructor")
+      video.addEventListener("play", computeFrame())
+    }
+    // 화면 캡처
+    function computeFrame() {
+      const video = document.getElementById("video-Instructor")
+      const width = state.face_width;
+      const height = state.face_height;
+      const canv = document.getElementById("face-video")
+      canv.style.width = `400px`
+      canv.style.height = `360px`
+      const ctx = canv.getContext("2d")
+      ctx.drawImage(video, state.face_x, state.face_y, width, height, 0, 0, canv.width, canv.height)
+      if (width > 0) {
+        let frame = ctx.getImageData(0, 0, width, height)
+        let l = frame.data.length / 4
+  
+        for (let i = 0; i < l; i++) {
+          let r = frame.data[i * 4 + 0]
+          let g = frame.data[i * 4 + 1]
+          let b = frame.data[i * 4 + 2]
+          if (g > 100 && r > 100 && b < 43)
+            frame.data[i * 4 + 3] = 0
+        }
+        ctx.putImageData(frame, 0, 0)
+      }
+      setTimeout(() => {computeFrame()}, 0.03*1000)
+    }
+    // 캡처 실행
+    function onCam() {
+      const cam = document.getElementById('video-Instructor')
+      cam.addEventListener('onloadedmetadata', onPlay())
+      document.addEventListener("DOMContentLoaded", doLoad())
+    }
+
     onMounted(() => {
-      init()
+      // init()
+      setTimeout(() => { onCam(), onPlay() }, 1000 )
     })
+
+    initFaceDetectionControls()
+    run()
 
     // Function
     function leaveRoom() {
@@ -224,52 +340,53 @@ export default {
       router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
     }
 
-    async function init() {
-      const modelURL = URL + "model.json"
-      const metadataURL = URL + "metadata.json"
+  // [Motion Command]
+  //   async function init() {
+  //     const modelURL = URL + "model.json"
+  //     const metadataURL = URL + "metadata.json"
 
-      // console.log('start')
-      // console.log(modelURL)
-      // console.log(metadataURL)
-      model = await window.tmImage.load(modelURL, metadataURL)
-      maxPredictions = model.getTotalClasses()
+  //     // console.log('start')
+  //     // console.log(modelURL)
+  //     // console.log(metadataURL)
+  //     model = await window.tmImage.load(modelURL, metadataURL)
+  //     maxPredictions = model.getTotalClasses()
 
-      // console.log('start2')
-      const flip = true; // whether to flip the webcam
-      webcam = new window.tmImage.Webcam(200, 200, flip);
-      await webcam.setup(); // request access to the webcam
-      await webcam.play();
-      // console.log('start3')
-      window.requestAnimationFrame(loop);
-      // console.log('start-done')
-    }
+  //     // console.log('start2')
+  //     const flip = true; // whether to flip the webcam
+  //     webcam = new window.tmImage.Webcam(200, 200, flip);
+  //     await webcam.setup(); // request access to the webcam
+  //     await webcam.play();
+  //     // console.log('start3')
+  //     window.requestAnimationFrame(loop);
+  //     // console.log('start-done')
+  //   }
 
-    async function loop() {
-      // console.log('loop')
-      webcam.update()
-      await predict();
-      window.requestAnimationFrame(loop);
-    }
+  //   async function loop() {
+  //     // console.log('loop')
+  //     webcam.update()
+  //     await predict();
+  //     window.requestAnimationFrame(loop);
+  //   }
 
-    async function predict() {
-      // console.log('check')
-      // predict can take in an image, video or canvas html element
-      const prediction = await model.predict(webcam.canvas);
-      // console.log('check2')
-      for (let i = 0; i < maxPredictions; i++) {
-          if (prediction[i].className === "close" && prediction[i].probability.toFixed(2) >= 0.9) {
-            leaveRoom()
-          } else if (prediction[i].className === "help" && prediction[i].probability.toFixed(2) >= 0.9) {
-            state.res = 'HELP!!!! 도와주세요!!!!!!!!!'
-          } else if (prediction[i].className === "thanks" && prediction[i].probability.toFixed(2) >= 0.9) {
-            state.res = 'THANKS!!!!!!! 감사합니다!!!!!!!'
-          }
-      }
-  }
+  //   async function predict() {
+  //     // console.log('check')
+  //     // predict can take in an image, video or canvas html element
+  //     const prediction = await model.predict(webcam.canvas);
+  //     // console.log('check2')
+  //     for (let i = 0; i < maxPredictions; i++) {
+  //         if (prediction[i].className === "close" && prediction[i].probability.toFixed(2) >= 0.9) {
+  //           leaveRoom()
+  //         } else if (prediction[i].className === "help" && prediction[i].probability.toFixed(2) >= 0.9) {
+  //           state.res = 'HELP!!!! 도와주세요!!!!!!!!!'
+  //         } else if (prediction[i].className === "thanks" && prediction[i].probability.toFixed(2) >= 0.9) {
+  //           state.res = 'THANKS!!!!!!! 감사합니다!!!!!!!'
+  //         }
+  //     }
+  // }
 
     return {
       state, URL,
-      leaveRoom, init, predict,
+      leaveRoom,
       doContinuousRecognition,
       stopContinuousRecognition,
     }
@@ -401,6 +518,13 @@ export default {
 
   .participant.main > span {
     display: none;
+  }
+
+  #face-video {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 3;
   }
 }
 </style>
