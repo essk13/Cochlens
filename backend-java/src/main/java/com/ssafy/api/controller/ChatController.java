@@ -8,22 +8,23 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class ChatController {
     private final SimpMessageSendingOperations template;
     private static final Logger log = LoggerFactory.getLogger(ChatController.class);
 
     @MessageMapping(value = "/chat/enter")
-    public void enter(@DestinationVariable ChatMessageDto message) {
+    public void enter(ChatMessageDto message) {
         log.info(message.toString());
         message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 
     @MessageMapping(value = "/chat/message")
-    public void message(@DestinationVariable ChatMessageDto message) {
+    public void message(ChatMessageDto message) {
         log.info(message.toString());
         template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
