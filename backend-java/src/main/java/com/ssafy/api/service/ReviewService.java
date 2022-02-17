@@ -16,9 +16,11 @@ public interface ReviewService {
     /* read */
     List<ReviewDto.ReviewListRes> getReviewListByCourse(Course course);
     List<ReviewDto.ReviewListRes> getReviewListByUser(User user);
+    long getCourseReviewCount(Long courseId);
     /* update */
     Review updateReview(Long reviewId, ReviewDto.ReviewInsertReq reviewInsertInfo);
     void updateReviewGrade(Course course);
     /* delete */
     void deleteReview(Long reviewId);
+
 }

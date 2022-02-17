@@ -17,8 +17,6 @@ public class RegisterCourseCustomRepositoryImpl implements RegisterCourseCustomR
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
 
-
-
     @Override
     public List<CourseDto.CourseListRes> findRegisterCourseListByUser(User user) {
         return jpaQueryFactory.select(Projections.constructor(CourseDto.CourseListRes.class,
@@ -50,25 +48,23 @@ public class RegisterCourseCustomRepositoryImpl implements RegisterCourseCustomR
     }
 
     @Override
-    public Boolean findIsJoinCourseByEmailAndCourseId(String email, Long courseId){
+    public Optional<RegisterCourse> findIsJoinCourseByEmailAndCourseId(String email, Long courseId){
         RegisterCourse registerCourse = jpaQueryFactory
                 .select(QRegisterCourse.registerCourse)
                 .from(QRegisterCourse.registerCourse)
                 .where(QRegisterCourse.registerCourse.user.email.eq(email))
                 .where(QRegisterCourse.registerCourse.course.courseId.eq(courseId)).fetchOne();
-        if(registerCourse == null) return false;
-        return true;
+        return Optional.ofNullable(registerCourse);
     }
 
     @Override
-    public Boolean findIsWishCourseByEmailAndCourseId(String email, Long courseId){
+    public Optional<Wishlist> findIsWishCourseByEmailAndCourseId(String email, Long courseId){
         Wishlist wishlist = jpaQueryFactory
                 .select(QWishlist.wishlist)
                 .from(QWishlist.wishlist)
                 .where(QWishlist.wishlist.user.email.eq(email))
                 .where(QWishlist.wishlist.course.courseId.eq(courseId)).fetchOne();
-        if(wishlist == null) return false;
-        return true;
+        return Optional.ofNullable(wishlist);
     }
 
     @Override

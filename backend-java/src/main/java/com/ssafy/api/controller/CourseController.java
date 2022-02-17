@@ -111,6 +111,8 @@ public class CourseController {
         Course course = courseService.getCourse(courseId);
         reviewService.createReview(userDetails.getUser(), course, reviewInsertInfo);
         reviewService.updateReviewGrade(course);
+        int courseReviewCount = Math.toIntExact(reviewService.getCourseReviewCount(courseId));
+        courseService.updateCourseReviewCount(courseId, courseReviewCount);
         return ResponseEntity.ok().build();
     }
 
@@ -162,7 +164,7 @@ public class CourseController {
         List<LectureDto.LectureListRes> lectureList = lectureService.getLectureList(course);
         List<ReviewDto.ReviewListRes> reviewList = reviewService.getReviewListByCourse(course);
         boolean isWish = courseService.findIsWishCourseByEmailAndCourseId(email, courseId);
-        boolean isJoin = courseService.findIsJoinCourseByUser(email, courseId);
+        boolean isJoin = courseService.findIsJoinCourseByUserAndCourseId(email, courseId);
         int courseJoinCount = Math.toIntExact(courseService.findJoinCountByCourseId(courseId));
 
         return ResponseEntity.ok().body(CourseDto.CourseDetailRes.of(course, courseJoinCount, isJoin, isWish, lectureList, reviewList));

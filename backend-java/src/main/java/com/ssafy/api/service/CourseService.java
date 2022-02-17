@@ -6,7 +6,6 @@ import com.ssafy.db.entity.User;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CourseService {
     /* create */
@@ -29,14 +28,16 @@ public interface CourseService {
     List<CourseDto.CourseListRes> getSearchCourseList(String courseName, Pageable pageable);
     /* update */
     Course updateCourse(Long courseId, CourseDto.CourseInsertReq courseInsertInfo);
+    void updateCourseReviewCount(Long courseId, int courseReviewCount);
     /* delete */
     void deregisterCourse(User user, Course course);
     void deregisterWishlist(User user, Course course);
 
     /* check */
-    Boolean findIsJoinCourseByUser(String email, Long courseId);
+    Boolean findIsJoinCourseByUserAndCourseId(String email, Long courseId);
     Boolean findIsWishCourseByEmailAndCourseId(String email, Long courseId);
 
     /* count */
     Long findJoinCountByCourseId(Long courseId);
+
 }

@@ -5,7 +5,6 @@ import com.ssafy.db.entity.*;
 import com.ssafy.db.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -152,6 +151,13 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.save(newCourse);
     }
 
+    @Override
+    public void updateCourseReviewCount(Long courseId, int courseReviewCount) {
+        Course course = getCourse(courseId);
+        course.setCourseReviewCount(courseReviewCount);
+        courseRepository.save(course);
+    }
+
     /**
      * delete
      */
@@ -168,15 +174,14 @@ public class CourseServiceImpl implements CourseService {
         registerCourseRepository.delete(registerCourse);
     }
 
-
     @Override
-    public Boolean findIsJoinCourseByUser(String email, Long courseId) {
-        return registerCourseRepository.findIsJoinCourseByEmailAndCourseId(email, courseId);
+    public Boolean findIsJoinCourseByUserAndCourseId(String email, Long courseId) {
+        return registerCourseRepository.findIsJoinCourseByEmailAndCourseId(email, courseId).isPresent();
     }
 
     @Override
     public Boolean findIsWishCourseByEmailAndCourseId(String email, Long courseId) {
-        return registerCourseRepository.findIsWishCourseByEmailAndCourseId(email, courseId);
+        return registerCourseRepository.findIsWishCourseByEmailAndCourseId(email, courseId).isPresent();
     }
 
     @Override
