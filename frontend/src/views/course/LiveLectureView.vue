@@ -21,7 +21,6 @@
       <div style="position: relative" id="face-detection">
         <canvas id="face-video"></canvas>
       </div>
-      <img src="https://cdn.quasar.dev/img/mountains.jpg">
       <span v-if="state.isSubtitles" class="main-screen-subtitles">{{ state.subtitles }}</span>
         <video id="videoOutput" autoplay style="width: 480px; height: 320px;"
 					></video>
