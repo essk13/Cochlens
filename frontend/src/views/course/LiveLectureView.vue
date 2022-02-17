@@ -3,8 +3,6 @@
     <div v-if="state.isMainScreen" class="screen-list-block">
       <q-carousel
         v-model="state.screenSlide"
-        transition-prev="slide-right"
-        transition-next="slide-left"
         swipeable
         control-color="primary"
         padding
@@ -13,33 +11,25 @@
         class="screen-list bg-grey-1 shadow-2"
       >
         <q-carousel-slide :name="1" class="column no-wrap">
-          <div id="participants" class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
-            <!-- <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" /> -->
+          <div id="participants" class="row fit items-center q-gutter-xs q-col-gutter no-wrap">
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
             <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-          </div>
-        </q-carousel-slide>
-        <q-carousel-slide :name="2" class="column no-wrap">
-          <div class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax2.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/quasar.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax2.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/quasar.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax2.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/quasar.jpg" />
-          </div>
-        </q-carousel-slide>
-        <q-carousel-slide :name="3" class="column no-wrap">
-          <div class="row fit justify-center items-center q-gutter-xs q-col-gutter no-wrap">
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/cat.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/linux-avatar.png" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/cat.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/linux-avatar.png" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/cat.jpg" />
-            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/linux-avatar.png" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/mountains.jpg" />
+            <q-img class="rounded-borders col-2 full-height" src="https://cdn.quasar.dev/img/parallax1.jpg" />
           </div>
         </q-carousel-slide>
       </q-carousel>
@@ -49,16 +39,18 @@
       <span v-if="state.isSubtitles" class="main-screen-subtitles">{{ state.subtitles }}</span>
     </div>
     <div v-else class="all-screen-list-block">
-      {{ store.state.courseStore.participants }}
+      
     </div>
     <div class="menu-block row justify-between">
       <div class="col-1 row justify-center items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+
       </div>
       <div class="col-2 row justify-between items-center">
-        <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
-        <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <div style="width: 4vh; height: 4vh; border-radius: 4vh;" class="mic-on-img"></div>
+        <!-- <div style="width: 4vh; height: 4vh; border-radius: 4vh;" class="mic-off-img"></div> -->
+        <div @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="video-on-img"></div>
+        <!-- <div @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="video-off-img"></div> -->
+        <div @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="exit-img"></div>
       </div>
       <div class="col-1 row justify-center items-center">
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
@@ -319,6 +311,7 @@ export default {
   color: white;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 0.5vh 2vh;
+  z-index: 5;
 }
 
 .all-screen-list-block {
@@ -332,12 +325,59 @@ export default {
   height: 8vh;
 }
 
+.mic-on-img {
+  background-image: url('@/assets/mic-on.png');
+  background-size: cover;
+}
+
+.mic-off-img {
+  background-image: url('@/assets/mic-off.png');
+  background-size: cover;
+}
+
+.video-on-img {
+  background-image: url('@/assets/video-on.png');
+  background-size: cover;
+}
+
+.video-off-img {
+  background-image: url('@/assets/video-off.png');
+  background-size: cover;
+}
+
+.exit-img {
+  background-image: url('@/assets/exit.png');
+  background-size: cover;
+}
+
+.q-carousel__slide {
+  padding: 4px;
+}
+
+.q-panel-parent {
+  overflow: visible;
+}
+
 ::v-deep {
   .participant {
     height: 100%;
     width: 16.6667%;
+    min-width: 16.6667%;
     border-radius: 4px;
     overflow: hidden;
+  }
+
+  .participant.main {
+    position: absolute;
+    top: 15vh;
+    width: auto;
+    height: 77vh;
+    border-radius: 0;
+    margin-top: 0;
+    margin-left: 0;
+    left: 50%;
+    z-index: 1;
+    transform: translate(-50%, 0);
   }
 
   .participant > video {
@@ -347,19 +387,20 @@ export default {
     transform: translate(-50%, -50%);
   }
 
+  .participant.main > video {
+    height: 77vh;
+  }
+
   .participant > span {
-    position: absolute;
-    top: 10px;
+    position: relative;
+    top: -109px;
+    left: 0;
     z-index: 2;
     background-color: white;
   }
 
-  // .participant.main > span {
-  //   position: absolute;
-  //   top: 0;
-  //   z-index: 2;
-  //   background-color: white;
-  //   display: none;
-  // }
+  .participant.main > span {
+    display: none;
+  }
 }
 </style>

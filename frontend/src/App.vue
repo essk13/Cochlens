@@ -33,7 +33,8 @@
         <template v-for="(navItem, index) in state.mainNavItem" :key="index">
           <q-item clickable :active="navItem.title === 'Outbox'" v-ripple @click="navItem.method">
             <q-item-section avatar>
-              <q-icon :name="navItem.icon" />
+              <q-icon v-if="index != 0" :name="navItem.icon" />
+              <div v-else class="main-logo"></div>
             </q-item-section>
             <q-item-section>
               {{ navItem.title }}
@@ -68,11 +69,10 @@ export default {
       logo,
       mainNav: true,
       mainNavItem: [
-        { title: 'Cochlens', icon: 'dashboard', method: clickHome },
+        { title: 'Cochlens', icon: '@/assets/logo.png', method: clickHome },
         { title: '내 정보', icon: 'account_circle', method: clickProfile },
         { title: '강좌 조회', icon: 'cast', method: clickCourse },
         { title: '강사 조회', icon: 'co_present', method: clickInstructor },
-        { title: '설정', icon: 'settings', method: clickSetting },
         { title: '로그아웃', icon: 'close', method: clickLogout },
       ],
       subNav: false,
@@ -151,6 +151,20 @@ export default {
             { title: '강사 리뷰', icon: '', method: clickInstructorReview},
             { title: '', icon: 'keyboard_double_arrow_left', method: subNavClose},
           ]
+        }
+      }
+    )
+
+    watch(
+      computed(() => route.name),
+      (newName, oldName) => {
+        console.log(newName, oldName)
+        if (newName == 'liveLecture') {
+          state.mainNav = false
+          state.subNav = false
+        } else if (oldName == 'liveLecture') {
+          state.mainNav = true
+          state.subNav = true
         }
       }
     )
@@ -263,6 +277,13 @@ export default {
 .sub-nav {
   background-color: rgb(166, 222, 255);
   margin-left: 200px !important;
+}
+
+.main-logo {
+  background-image: url('@/assets/logo.png');
+  background-size: cover;
+  width: 25px;
+  height: 30px;
 }
 
 .main-menu {
