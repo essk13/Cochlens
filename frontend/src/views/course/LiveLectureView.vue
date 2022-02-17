@@ -70,11 +70,9 @@ export default {
     const store = useStore()
     const route = useRoute()
 
-    const sockJs = new SockJS("/message");
-    const stomp = Stomp.over(sockJs);
 
     const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
-    let webcam, model, maxPredictions
+    // let webcam, model, maxPredictions
     const state = reactive({
       screenSlide: 1,
       isMainScreen: true,
@@ -87,8 +85,48 @@ export default {
       face_x: null,
       face_y: null,
       videoOutput: document.getElementById('videoOutput'),
+      chatList: [],
+      stompClient: null,
       // logo
     })
+
+    // Function
+    function connect() {
+      var socket = new SockJS('/cochlens')
+      state.stompClient = Stomp.over(socket)
+
+      state.stompClient.connect({}, () => {
+          subscribeChat()
+      })
+    }
+
+    const subscribeChat = () => {
+      state.stompClient.subscribe(`/topic/${route.params.lectureId}`, res => {
+        const chatMsg = JSON.parse(res.body)
+        state.chatList.push(chatMsg)
+      })
+    }
+
+    function sendChat(subtitles) {
+      console.log('send')
+      // 전달할 객체
+      if (state.stompClient) {
+        const msg = {
+          lectureId: 102,
+          userName: 'Mr.깡',
+          content: subtitles
+        }
+        state.stompClient.send(`/app/chat/${route.params.lectureId}`, JSON.stringify(msg), {})
+        state.text = ''
+      }
+    }
+
+    function disconnect() {
+      state.stompClient.disconnect()
+      state.stompClient = null
+    }
+
+    connect()
 
     // [STT 변수]
     const sdk = require('microsoft-cognitiveservices-speech-sdk')
@@ -100,7 +138,6 @@ export default {
     // if (store.state.user.userNickname == store.state.courseStore.courseData.instructorNickname) {
     if (store.state.user.userName == store.state.courseStore.courseData.instructorName) {
       doContinuousRecognition()
-      connect()
     }
 
     // [STT 함수]
@@ -207,8 +244,7 @@ export default {
           state.subtitles = `${result.text}\r\n`;
 
           // 소켓 통신으로 사용자들에게 pub...
-          stomp.send('/pub/chat/message', {}, JSON.stringify({roomId: route.params.lectureId, message: state.subtitles, writer: store.state.user.userName}));
-
+          sendChat(state.subtitles)
 
           console.log('detailedResultJson : ', detailedResultJson)
           console.log('state.subtitles_text : ', state.subtitles_text)
@@ -353,23 +389,9 @@ export default {
       if (store.state.user.userName == store.state.courseStore.courseData.instructorName) {
         stopContinuousRecognition()
       }
+      disconnect()
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
-    }
-
-    function connect() {
-        console.log("STOMP connect start")
-            // pub/sub event
-      stomp.connect({}, function() {
-        console.log("STOMP Connection")
-        stomp.subscribe("/sub/chat/room/"+ route.params.lectureId, function(message) {
-          var recv = JSON.parse(message.body)
-          // stomp.recvMessage(recv);
-          console.log("/sub/chat/room/" + recv)
-        });
-        console.log("/pub/chat/enter" + JSON.stringify({roomId: route.params.lectureId, writer: store.state.user.userName}))
-        stomp.send("/pub/chat/enter", {}, JSON.stringify({roomId: route.params.lectureId, message: '', writer: store.state.user.userName}))
-      });
     }
 
     /**
@@ -438,11 +460,12 @@ export default {
   // }
 
     return {
-      state, URL, connect,
+      state, URL,
       leaveRoom,
       doContinuousRecognition,
       stopContinuousRecognition,
-      startRecording, stopRecording, playRecording
+      startRecording, stopRecording, playRecording,
+      connect, sendChat, disconnect
     }
   }
 }
