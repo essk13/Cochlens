@@ -49,6 +49,14 @@ public class User {
     @Column(name = "is_face_focusing")
     boolean isFaceFocusing;
 
+
+    @PrePersist
+    public void prePersist() {
+        this.profileImage = this.profileImage == null ? "" : this.profileImage;
+        this.thumbnailImage = this.thumbnailImage == null ? "" : this.thumbnailImage;
+        this.userDescription = this.userDescription == null ? "" : this.userDescription;
+    }
+
     @Builder
     public User(String email, String password, String userName, String userNickname, String profileImage, Role role) {
         this.email = email;
