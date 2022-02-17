@@ -60,6 +60,7 @@ export default {
       store.dispatch('courseStore/register', message)
       router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: props.lectureItem.lectureId } })
     }
+    
     // VOD 등록
     function uploadVOD() {
     }
