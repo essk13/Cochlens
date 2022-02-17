@@ -28,7 +28,8 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                         course.courseCategory, course.courseThumbnail,
                         course.courseOpenDate, course.courseCloseDate,
                         course.courseFee, course.courseWishCount, course.courseReviewCount,
-                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName"),
+                        course.user.userNickname.as("instructorNickname")))
                 .from(course)
                 .orderBy(course.courseWishCount.desc())
                 .limit(5)
@@ -42,7 +43,9 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                         registerCourse.course.courseCategory, registerCourse.course.courseThumbnail,
                         registerCourse.course.courseOpenDate, registerCourse.course.courseCloseDate,
                         registerCourse.course.courseFee, registerCourse.course.courseWishCount, registerCourse.course.courseReviewCount,
-                        registerCourse.course.courseReviewRateAverage.as("courseReviewRateAverage"), registerCourse.course.user.userName.as("instructorName")))
+                        registerCourse.course.courseReviewRateAverage.as("courseReviewRateAverage"),
+                        registerCourse.course.user.userName.as("instructorName"),
+                        registerCourse.course.user.userNickname.as("instructorNickname")))
                 .from(registerCourse)
                 .where(registerCourse.user.eq(user))
                 .fetch();
@@ -55,7 +58,9 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                         course.courseCategory, course.courseThumbnail,
                         course.courseOpenDate, course.courseCloseDate,
                         course.courseFee, course.courseWishCount, course.courseReviewCount,
-                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"),
+                        course.user.userName.as("instructorName"),
+                        course.user.userNickname.as("instructorNickname")))
                 .from(course)
                 .where(course.courseName.contains(courseName))
                 .limit(pageable.getPageSize())
@@ -84,7 +89,8 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                         course.courseCategory, course.courseThumbnail,
                         course.courseOpenDate, course.courseCloseDate,
                         course.courseFee, course.courseWishCount, course.courseReviewCount,
-                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName"),
+                        course.user.userNickname.as("instructorNickname")))
                 .from(course)
                 .where(course.user.eq(user), Expressions.currentDate().between(course.courseOpenDate, course.courseCloseDate))
                 .fetch();
@@ -97,7 +103,8 @@ public class CourseCustomRepositoryImpl implements CourseCustomRepository {
                         course.courseCategory, course.courseThumbnail,
                         course.courseOpenDate, course.courseCloseDate,
                         course.courseFee, course.courseWishCount, course.courseReviewCount,
-                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName")))
+                        course.courseReviewRateAverage.as("courseReviewRateAverage"), course.user.userName.as("instructorName"),
+                        course.user.userNickname.as("instructorNickname")))
                 .from(course)
                 .where(course.user.eq(user), Expressions.currentDate().between(course.courseOpenDate, course.courseCloseDate).not())
                 .fetch();

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ssafy.db.entity.QCourse.course;
 import static com.ssafy.db.entity.QRegisterCourse.registerCourse;
 import static com.ssafy.db.entity.QWishlist.wishlist;
 
@@ -25,7 +26,9 @@ public class RegisterCourseCustomRepositoryImpl implements RegisterCourseCustomR
                         registerCourse.course.courseCategory, registerCourse.course.courseThumbnail,
                         registerCourse.course.courseOpenDate, registerCourse.course.courseCloseDate,
                         registerCourse.course.courseFee, registerCourse.course.courseWishCount, registerCourse.course.courseReviewCount,
-                        registerCourse.course.courseReviewRateAverage.as("courseReviewRateAverage"), registerCourse.user.userName.as("instructorName")))
+                        registerCourse.course.courseReviewRateAverage.as("courseReviewRateAverage"),
+                        registerCourse.user.userName.as("instructorName"),
+                        course.user.userNickname.as("instructorNickname")))
                 .from(registerCourse)
                 .where(registerCourse.user.eq(user))
                 .fetch();
@@ -38,7 +41,9 @@ public class RegisterCourseCustomRepositoryImpl implements RegisterCourseCustomR
                         wishlist.course.courseCategory, wishlist.course.courseThumbnail,
                         wishlist.course.courseOpenDate, wishlist.course.courseCloseDate,
                         wishlist.course.courseFee, wishlist.course.courseWishCount, wishlist.course.courseReviewCount,
-                        wishlist.course.courseReviewRateAverage.as("courseReviewRateAverage"), wishlist.user.userName.as("instructorName")))
+                        wishlist.course.courseReviewRateAverage.as("courseReviewRateAverage"),
+                        wishlist.user.userName.as("instructorName"),
+                        wishlist.user.userNickname.as("instructorNickname")))
                 .from(wishlist)
                 .where(wishlist.user.eq(user))
                 .fetch();
