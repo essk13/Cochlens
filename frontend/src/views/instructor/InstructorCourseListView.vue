@@ -8,47 +8,12 @@
   <!-- 강사의 전체 강좌 목록 -->
   <div class="q-px-xl q-mx-xl q-pb-xl">
     <div class="row justify-between q-gutter-xl">
-      <!-- <course-item
+      <course-item
         v-for="vodOpenCourse in state.vodOpenCourseList"
         :key="vodOpenCourse.courseId"
         :course-item="vodOpenCourse"
       >
-      </course-item> -->
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
+      </course-item>
     </div>
   </div>
 </template>

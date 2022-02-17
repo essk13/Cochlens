@@ -10,10 +10,9 @@
         navigation
         infinite
       >
-        <q-carousel-slide :name="1" img-src="https://cdn.quasar.dev/img/mountains.jpg" />
-        <q-carousel-slide :name="2" img-src="https://cdn.quasar.dev/img/parallax1.jpg" />
-        <q-carousel-slide :name="3" img-src="https://cdn.quasar.dev/img/parallax2.jpg" />
-        <q-carousel-slide :name="4" img-src="https://cdn.quasar.dev/img/quasar.jpg" />
+        <q-carousel-slide :name="1" img-src="https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1295,h_971/w_80,x_15,y_15,g_south_west,l_klook_water/activities/xol1bfcqo2xvtciab6lp/%EB%B6%80%ED%82%B7%EB%B0%94%ED%86%A1%EA%BD%83%EA%BD%82%EC%9D%B4%EC%9B%90%EB%8D%B0%EC%9D%B4%ED%81%B4%EB%9E%98%EC%8A%A4.webp" />
+        <q-carousel-slide :name="2" img-src="https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1295,h_934/w_80,x_15,y_15,g_south_west,l_klook_water/activities/n3idrlfaqsfiyznbzfoy/%EA%B3%A0%EA%B8%89%EB%AF%B8%EC%88%A0%EC%9E%91%ED%92%88%EC%A0%9C%EC%9E%91%EC%9D%BC%EC%9D%BC%ED%81%B4%EB%9E%98%EC%8A%A4.webp" />
+        <q-carousel-slide :name="3" img-src="https://post-phinf.pstatic.net/MjAyMDA2MjlfMTQz/MDAxNTkzNDEwNDg3MDMx.1eJup46_Aa9UByikXD7IkArDYpGbQitnFj0F-Hz6Xrcg.kJ4es3YEDEl3Y4JZLvIHi8tOiHCff7tLUJFNfAykz7Ig.PNG/%EC%9D%B4%EB%AF%B8%EC%A7%80_72.png?type=w1200" />
       </q-carousel>
     </div>
 

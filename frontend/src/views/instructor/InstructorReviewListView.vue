@@ -8,32 +8,12 @@
   <!-- 강사 리뷰 목록 -->
   <div class="contents q-mx-xl q-pb-xl">
     <q-list bordered class="instructor-review-list rounded-borders q-mx-xl">
-      <!-- <course-review
+      <course-review
         v-for="courseReview in state.instructorReviewList"
         :key="courseReview.reviewId"
         :course-review="courseReview"
       >
-      </course-review> -->
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
-      <course-review></course-review>
+      </course-review>
     </q-list>
   </div>
 </template>
