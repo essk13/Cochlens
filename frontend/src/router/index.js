@@ -13,6 +13,7 @@ import CourseReviewListView from '../views/course/CourseReviewListView'
 import CourseCreateView from '../views/course/CourseCreateView'
 import CourseUpdateView from '../views/course/CourseUpdateView'
 import LiveLectureView from '../views/course/LiveLectureView'
+import ChatView from '../views/course/ChatView'
 
 import InstructorListView from '../views/instructor/InstructorListView'
 import InstructorDetailView from '../views/instructor/InstructorDetailView'
@@ -79,6 +80,11 @@ const routes = [
     path: '/course/:courseId/:lectureId',
     name: 'liveLecture',
     component: LiveLectureView
+  },
+  { // 채팅
+    path: '/chat/:lectureId',
+    name: 'chat',
+    component: ChatView
   },
 
   // 강사
