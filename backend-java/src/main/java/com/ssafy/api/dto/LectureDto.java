@@ -3,6 +3,7 @@ package com.ssafy.api.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.db.entity.Lecture;
 import com.ssafy.db.entity.Course;
+import com.ssafy.db.entity.LectureState;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class LectureDto {
         @ApiModelProperty(name="lectureDate", example="2022/02/11")
         Date lectureDate;
         @ApiModelProperty(name="lectureState", example="start")
-        String lectureState;
+        LectureState lectureState;
         @ApiModelProperty(name="lectureVod", example="vod address")
         String lectureVod;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
@@ -61,7 +62,7 @@ public class LectureDto {
         @ApiModelProperty(name="lectureDate", example="2022/02/11")
         Date lectureDate;
         @ApiModelProperty(name="lectureState", example="start")
-        String lectureState;
+        LectureState lectureState;
         @ApiModelProperty(name="lectureOpenTime", example="10:10")
         Date lectureOpenTime;
         @ApiModelProperty(name="lectureCloseTime", example="12:10")
@@ -98,7 +99,7 @@ public class LectureDto {
         @ApiModelProperty(name="lectureDate", example="2022/02/11")
         Date lectureDate;
         @ApiModelProperty(name="lectureState", example="start")
-        String lectureState;
+        LectureState lectureState;
         @ApiModelProperty(name="lectureVod", example="vod address")
         String lectureVod;
         @ApiModelProperty(name="lectureOpenTime", example="10:10")

@@ -23,20 +23,21 @@
       </div>
       <img src="https://cdn.quasar.dev/img/mountains.jpg">
       <span v-if="state.isSubtitles" class="main-screen-subtitles">{{ state.subtitles }}</span>
+        <video id="videoOutput" autoplay style="width: 480px; height: 320px;"
+					></video>
+      <span class="main-screen-subtitles">{{ state.res }}</span>
     </div>
     <div v-else class="all-screen-list-block">
       
     </div>
     <div class="menu-block row justify-between">
       <div class="col-1 row justify-center items-center">
-
+        <img @click="startRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-2 row justify-between items-center">
-        <div style="width: 4vh; height: 4vh; border-radius: 4vh;" class="mic-on-img"></div>
-        <!-- <div style="width: 4vh; height: 4vh; border-radius: 4vh;" class="mic-off-img"></div> -->
-        <div @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="video-on-img"></div>
-        <!-- <div @click="init" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="video-off-img"></div> -->
-        <div @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="exit-img"></div>
+        <img @click="stopRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="playRecording" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
+        <img @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
       </div>
       <div class="col-1 row justify-center items-center">
         <img style="width: 4vh; height: 4vh; border-radius: 4vh;" src="https://cdn.quasar.dev/img/cat.jpg" />
@@ -54,6 +55,11 @@ import { useRoute } from 'vue-router'
 
 import * as faceapi from 'face-api.js'
 import $ from 'jquery'
+import Stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
+// import logo from '@/assets/logo.svc'
+// import model_json from '@/assets/my_model/model.json'
+// import metadata_json from '@/assets/my_model/metadata.json'
 
 export default {
   name: 'LiveLectureView',
@@ -63,7 +69,9 @@ export default {
   setup() {
     const store = useStore()
     const route = useRoute()
-    // const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
+
+
+    const URL = "https://teachablemachine.withgoogle.com/models/a2NpjKcPa/"
     // let webcam, model, maxPredictions
     const state = reactive({
       screenSlide: 1,
@@ -76,7 +84,56 @@ export default {
       face_height: null,
       face_x: null,
       face_y: null,
+      videoOutput: document.getElementById('videoOutput'),
+      chatList: [],
+      stompClient: null,
+      // logo
     })
+
+    // Function
+    function connect() {
+      var socket = new SockJS('/cochlens')
+      state.stompClient = Stomp.over(socket)
+
+      state.stompClient.connect({}, () => {
+          subscribeChat()
+      })
+    }
+
+    const subscribeChat = () => {
+      state.stompClient.subscribe(`/topic/${route.params.lectureId}`, res => {
+        const chatMsg = JSON.parse(res.body)
+        console.log(chatMsg)
+        console.log(store.state.user.userName)
+        console.log(store.state.courseStore.courseData.instructorName)
+        if (store.state.user.userName != store.state.courseStore.courseData.instructorName) {
+          state.subtitles = chatMsg.content
+          console.log(state.subtitles)
+        }
+        state.chatList.push(chatMsg)
+      })
+    }
+
+    function sendChat(subtitles) {
+      console.log('send')
+      // 전달할 객체
+      if (state.stompClient) {
+        const msg = {
+          lectureId: 102,
+          userName: store.state.user.userName,
+          content: subtitles
+        }
+        state.stompClient.send(`/app/chat/${route.params.lectureId}`, JSON.stringify(msg), {})
+        state.text = ''
+      }
+    }
+
+    function disconnect() {
+      state.stompClient.disconnect()
+      state.stompClient = null
+    }
+
+    connect()
 
     // [STT 변수]
     const sdk = require('microsoft-cognitiveservices-speech-sdk')
@@ -192,6 +249,9 @@ export default {
           state.subtitles_text += `${JSON.stringify(detailedResultJson, null, 2)}\r\n`;
 
           state.subtitles = `${result.text}\r\n`;
+
+          // 소켓 통신으로 사용자들에게 pub...
+          sendChat(state.subtitles)
 
           console.log('detailedResultJson : ', detailedResultJson)
           console.log('state.subtitles_text : ', state.subtitles_text)
@@ -336,8 +396,30 @@ export default {
       if (store.state.user.userName == store.state.courseStore.courseData.instructorName) {
         stopContinuousRecognition()
       }
+      disconnect()
       store.dispatch('courseStore/leaveLecture')
       router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
+    }
+
+    /**
+     * 녹화 관련 함수들
+     */
+
+    function startRecording() {
+      console.log('startRecording')
+      state.videoOutput = document.getElementById('videoOutput')
+      console.log(state.videoOutput)
+      store.dispatch('courseStore/startRecording', state.videoOutput)
+    }
+
+    function stopRecording() {
+      console.log('stopRecording')
+      store.dispatch('courseStore/stopRecording')
+    }
+
+    function playRecording() {
+      console.log('playRecording')
+      store.dispatch('courseStore/playRecording', state.videoOutput)
     }
 
   // [Motion Command]
@@ -389,6 +471,8 @@ export default {
       leaveRoom,
       doContinuousRecognition,
       stopContinuousRecognition,
+      startRecording, stopRecording, playRecording,
+      connect, sendChat, disconnect
     }
   }
 }
