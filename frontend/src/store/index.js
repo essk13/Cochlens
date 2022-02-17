@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import createPersistedState from 'vuex-persistedstate';
 
 // modules
 import courseStore from '@/store/modules/courseStore'
@@ -9,6 +10,7 @@ import profileStore from '@/store/modules/profileStore'
 const BASE_URL = 'https://localhost:8443/api/v1/'
 
 export default createStore({
+  plugins: [createPersistedState()],
   state: {
     user: null,
   },
@@ -89,7 +91,7 @@ export default createStore({
     getHomeData({ commit }) {
       axios({
         method: 'get',
-        url: `${BASE_URL}main`,
+        url: `${BASE_URL}users/main`,
         headers: {
           Authorization: `Bearer ${localStorage.getItem('JWT')}`
         }
@@ -101,7 +103,6 @@ export default createStore({
         })
         .catch(err => {
           console.log(err)
-          alert('err')
         })
     }
   },

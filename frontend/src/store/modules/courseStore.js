@@ -147,9 +147,9 @@ const courseStore = {
         audio : true,
         video : {
           mandatory : {
-            maxWidth : 320,
-            maxHeight : 120,
-            maxFrameRate : 15,
+            maxWidth : 300,
+            maxHeight : 200,
+            maxFrameRate : 30,
             minFrameRate : 15
           }
         }
@@ -206,7 +206,7 @@ const courseStore = {
       for ( var key in state.participants) {
         state.participants[key].dispose()
       }
-
+      
       state.ws.close();
     },
 
@@ -222,6 +222,50 @@ const courseStore = {
       commit('DISPOSE_PARTICIPANT', participantName);
     },
 
+    // 강의 종료 후 자막 저장
+    saveSubtitles({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'post',
+          url: `${BASE_URL}STT/${data.id}`,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('JWT')}`
+          },
+          data: data.subtitles
+        })
+        .then(res => {
+          commit('')
+          resolve(res)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
+
+    // 강의 자막 조회
+    getSubtitles({ commit }, lectureId) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          url: `${BASE_URL}STT/${lectureId}`,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('JWT')}`
+          },
+        })
+        .then(res => {
+          console.log('getSubtitles!! :', res.data)
+          console.log('subtitlesLectureId :', lectureId)
+          commit('')
+          resolve(res)
+        })
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
 
     // 강좌 생성
     createCourse({ commit }, data) {

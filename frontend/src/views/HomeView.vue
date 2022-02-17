@@ -28,16 +28,12 @@
           </div>
           <!-- 강좌 목록 -->
           <div class="my-course-list col column justify-between no-wrap">
-            <!-- <taking-course
+            <taking-course
               v-for="takingCourse in state.takingCourseList"
               :key="takingCourse.courseId"
               :taking-course-item="takingCourse"
             >
-            </taking-course> -->
-            <taking-course></taking-course>
-            <taking-course></taking-course>
-            <taking-course></taking-course>
-            <taking-course></taking-course>
+            </taking-course>
           </div>
         </div>
       </div>
@@ -51,17 +47,12 @@
 
               <!-- 인기 강사 목록 -->
             <div class="contents-body best-instructor-list col row justify-between shadow-2 no-wrap">
-              <!-- <best-instructor
+              <best-instructor
                 v-for="bestInstructor in state.bestInstructorList"
                 :key="bestInstructor.userId"
                 :best-instructor="bestInstructor"
               >
-              </best-instructor> -->
-              <best-instructor></best-instructor>
-              <best-instructor></best-instructor>
-              <best-instructor></best-instructor>
-              <best-instructor></best-instructor>
-              <best-instructor></best-instructor>
+              </best-instructor>
             </div>
           </div>
         </div>
@@ -73,16 +64,12 @@
             </div>
             <!-- 인기 강좌 목록 -->
             <div class="contents-body best-course-list col row justify-between shadow-2 no-wrap">
-              <!-- <course-item
+              <course-item
                 v-for="bestCourse in state.bestCourseList"
                 :key="bestCourse.courseId"
                 :course-item="bestCourse"
               >
-              </course-item> -->
-              <course-item></course-item>
-              <course-item></course-item>
-              <course-item></course-item>
-              <course-item></course-item>
+              </course-item>
             </div>
           </div>
         </div>
@@ -124,7 +111,7 @@ export default {
       bestCourseList: store.state.courseStore.bestCourseList,
     })
 
-    // store.dispatch('getHomeData')
+    store.dispatch('getHomeData')
 
     watchEffect(() => {
       state.takingCourseList = store.state.profileStore.takingList
