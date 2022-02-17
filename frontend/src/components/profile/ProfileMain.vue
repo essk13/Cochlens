@@ -2,8 +2,11 @@
   <!-- 상단 메뉴 -->
   <div class="row profile-upper-area q-mb-lg">
     <div class="col-6 q-pr-md">
-      <p class="profile-menu-title">시간표</p>
-      <div class="profile-home-menu"></div>
+      <p class="profile-menu-title">소개</p>
+      <div class="profile-home-menu">
+        <!-- 소개 -->
+        {{ state.description }}
+      </div>
     </div>
 
     <div class="col-6 q-pl-md">
@@ -58,7 +61,7 @@
       <div v-if="state.takingList" class="profile-home-row-menu">
         <taking-course-vue
           class="q-mb-md"
-          v-for="(takingItem, index) in state.takingList"
+          v-for="(takingItem, index) in state.takingList.slice(0, 3)"
           :key="index"
           :taking-course-item="takingItem"
         >
@@ -77,7 +80,7 @@
       <div v-if="state.wishList" class="profile-home-row-menu">
         <taking-course-vue
           class="q-mb-md"
-          v-for="(wishItem, index) in state.wishList"
+          v-for="(wishItem, index) in state.wishList.slice(0, 3)"
           :key="index"
           :taking-course-item="wishItem"
         >
@@ -93,6 +96,7 @@
 import TakingCourseVue from "./TakingCourse.vue"
 import { reactive } from "vue"
 import { useStore } from 'vuex'
+import { watchEffect } from 'vue'
 
 export default {
   name: 'ProfileMain',
@@ -105,8 +109,33 @@ export default {
       subtitle: store.state.user.isSubtitle,
       command: store.state.user.isCommand,
       faceFocusing: store.state.user.isFaceFocusing,
+      description: store.state.user.description,
       takingList: store.state.profileStore.takingList,
       wishList: store.state.profileStore.wishList,
+    })
+
+    watchEffect(() => {
+      state.subtitle = store.state.user.isSubtitle
+    })
+
+    watchEffect(() => {
+      state.command = store.state.user.isCommand
+    })
+
+    watchEffect(() => {
+      state.faceFocusing = store.state.user.isFaceFocusing
+    })
+
+    watchEffect(() => {
+      state.description = store.state.user.description
+    })
+
+    watchEffect(() => {
+      state.takingList = store.state.profileStore.takingList
+    })
+
+    watchEffect(() => {
+      state.wishList = store.state.profileStore.wishList
     })
 
     // Function
@@ -156,7 +185,7 @@ export default {
     width: 100%;
     padding: 25px;
     border-radius: 5px;
-    background: gray;
+    background: lightblue;
   }
 
   .profile-home-row-menu {
@@ -164,7 +193,7 @@ export default {
     width: 100%;
     padding: 15px;
     border-radius: 5px;
-    background: gray;
+    background: rgb(187, 210, 255);
   }
 
   .profile-menu-title {

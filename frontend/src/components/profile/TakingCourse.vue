@@ -9,16 +9,13 @@
     <!-- 강좌 정보 -->
     <div class="my-course-info col column">
       <div class="col-3 row">
-        <div class="col-6 text-bold">강쉡의 요리교실 <span class="text-caption">★5.0</span></div>
-        <!-- <div class="col-6 text-bold">{{ props.takingCourseItem.courseName }} <span class="text-caption">★{{ props.takingCourseItem.courseReviewRateAverage }}</span></div> -->
+        <div class="col-6 text-bold">{{ props.takingCourseItem.courseName }} <span class="text-caption">★{{ props.takingCourseItem.courseReviewRateAverage }}</span></div>
         <div class="col-6 text-right text-caption text-bold">현재 진도 : 3강 / 15강</div>
       </div>
-      <div class="col-6 text-caption q-pt-xs">이 강좌는 그리스 로마부터 시작되어 현대에 이르기까지</div>
-      <!-- <div class="col-6 text-caption q-pt-xs">{{ props.takingCourseItem.courseDescription }}</div> -->
+      <div class="col-6 text-caption q-pt-xs">{{ props.takingCourseItem.courseDescription }}</div>
       <div class="col-3 row">
         <div class="text-left col-7 full-height">
-          <p class="text-bold text-caption q-mt-xs">강사 : 강태훈 | #요리조리</p>
-          <!-- <p class="text-bold text-caption q-mt-xs">강사 : {{ props.takingCourseItem.instructorName }} | #{{ props.takingCourseItem.courseCategory }}</p> -->
+          <p class="text-bold text-caption q-mt-xs">강사 : {{ props.takingCourseItem.instructorName }} | #{{ props.takingCourseItem.courseCategory }}</p>
         </div>
         <div class="text-right col-5">
           <span class="my-course-continue text-bold">이어서 학습하기 >></span>
@@ -30,7 +27,7 @@
 
 <script>
 import { reactive, computed } from '@vue/reactivity'
-// import { useStore } from 'vuex'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -39,18 +36,18 @@ export default {
     takingCourseItem: Object,
   },
   setup (props) {
-    // const store = useStore()
+    const store = useStore()
     const router = useRouter()
     const state = reactive({
-      id: 1,
       thumbnailImageUrl: computed(() => props.takingCourseItem.courseThumbnail),
     })
 
     // 강좌 상세 정보로 이동
     function clickCourse(){
-      // store.dispatch('courseStore/getCourseDetail', props.takingCourseItem.courseId)
-      // router.push({ name: 'courseDetail', params: { courseId: props.takingCourseItem.courseId }})
-      router.push({ name: 'courseDetail', params: { courseId: state.id }})
+      store.dispatch('courseStore/getCourseDetail', props.takingCourseItem.courseId)
+      .then(() => {
+        router.push({ name: 'courseDetail', params: { courseId: props.takingCourseItem.courseId }})
+      })
     }
 
     return {

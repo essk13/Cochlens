@@ -11,11 +11,10 @@
       </div>
     </div>
     <div>
-      <q-btn v-if="props.lectureItem.lectureState == 'BEFORE' && state.userName === state.instructor" @click="startLecture" color="purple" label="강의 시작" />
-      <q-btn v-else-if="props.lectureItem.lectureState == 'BEFORE' && !(state.userName === state.instructor)" color="purple" disable label="시작 예정" />
-      <q-btn v-else-if="props.lectureItem.lectureState === 'LIVE' && !(state.userName === state.instructor)" @click="joinLecture" color="purple" label="강의 참가" />
+      <q-btn v-if="props.lectureItem.lectureState == 'before' && state.userName === state.instructor" @click="startLecture" color="purple" label="강의 시작" />
+      <q-btn v-else-if="props.lectureItem.lectureState == 'before' && !(state.userName === state.instructor)" color="purple" disable label="시작 예정" />
+      <q-btn v-else-if="props.lectureItem.lectureState === 'start' && !(state.userName === state.instructor)" @click="joinLecture" color="purple" label="강의 참가" />
       <q-btn v-else @click="joinLecture" color="purple" label="VOD" />
-      <q-btn @click="joinLecture" color="purple" label="일단 참가" />
     </div>
   </div>
 </template>

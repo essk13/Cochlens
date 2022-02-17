@@ -1,12 +1,12 @@
 import axios from "axios"
-const BASE_URL = 'https://localhost:8443/api/v1/'
+const BASE_URL = 'https://i6d102.p.ssafy.io:8443/'
 
 const profileStore = {
   namespaced: true,
   state: {
     component: 'home',
-    takingList: null,
-    wishList: null,
+    takingList: [],
+    wishList: [],
   },
   getters: {
   },
@@ -18,10 +18,10 @@ const profileStore = {
       rootState.user.thumbnailImage = data.thumbnailImage
       rootState.user.userDescription = data.userDescription
     },
-    SET_WISHLIST({ state }, wishList) {
+    SET_WISHLIST(state, wishList) {
       state.wishList = wishList
     },
-    SET_TAKINGLIST({ state }, takingList) {
+    SET_TAKINGLIST(state, takingList) {
       state.takingList = takingList
     },
   },

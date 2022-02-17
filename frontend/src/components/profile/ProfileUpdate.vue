@@ -5,8 +5,8 @@
   <p class="q-mt-md">닉네임</p>
   <q-input outlined v-model="state.userNickname" label="닉네임" dense />
 
-  <p v-if="state.role === 'INSTRUCTOR'" class="q-mt-md">소개</p>
-  <q-input v-if="state.role === 'INSTRUCTOR'" outlined v-model="state.userDescription" label="닉네임" type="textarea" />
+  <p class="q-mt-md">소개</p>
+  <q-input outlined v-model="state.userDescription" label="닉네임" type="textarea" />
 
   <p class="q-mt-md">프로필 사진</p>
   <q-file outlined dense bottom-slots v-model="state.profileImage" label="프로필 사진" counter max-files="12">

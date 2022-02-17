@@ -337,7 +337,10 @@ export default {
         stopContinuousRecognition()
       }
       store.dispatch('courseStore/leaveLecture')
-      router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
+      store.dispatch('courseStore/getCourseDetail', route.params.courseId)
+      .then(() => {
+        router.push({ name: 'courseDetail', params: { courseId: route.params.courseId } })
+      })
     }
 
   // [Motion Command]

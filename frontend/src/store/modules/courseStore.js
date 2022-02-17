@@ -2,7 +2,7 @@ import Participant from './js/participant.js'
 import kurentoUtils from 'kurento-utils'
 import axios from 'axios'
 
-const BASE_URL = 'https://localhost:8443/api/v1/'
+const BASE_URL = 'https://i6d102.p.ssafy.io:8443/'
 
 const courseStore = {
   namespaced: true,
@@ -41,11 +41,16 @@ const courseStore = {
     },
     
     SET_COURSE_LIST(state, list) {
-      state.courseList = list
+      console.log('SET_COURSE_LIST :', list)
+      if (list) {
+        state.courseList = list
+      }
     },
 
     SET_BEST_COURSE_LIST(state, list) {
-      state.bestCourseList = list
+      if (list) {
+        state.bestCourseList = list
+      }
     },
 
     SET_COURSE_DATA(state, data) {
@@ -195,6 +200,7 @@ const courseStore = {
 
     // 입실
     register({ commit, dispatch }, msg) {
+      console.log('registerregisterregisterregister!!!!!!!!')
       commit('SET_NAME', msg.name)
       dispatch('sendMessage', msg)
     },
@@ -341,20 +347,24 @@ const courseStore = {
 
     // 강좌 상세 정보
     getCourseDetail({ commit }, id) {
-      axios({
-        method: 'get',
-        url: `${BASE_URL}course/${id}`,
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('JWT')}`
-        },
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'get',
+          url: `${BASE_URL}course/${id}`,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('JWT')}`
+          },
+        })
+          .then((res) => {
+            console.log(res)
+            commit('SET_COURSE_DATA', res.data)
+            resolve(res)
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
       })
-        .then((res) => {
-          console.log(res)
-          commit('SET_COURSE_DATA', res.data)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     },
 
     // 강좌 수강 신청
@@ -447,65 +457,68 @@ const courseStore = {
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    // 강좌 수정
+    updateCourse({ commit }, data) {
+      axios({
+        method: 'put',
+        url: `${BASE_URL}course/${data.id}`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+        data: data.data,
+      })
+        .then((res) => {
+          console.log(res)
+          commit('SET_COURSE_DATA', res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 리뷰 작성
+    createReview({ dispatch }, data) {
+      console.log('creatingReview!!!!!!')
+      axios({
+        method: 'post',
+        url: `${BASE_URL}course/${data.id}/review`,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('JWT')}`
+        },
+        data: data.data,
+      })
+        .then((res) => {
+          console.log(res)
+          dispatch('getCourseDetail', data.id)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    // 강의 시작
+    startLecture({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        axios({
+          method: 'post',
+          url: `${BASE_URL}lecture/${id}/open`,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('JWT')}`
+          },
+        })
+          .then((res) => {
+            console.log(res)
+            commit('')
+            resolve(res)
+          })
+          .catch((err) => {
+            console.log(err)
+            reject(err)
+          })
+      })
     }
-  },
-
-  // 강좌 수정
-  updateCourse({ commit }, data) {
-    axios({
-      method: 'put',
-      url: `${BASE_URL}course/${data.id}`,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('JWT')}`
-      },
-      data: data.data,
-    })
-      .then((res) => {
-        console.log(res)
-        commit('SET_COURSE_DATA', res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  },
-
-  // 리뷰 작성
-  createReview({ dispatch }, data) {
-    console.log('axios')
-    axios({
-      method: 'post',
-      url: `${BASE_URL}course/${data.id}/review`,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('JWT')}`
-      },
-      data: data.data,
-    })
-      .then((res) => {
-        console.log(res)
-        dispatch('getCourseDetail', data.id)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  },
-
-  // 강의 시작
-  startLecture({ commit }, id) {
-    console.log('axios')
-    axios({
-      method: 'post',
-      url: `${BASE_URL}lecture/${id}/open`,
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('JWT')}`
-      },
-    })
-      .then((res) => {
-        console.log(res)
-        commit('')
-      })
-      .catch((err) => {
-        console.log(err)
-      })
   }
 }
 

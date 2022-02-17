@@ -36,7 +36,7 @@
     <!-- 강사의 라이브 강좌 -->
     <div class="in-progress-course-block col-4 column q-py-sm">
       <div class="contents-header col-auto">
-        <span class="contents-title">진행중인 강좌</span>
+        <span class="contents-title">라이브 강좌</span>
         <span class="contents-more" @click="moveToLiveCourseList">더보기></span>
       </div>
       <div class="in-progress-course-list col row justify-around items-center no-wrap">
@@ -64,28 +64,6 @@
       </div>
     </div>
   </div>
-  <q-btn :label="state.dialogText" color="primary" @click="state.isDialog = true" />
-  <div>{{ state.date }}</div>
-  <q-dialog v-model="state.isDialog" persistent>
-    <q-card style="min-width: 350px">
-      <q-card-section>
-        <div class="text-h6">강의 생성</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        <q-input dense v-model="state.dialogText" autofocus @keyup.enter="prompt = false" />
-        <div class="q-gutter-md row items-start">
-          <q-date v-model="state.date" mask="YYYY-MM-DD HH:mm" color="purple" />
-          <q-time v-model="state.date" mask="YYYY-MM-DD HH:mm" color="purple" />
-        </div>
-      </q-card-section>
-
-      <q-card-actions align="right" class="text-primary">
-        <q-btn flat label="강의 생성" v-close-popup @click="createLecture" />
-        <q-btn flat label="취소" v-close-popup />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script>

@@ -332,6 +332,9 @@ export default {
 
     // 리뷰 작성
     function createReview() {
+      console.log(state.reviewContent)
+      console.log(`${today.getFullYear()}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getDate().toString().padStart(2, '0')}`)
+      console.log(state.reviewRate)
       store.dispatch('courseStore/createReview', {
         id: state.courseData.courseId,
         data: {

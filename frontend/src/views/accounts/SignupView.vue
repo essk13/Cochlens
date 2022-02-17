@@ -102,7 +102,7 @@
           </div>
 
           <div class="row">
-            <div class="col-6 q-pr-sm">
+            <!-- <div class="col-6 q-pr-sm">
               <q-btn color="white" text-color="dark" class="full-width q-mb-md">
                 <img :src="state.google" height="20" class="q-mr-sm">
                 구글 로그인
@@ -113,7 +113,7 @@
                 <img :src="state.naver" height="18" class="q-mr-sm">
                 네이버 로그인
               </q-btn>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

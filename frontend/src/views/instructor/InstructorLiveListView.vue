@@ -8,42 +8,12 @@
   <!-- 강사의 라이브 강좌 목록 -->
   <div class="contents q-px-xl q-mx-xl q-pb-xl">
     <div class="row justify-between q-gutter-xl">
-      <!-- <course-item
+      <course-item
         v-for="liveOpenCourse in state.liveOpenCourseList"
         :key="liveOpenCourse.courseId"
         :course-item="liveOpenCourse"
       >
-      </course-item> -->
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
-      <course-item></course-item>
+      </course-item>
     </div>
   </div>
 </template>

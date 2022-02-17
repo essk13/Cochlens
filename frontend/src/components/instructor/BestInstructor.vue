@@ -9,7 +9,7 @@
     <!-- 베스트 강사 설명 -->
     <div class="best-instructor-info col-3">
       <span>{{ props.bestInstructor.userNickname }}</span>
-      <span class="best-instructor-rate">★{{  }}</span>
+      <span class="best-instructor-rate">★{{ props.bestInstructor.courseReviewRateAverage }}</span>
     </div>
   </div>
 </template>
