@@ -6,15 +6,16 @@
         <p class="curriculum-title">{{ props.lectureItem.lectureName }}</p>
         <p class="curriculum-description">
           강사 : {{ state.instructor }}<br>
-          날짜 : {{ props.lectureItem.lectureDate }} / 길이 : {{ props.lectureItem.lectureRuntime }}
+          날짜 : {{ props.lectureItem.lectureDate }} / 시간 : {{ props.lectureItem.lectureOpenTime }}
         </p>
       </div>
     </div>
     <div>
-      <q-btn v-if="props.lectureItem.lectureState == 'before' && state.userName === state.instructor" @click="startLecture" color="purple" label="강의 시작" />
-      <q-btn v-else-if="props.lectureItem.lectureState == 'before' && !(state.userName === state.instructor)" color="purple" disable label="시작 예정" />
-      <q-btn v-else-if="props.lectureItem.lectureState === 'live' && !(state.userName === state.instructor)" @click="joinLecture" color="purple" label="강의 참가" />
-      <q-btn v-else @click="watchVOD" color="purple" label="VOD" />
+      <q-btn v-if="props.lectureItem.lectureState == 'BEFORE' && state.userName === state.instructor" @click="startLecture" color="purple" label="강의 시작" />
+      <q-btn v-else-if="props.lectureItem.lectureState == 'BEFORE' && !(state.userName === state.instructor)" color="purple" disable label="시작 예정" />
+      <q-btn v-else-if="props.lectureItem.lectureState === 'LIVE' && !(state.userName === state.instructor)" @click="joinLecture" color="purple" label="강의 참가" />
+      <q-btn v-else @click="joinLecture" color="purple" label="VOD" />
+      <q-btn @click="joinLecture" color="purple" label="일단 참가" />
     </div>
   </div>
 </template>
@@ -48,6 +49,7 @@ export default {
         room : props.lectureItem.lectureName,
       }
       store.dispatch('courseStore/register', message)
+      store.dispatch('courseStore/startLecture', props.lectureItem.lectureId)
       router.push({ name: 'liveLecture', params: { courseId: route.params.courseId, lectureId: props.lectureItem.lectureId } })
     }
     // 강의 참가

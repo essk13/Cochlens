@@ -487,6 +487,25 @@ const courseStore = {
       .catch((err) => {
         console.log(err)
       })
+  },
+
+  // 강의 시작
+  startLecture({ commit }, id) {
+    console.log('axios')
+    axios({
+      method: 'post',
+      url: `${BASE_URL}lecture/${id}/open`,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('JWT')}`
+      },
+    })
+      .then((res) => {
+        console.log(res)
+        commit('')
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 

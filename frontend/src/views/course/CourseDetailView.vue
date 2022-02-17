@@ -186,8 +186,8 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const optionContent = {
-      '라이브': 'before',
-      'VOD': 'vod'
+      '라이브': 'BEFORE',
+      'VOD': 'VOD'
     }
     let today = new Date()
     const url = 'wss://' + location.host + '/groupcall'
@@ -208,7 +208,7 @@ export default {
       lectureName: '',
       lectureOpenTime: `${today.getHours().toString().padStart(2, '0')}:${today.getMinutes().toString().padStart(2, '0')}`,
       lectureRuntime: '02:00',
-      lectureState: 'before',
+      lectureState: 'BEFORE',
       lectureThumbnail: null,
       lectureVod: null,
       options: ['라이브', 'VOD'],
