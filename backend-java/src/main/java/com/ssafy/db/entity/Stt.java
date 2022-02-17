@@ -18,6 +18,7 @@ public class Stt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long sttId;
 
+
     @Column(name = "stt_one_id")
     String sttOneId;
 
@@ -27,19 +28,19 @@ public class Stt {
     @Column(name = "stt_offset",nullable = false)
     Integer sttOffset;
 
-    @Column(name = "stt_duraton",nullable = false)
+    @Column(name = "stt_duration",nullable = false)
     Integer sttDuration;
 
-    @Column(name = "stt_dispalyText",nullable = false)
+    @Column(name = "stt_display_text",nullable = false)
     String sttDisplayText;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lecture_id")
     Lecture lecture;
 
     @Builder
-    public Stt(Long sttId, String sttOneId, Integer sttRecognitionStatus, Integer sttOffset, Integer sttDuration, String sttDisplayText, Lecture lecture){
-        this.sttId = sttId;
+    public Stt(String sttOneId, Integer sttRecognitionStatus, Integer sttOffset, Integer sttDuration, String sttDisplayText, Lecture lecture){
+
         this.sttOneId = sttOneId;
         this.sttRecognitionStatus = sttRecognitionStatus;
         this.sttOffset = sttOffset;
