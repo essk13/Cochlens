@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface ReviewCustomRepository {
     Optional<Double> countReviewAverage(Course course);
+    Long countCourseReviewByCourseId(Long courseId);
     public List<ReviewDto.ReviewListRes> findAllByUser(User user);
 }

@@ -40,6 +40,7 @@ public class Course {
     @Column(name = "course_limit_people", nullable = false)
     int courseLimitPeople;
 
+
     @Column(name = "course_wish_count")
     int courseWishCount;
     @Column(name = "course_review_count")
@@ -57,6 +58,13 @@ public class Course {
 
     public void increaseReviewCount() {
         courseReviewCount++;
+    }
+
+
+    @PrePersist
+    public void prePersist() {
+        this.courseThumbnail = this.courseThumbnail == null ? "" : this.courseThumbnail;
+        this.courseIntroVideo = this.courseIntroVideo == null ? "" : this.courseIntroVideo;
     }
 
     @Builder

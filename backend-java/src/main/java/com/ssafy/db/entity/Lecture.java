@@ -41,6 +41,13 @@ public class Lecture {
     @JoinColumn(name = "course_id")
     Course course;
 
+    @PrePersist
+    public void prePersist() {
+        this.lectureThumbnail = this.lectureThumbnail == null ? "" : this.lectureThumbnail;
+        this.lectureVod = this.lectureVod == null ? "" : this.lectureVod;
+    }
+
+
     @Builder
     public Lecture(Long lectureId, String lectureName, Date lectureRuntime, String lectureThumbnail,
                    Date lectureDate, LectureState lectureState, String lectureVod,

@@ -28,8 +28,6 @@ public class QReview extends EntityPathBase<Review> {
 
     public final DateTimePath<java.util.Date> reviewDate = createDateTime("reviewDate", java.util.Date.class);
 
-    public final NumberPath<Integer> reviewGrade = createNumber("reviewGrade", Integer.class);
-
     public final NumberPath<Long> reviewId = createNumber("reviewId", Long.class);
 
     public final QUser user;
