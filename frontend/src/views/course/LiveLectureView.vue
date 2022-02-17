@@ -103,6 +103,13 @@ export default {
     const subscribeChat = () => {
       state.stompClient.subscribe(`/topic/${route.params.lectureId}`, res => {
         const chatMsg = JSON.parse(res.body)
+        console.log(chatMsg)
+        console.log(store.state.user.userName)
+        console.log(store.state.courseStore.courseData.instructorName)
+        if (store.state.user.userName != store.state.courseStore.courseData.instructorName) {
+          state.subtitles = chatMsg.content
+          console.log(state.subtitles)
+        }
         state.chatList.push(chatMsg)
       })
     }
@@ -113,7 +120,7 @@ export default {
       if (state.stompClient) {
         const msg = {
           lectureId: 102,
-          userName: 'Mr.깡',
+          userName: store.state.user.userName,
           content: subtitles
         }
         state.stompClient.send(`/app/chat/${route.params.lectureId}`, JSON.stringify(msg), {})
