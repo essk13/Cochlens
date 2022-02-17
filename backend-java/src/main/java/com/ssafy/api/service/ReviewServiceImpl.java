@@ -61,6 +61,11 @@ public class ReviewServiceImpl implements ReviewService {
         return result;
     }
 
+    @Override
+    public long getCourseReviewCount(Long courseId) {
+        return reviewRepository.countCourseReviewByCourseId(courseId);
+    }
+
     /**
      * update
     */

@@ -54,7 +54,7 @@ public class CourseController {
     })
     public ResponseEntity<? extends BaseResponseBody> createCourse(@ApiIgnore Authentication authentication,
                                                                     @RequestBody @ApiParam(value="강좌 생성 정보", required = true) CourseDto.CourseInsertReq courseInsertInfo) {
-        System.out.println(authentication);
+
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         String email = userDetails.getUsername();
         User user = userService.getUserByEmail(email);
@@ -75,6 +75,7 @@ public class CourseController {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         Course course = courseService.getCourse(courseId);
+        if (!courseService.findIsJoinCourseByUserAndCourseId(userDetails.getUser().getEmail(), courseId))
         courseService.registerCourse(userDetails.getUser(), course);
         return ResponseEntity.ok().build();
     }
@@ -92,6 +93,7 @@ public class CourseController {
 
         SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
         Course course = courseService.getCourse(courseId);
+        if (!courseService.findIsWishCourseByEmailAndCourseId(userDetails.getUser().getEmail(), courseId))
         courseService.registerWishlist(userDetails.getUser(), course);
         return ResponseEntity.ok().build();
     }
@@ -111,6 +113,8 @@ public class CourseController {
         Course course = courseService.getCourse(courseId);
         reviewService.createReview(userDetails.getUser(), course, reviewInsertInfo);
         reviewService.updateReviewGrade(course);
+        int courseReviewCount = Math.toIntExact(reviewService.getCourseReviewCount(courseId));
+        courseService.updateCourseReviewCount(courseId, courseReviewCount);
         return ResponseEntity.ok().build();
     }
 
@@ -161,10 +165,11 @@ public class CourseController {
         Course course = courseService.getCourse(courseId);
         List<LectureDto.LectureListRes> lectureList = lectureService.getLectureList(course);
         List<ReviewDto.ReviewListRes> reviewList = reviewService.getReviewListByCourse(course);
-        boolean isWish = false;
-        boolean isJoin = false;
+        boolean isWish = courseService.findIsWishCourseByEmailAndCourseId(email, courseId);
+        boolean isJoin = courseService.findIsJoinCourseByUserAndCourseId(email, courseId);
+        int courseJoinCount = Math.toIntExact(courseService.findJoinCountByCourseId(courseId));
 
-        return ResponseEntity.ok().body(CourseDto.CourseDetailRes.of(course, 0, isJoin, isWish, lectureList, reviewList));
+        return ResponseEntity.ok().body(CourseDto.CourseDetailRes.of(course, courseJoinCount, isJoin, isWish, lectureList, reviewList));
     }
 
     @GetMapping("/search")

@@ -90,6 +90,9 @@ public class CourseDto {
         @ApiModelProperty(name="instructorName", example="ssafy")
         String instructorName;
 
+        @ApiModelProperty(name="instructorNickname", example="hotsix")
+        String instructorNickname;
+
         public static CourseListRes of(Course course) {
             CourseListRes res = new CourseListRes();
 
@@ -108,6 +111,7 @@ public class CourseDto {
             res.setCourseReviewRateAverage(course.getCourseReviewRateAverage());
 
             res.setInstructorName(course.getUser().getUserName());
+            res.setInstructorNickname(course.getUser().getUserNickname());
 
             return res;
         }
@@ -129,6 +133,9 @@ public class CourseDto {
         String courseThumbnail;
         @ApiModelProperty(name="instructorName")
         String instructorName;
+        @ApiModelProperty(name="instructorNickname")
+        String instructorNickname;
+
 
         public static CourseAllRes of(Course course) {
             CourseAllRes res = new CourseAllRes();
@@ -138,6 +145,7 @@ public class CourseDto {
             res.setCourseCategory(course.getCourseCategory());
             res.setCourseThumbnail(course.getCourseThumbnail());
             res.setInstructorName(course.getUser().getUserName());
+            res.setInstructorNickname(course.getUser().getUserNickname());
 
             return res;
         }
@@ -184,6 +192,8 @@ public class CourseDto {
 
         @ApiModelProperty(name="instructorName")
         String instructorName;
+        @ApiModelProperty(name="instructorNickname")
+        String instructorNickname;
         @ApiModelProperty(name="instructorProfileImage")
         String instructorProfileImage;
 
@@ -220,6 +230,7 @@ public class CourseDto {
             res.setCourseReviewRateAverage(course.getCourseReviewRateAverage());
 
             res.setInstructorName(course.getUser().getUserName());
+            res.setInstructorNickname(course.getUser().getUserNickname());
             res.setInstructorProfileImage(course.getUser().getProfileImage());
 
             res.setIsJoin(isJoin);

@@ -31,6 +31,14 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
     }
 
     @Override
+    public Long countCourseReviewByCourseId(Long courseId) {
+        return jpaQueryFactory.select()
+                .from(review)
+                .where(review.course.courseId.eq(courseId))
+                .fetchCount();
+    }
+
+    @Override
     public List<ReviewDto.ReviewListRes> findAllByUser(User user) {
         return jpaQueryFactory.select(Projections.constructor(ReviewDto.ReviewListRes.class,
                         review.reviewId, review.reviewDate, review.reviewRate, review.reviewContent,
