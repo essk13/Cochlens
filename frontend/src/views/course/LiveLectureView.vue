@@ -181,7 +181,8 @@ export default {
 
     // 자막 정보 설정 (키, 지역, 언어, 상세 데이터 여부)
     function getSpeechConfig() {
-      const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.VUE_APP_SPEECH_KEY, process.env.VUE_APP_SPEECH_REGION)
+      const speechConfig = sdk.SpeechConfig.fromSubscription('9b086c20eae642f1bd8ff32b34f6a2b0', 'koreacentral')
+      // const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.VUE_APP_SPEECH_KEY, process.env.VUE_APP_SPEECH_REGION)
       speechConfig.speechRecognitionLanguage = 'ko-KR';  // 인식 언어
       speechConfig.outputFormat = sdk.OutputFormat.Detailed  // 자막 상세 데이터 수신 여부 (Detailed)
       return speechConfig
