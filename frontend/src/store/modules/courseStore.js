@@ -178,8 +178,8 @@ const courseStore = {
         audio : true,
         video : {
           mandatory : {
-            maxWidth : 300,
-            maxHeight : 200,
+            maxWidth : 900,
+            maxHeight : 600,
             maxFrameRate : 30,
             minFrameRate : 15
           }

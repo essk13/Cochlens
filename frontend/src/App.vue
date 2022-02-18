@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lhh LpR lff" class="shadow-2 rounded-borders">
+  <q-layout view="lhr LpR lfr" class="shadow-2 rounded-borders">
     <q-drawer
       v-model="state.subNav"
       bordered

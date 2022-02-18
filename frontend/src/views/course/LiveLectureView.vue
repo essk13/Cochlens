@@ -1,4 +1,20 @@
 <template>
+  <q-drawer
+    side="right"
+    v-model="state.isChat"
+    bordered
+    :width="300"
+    :breakpoint="500"
+  >
+    <div style="width: 100%;" v-for="(chat, index) in state.chatList" :key="index">
+      <h6 class="q-ma-none">
+        {{ chat.userName }}
+      </h6>
+      <p>{{ chat.content }}</p>
+    </div>
+    <q-input outlined square v-model="state.text" @keyup.enter="sendChat(state.text)" />
+  </q-drawer>
+
   <div>
     <div v-if="state.isMainScreen" class="screen-list-block">
       <q-carousel
@@ -41,7 +57,7 @@
         <div @click="leaveRoom" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="exit-img"></div>
       </div>
       <div class="col-1 row justify-center items-center">
-
+        <div @click="closeChat" style="width: 4vh; height: 4vh; border-radius: 4vh;" class="exit-img"></div>
       </div>
     </div>
   </div>
@@ -51,7 +67,7 @@
 import { reactive } from '@vue/reactivity'
 import { useStore } from 'vuex'
 import router from '@/router'
-import { onMounted } from '@vue/runtime-core'
+import { onMounted, watchEffect } from '@vue/runtime-core'
 import { useRoute } from 'vue-router'
 
 import * as faceapi from 'face-api.js'
@@ -88,8 +104,19 @@ export default {
       videoOutput: document.getElementById('videoOutput'),
       chatList: [],
       stompClient: null,
+      isChat: true,
+      text: '',
       // logo
     })
+
+    watchEffect(() => {
+      store.state.chat
+      state.isChat = store.state.chat
+    })
+
+    function closeChat() {
+      store.state.chat = !store.state.chat
+    }
 
     // Function
     function connect() {
@@ -475,7 +502,8 @@ export default {
       doContinuousRecognition,
       stopContinuousRecognition,
       startRecording, stopRecording, playRecording,
-      connect, sendChat, disconnect
+      connect, sendChat, disconnect,
+      closeChat,
     }
   }
 }
@@ -586,6 +614,8 @@ export default {
 
   .participant > video {
     position: relative;
+    height: 200px;
+    width: 300px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

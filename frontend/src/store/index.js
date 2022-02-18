@@ -13,6 +13,7 @@ export default createStore({
   plugins: [createPersistedState()],
   state: {
     user: null,
+    chat: null,
   },
   getters: {
   },
