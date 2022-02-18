@@ -25,4 +25,15 @@ public class ChatController {
         String webSocketPath = webSocketDefault + lectureId;
         template.convertAndSend(webSocketPath, chatModel);
     }
+
+    @MessageMapping("/stt/{lectureId}")
+    public void sendStt(ChatModel chatModel,
+                            @DestinationVariable String lectureId
+    ) {
+        log.debug(chatModel.toString());
+
+        String webSocketDefault = "/topic/";
+        String webSocketPath = webSocketDefault + lectureId;
+        template.convertAndSend(webSocketPath, chatModel);
+    }
 }

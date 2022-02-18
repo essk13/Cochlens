@@ -151,7 +151,7 @@ export default {
           userName: store.state.user.userName,
           content: subtitles
         }
-        state.stompClient.send(`/app/chat/${route.params.lectureId}`, JSON.stringify(msg), {})
+        state.stompClient.send(`/app/stt/${route.params.lectureId}`, JSON.stringify(msg), {})
         state.text = ''
       }
     }
@@ -615,7 +615,6 @@ export default {
   .participant > video {
     position: relative;
     height: 200px;
-    width: 300px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
